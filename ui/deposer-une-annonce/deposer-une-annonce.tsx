@@ -12,7 +12,6 @@ import {
   CameraIcon, 
   DocumentTextIcon, 
   CheckIcon, 
-  ChevronUpDownIcon 
 } from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,7 +21,6 @@ import { Select } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { SearchableCombobox } from '@/components/ui/combobox';
-import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { City } from '@/types/location';
 
