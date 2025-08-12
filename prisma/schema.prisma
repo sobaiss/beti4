@@ -1,0 +1,308 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  firstName String
+  lastName  String
+  phone     String
+  userType  UserType @default(particulier)
+  avatar    String?
+  status    UserStatus @default(attente_validation)
+  validatedAt DateTime?
+  verifiedAt  DateTime?
+  lockedAt    DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  password String?
+  
+  // Preferences
+  acceptMarketing Boolean @default(false)
+  
+  // Agency relationship
+  agencyId String?
+  agency   Agency? @relation(fields: [agencyId], references: [id], onDelete: SetNull)
+  
+  // Relations
+  properties      Property[]
+  favoriteProperties PropertyFavorite[]
+  savedSearches   SavedSearch[]
+  settings        UserSettings?
+  rights          UserRight[]
+  
+  // NextAuth.js required fields
+  accounts Account[]
+  sessions Session[]
+  
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
+model UserSettings {
+  id                    String   @id @default(cuid())
+  acceptEmailContact    Boolean  @default(true)
+  acceptPhoneContact    Boolean  @default(true)
+  displayEmail          Boolean  @default(false)
+  displayPhone          Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  
+  // Relations
+  userId               String   @unique
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("user_settings")
+}
+model Agency {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  address     String?
+  city        String?
+  postalCode  String?
+  phone       String?
+  email       String?
+  website     String?
+  logo        String?
+  status      AgencyStatus @default(attente_validation)
+  verifiedAt  DateTime?
+  lockedAt    DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  users       User[]
+  properties  Property[]
+  
+  @@map("agencies")
+}
+
+model Property {
+  id              String            @id @default(cuid())
+  title           String
+  description     String
+  price           Int
+  location        String
+  address         String?
+  postalCode      String?
+  city            String?
+  type            PropertyType
+  transactionType TransactionType
+  bedrooms        Int
+  bathrooms       Int?
+  area            Int
+  floor           Int?
+  totalFloors     Int?
+  yearBuilt       Int?
+  energyRating    String?
+  featured        Boolean           @default(false)
+  status          PropertyStatus    @default(disponible)
+  availableAt     DateTime?
+  publishedAt     DateTime?
+  reference       String?           @unique
+  agencyReference String?
+  views           Int               @default(0)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  
+  // Relations
+  ownerId         String
+  owner           User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  agencyId        String?
+  agency          Agency?           @relation(fields: [agencyId], references: [id], onDelete: SetNull)
+  images          PropertyImage[]
+  amenities       PropertyAmenity[]
+  favorites       PropertyFavorite[]
+  
+  @@map("properties")
+}
+
+model PropertyImage {
+  id         String   @id @default(cuid())
+  url        String
+  alt        String?
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  
+  // Relations
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  
+  @@map("property_images")
+}
+
+model PropertyAmenity {
+  id         String   @id @default(cuid())
+  area       Int?
+  amenityCount Int?
+  createdAt  DateTime @default(now())
+  
+  // Relations
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  amenityId  String
+  amenity    Amenity  @relation(fields: [amenityId], references: [id], onDelete: Cascade)
+  
+  @@map("property_amenities")
+}
+
+model PropertyFavorite {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  
+  // Relations
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, propertyId])
+  @@map("property_favorites")
+}
+
+model SavedSearch {
+  id            String   @id @default(cuid())
+  name          String
+  filters       Json
+  alertsEnabled Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relations
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("saved_searches")
+}
+
+model Right {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  users     UserRight[]
+  
+  @@map("rights")
+}
+
+model UserRight {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rightId   String
+  right     Right    @relation(fields: [rightId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, rightId])
+  @@map("user_rights")
+}
+model Amenity {
+  id        String          @id @default(cuid())
+  name      String          @unique
+  category  AmenityCategory
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  
+  // Relations
+  properties PropertyAmenity[]
+  
+  @@map("amenities")
+}
+enum UserType {
+  particulier
+  professionnel
+  interne
+  admin
+}
+
+enum UserStatus {
+  attente_validation
+  valide
+  verifie
+  bloque
+}
+
+enum AgencyStatus {
+  attente_validation
+  verifie
+  bloque
+}
+
+enum AmenityCategory {
+  interieur
+  exterieur
+  equipement
+}
+
+enum PropertyType {
+  appartement
+  maison
+  villa
+  bureau_commerce
+  terrain
+  terrain_agricole
+}
+
+enum TransactionType {
+  achat
+  location
+}
+
+enum PropertyStatus {
+  disponible
+  vendu
+  loue
+  desactive
+  brouillon
+}

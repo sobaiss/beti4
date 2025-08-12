@@ -1,0 +1,45 @@
+import { NextResponse } from 'next/server'
+import { PropertyService } from '@/lib/services/property'
+import { generateSEOFilename } from '@/lib/utils/image-optimization'
+
+export async function GET() {
+  const baseUrl = 'https://beti.com'
+  
+  // Get all properties with images
+  const { properties } = await PropertyService.getProperties({}, { field: 'createdAt', direction: 'desc' }, 1, 1000)
+  
+  // Generate image sitemap XML
+  const imageEntries = properties.flatMap((property) => {
+    if (!property.images || property.images.length === 0) return []
+    
+    return property.images.map((image, index) => {
+      const imageTypes = ['vue-principale', 'salon', 'cuisine', 'chambre', 'salle-de-bain', 'exterieur']
+      const imageType = imageTypes[index] || 'vue-interieure'
+      
+      return `
+    <url>
+      <loc>${baseUrl}/property/${property.id}</loc>
+      <image:image>
+        <image:loc>${image.url}</image:loc>
+        <image:title>${property.title} - ${imageType}</image:title>
+        <image:caption>${property.title} à ${property.location} - ${property.transactionType === 'achat' ? 'À vendre' : 'À louer'} ${property.price}€</image:caption>
+        <image:geo_location>${property.location}</image:geo_location>
+        <image:license>https://beti.com/license</image:license>
+      </image:image>
+    </url>`
+    })
+  }).join('')
+  
+  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  ${imageEntries}
+</urlset>`
+
+  return new NextResponse(sitemap, {
+    headers: {
+      'Content-Type': 'application/xml',
+      'Cache-Control': 'public, max-age=3600, s-maxage=3600',
+    },
+  })
+}
