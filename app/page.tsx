@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react';
 import { 
   MagnifyingGlassIcon, 
-  MapPinIcon, 
-  TrendingUpIcon 
+  MapPinIcon,
 } from '@heroicons/react/24/outline';
 import { Button, Input, Select, SelectItem, Card, CardBody } from '@heroui/react';
 import Link from 'next/link';
