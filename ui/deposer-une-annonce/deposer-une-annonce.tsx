@@ -164,6 +164,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                     onClick={() => setTransactionType('location')}
                     className={`p-6 border-2 rounded-lg text-left transition-all ${
                       transactionType === 'location' // Changed from border-blue-500 bg-blue-50 to border-primary-500 bg-primary-50
+                        ? 'border-primary-500 bg-primary-50'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
@@ -239,7 +240,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                     placeholder="Sélectionner une ville..."
                   >
                     {cityOptions.map((city) => (
-                      <SelectItem key={city.value} value={city.value}>
+                      <SelectItem key={city.value}>
                         {city.label}
                       </SelectItem>
                     ))}
@@ -255,7 +256,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                   placeholder="Sélectionner un quartier..."
                 >
                   {locationOptions.map((location) => (
-                    <SelectItem key={location.value} value={location.value}>
+                    <SelectItem key={location.value}>
                       {location.label}
                     </SelectItem>
                   ))}
@@ -468,7 +469,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                 <CloudArrowUpIcon className="w-12 h-12 text-default-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-default-900 mb-2">Glissez vos photos ici</h3>
                 <p className="text-default-600 mb-4">ou cliquez pour sélectionner des fichiers</p>
-                <Button variant="outline">Choisir des photos</Button>
+                <Button variant="bordered">Choisir des photos</Button>
               </div>
 
               <div className="bg-blue-50 p-4 rounded-lg">
