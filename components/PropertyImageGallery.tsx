@@ -1,9 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, Maximize2, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { 
+  ChevronLeftIcon, 
+  ChevronRightIcon, 
+  MagnifyingGlassPlusIcon, 
+  XMarkIcon 
+} from '@heroicons/react/24/outline';
+import { Button, Modal, ModalContent, ModalBody } from '@heroui/react';
 import Image from 'next/image';
 import { Property, PropertyImage } from '@/types/property';
 
@@ -102,19 +106,21 @@ export default function PropertyImageGallery({
                 variant="ghost"
                 size="sm"
                 onClick={prevImage}
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-3 shadow-lg"
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full min-w-12 h-12"
+                isIconOnly
                 aria-label="Image précédente"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeftIcon className="w-5 h-5" />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={nextImage}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-3 shadow-lg"
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full min-w-12 h-12"
+                isIconOnly
                 aria-label="Image suivante"
               >
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRightIcon className="w-5 h-5" />
               </Button>
             </>
           )}
@@ -124,10 +130,11 @@ export default function PropertyImageGallery({
             variant="ghost"
             size="sm"
             onClick={openLightbox}
-            className="absolute bottom-4 right-4 bg-white/90 hover:bg-white rounded-full p-3 shadow-lg"
+            className="absolute bottom-4 right-4 bg-white/90 hover:bg-white rounded-full min-w-12 h-12"
+            isIconOnly
             aria-label="Voir en plein écran"
           >
-            <Maximize2 className="w-4 h-4" />
+            <MagnifyingGlassPlusIcon className="w-4 h-4" />
           </Button>
 
           {/* Image Counter */}
@@ -145,9 +152,9 @@ export default function PropertyImageGallery({
               <button
                 key={image.id}
                 onClick={() => setCurrentImageIndex(index)}
-                className={`relative flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                className={`relative flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-all hover:scale-105 ${
                   index === currentImageIndex 
-                    ? 'border-blue-500 ring-2 ring-blue-200' 
+                    ? 'border-primary ring-2 ring-primary/20' 
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
                 aria-label={`Voir l'image ${index + 1}`}
@@ -166,18 +173,29 @@ export default function PropertyImageGallery({
       </div>
 
       {/* Lightbox Modal */}
-      <Dialog open={isLightboxOpen} onOpenChange={setIsLightboxOpen}>
-        <DialogContent className="max-w-7xl w-full h-full max-h-screen p-0 bg-black">
+      <Modal 
+        isOpen={isLightboxOpen} 
+        onOpenChange={setIsLightboxOpen}
+        size="full"
+        classNames={{
+          base: "bg-black/95",
+          backdrop: "bg-black/80",
+          closeButton: "hidden"
+        }}
+      >
+        <ModalContent className="bg-transparent shadow-none">
+          <ModalBody className="p-0">
           <div className="relative w-full h-full flex items-center justify-center">
             {/* Close Button */}
             <Button
-              variant="ghost"
-              size="sm"
+              variant="light"
+              size="lg"
               onClick={closeLightbox}
-              className="absolute top-4 right-4 z-10 bg-white/20 hover:bg-white/30 text-white rounded-full p-3"
+              className="absolute top-4 right-4 z-10 bg-white/20 hover:bg-white/30 text-white rounded-full min-w-12 h-12"
+              isIconOnly
               aria-label="Fermer"
             >
-              <X className="w-6 h-6" />
+              <XMarkIcon className="w-6 h-6" />
             </Button>
 
             {/* Main Lightbox Image */}
@@ -197,22 +215,24 @@ export default function PropertyImageGallery({
             {propertyImages.length > 1 && (
               <>
                 <Button
-                  variant="ghost"
-                  size="sm"
+                  variant="light"
+                  size="lg"
                   onClick={prevImage}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white rounded-full p-4"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white rounded-full min-w-16 h-16"
+                  isIconOnly
                   aria-label="Image précédente"
                 >
-                  <ChevronLeft className="w-6 h-6" />
+                  <ChevronLeftIcon className="w-6 h-6" />
                 </Button>
                 <Button
-                  variant="ghost"
-                  size="sm"
+                  variant="light"
+                  size="lg"
                   onClick={nextImage}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white rounded-full p-4"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white rounded-full min-w-16 h-16"
+                  isIconOnly
                   aria-label="Image suivante"
                 >
-                  <ChevronRight className="w-6 h-6" />
+                  <ChevronRightIcon className="w-6 h-6" />
                 </Button>
               </>
             )}
@@ -222,8 +242,9 @@ export default function PropertyImageGallery({
               {currentImageIndex + 1} / {propertyImages.length}
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 }
