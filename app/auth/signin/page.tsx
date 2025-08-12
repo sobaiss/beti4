@@ -11,7 +11,7 @@ import {
   LockClosedIcon, 
   ArrowLeftIcon 
 } from '@heroicons/react/24/outline';
-import { Button } from '@/components/ui/button';
+import { Button } from '@heroui/react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -152,7 +152,8 @@ export default function SignInPage() {
 
               <Button 
                 type="submit" 
-                className="w-full bg-blue-900 hover:bg-blue-800"
+                color="primary"
+                className="w-full"
                 disabled={isLoading}
               >
                 {isLoading ? 'Connexion...' : 'Se Connecter'}
@@ -168,7 +169,7 @@ export default function SignInPage() {
 
             <div className="space-y-3">
               <Button 
-                variant="outline" 
+                variant="bordered"
                 className="w-full"
                 onClick={() => signIn('google', { callbackUrl: '/' })}
                 disabled={isLoading}
@@ -183,7 +184,7 @@ export default function SignInPage() {
               </Button>
               
               <Button 
-                variant="outline" 
+                variant="bordered"
                 className="w-full"
                 onClick={() => signIn('facebook', { callbackUrl: '/' })}
                 disabled={isLoading}

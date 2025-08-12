@@ -17,7 +17,7 @@ import {
   Mountain,
   ShoppingBag
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@heroui/react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
@@ -161,7 +161,7 @@ export default function SearchPage() {
 
             {/* Filter Toggle */}
             <Button
-              variant="outline"
+              variant="bordered"
               onClick={() => setShowFilters(!showFilters)}
               className="flex items-center gap-2"
             >
@@ -308,7 +308,7 @@ export default function SearchPage() {
 
               <div className="flex border rounded-lg">
                 <Button
-                  variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                  variant={viewMode === 'grid' ? 'solid' : 'light'}
                   size="sm"
                   onClick={() => setViewMode('grid')}
                   className="rounded-r-none"
@@ -316,7 +316,7 @@ export default function SearchPage() {
                   <Grid className="w-4 h-4" />
                 </Button>
                 <Button
-                  variant={viewMode === 'list' ? 'default' : 'ghost'}
+                  variant={viewMode === 'list' ? 'solid' : 'light'}
                   size="sm"
                   onClick={() => setViewMode('list')}
                   className="rounded-none"
@@ -324,7 +324,7 @@ export default function SearchPage() {
                   <List className="w-4 h-4" />
                 </Button>
                 <Button
-                  variant={viewMode === 'map' ? 'default' : 'ghost'}
+                  variant={viewMode === 'map' ? 'solid' : 'light'}
                   size="sm"
                   onClick={() => setViewMode('map')}
                   className="rounded-l-none"
@@ -430,7 +430,7 @@ export default function SearchPage() {
         {/* Load More */}
         {properties.length > 0 && (
           <div className="text-center mt-12">
-            <Button variant="outline" size="lg" className="px-8">
+            <Button variant="bordered" size="lg" className="px-8">
               Charger Plus de Biens
             </Button>
           </div>

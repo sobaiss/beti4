@@ -21,7 +21,7 @@ import {
   MagnifyingGlassIcon,
   ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/outline';
-import { Button } from '@/components/ui/button';
+import { Button } from '@heroui/react';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -71,12 +71,12 @@ export default function Header() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="outline" size="sm" className="text-blue-900 border-blue-900 hover:bg-blue-50">
+            <Button variant="bordered" size="sm" className="text-blue-900 border-blue-900 hover:bg-blue-50">
               <Link href="/deposer-une-annonce">
                 Déposer une annonce
               </Link>
             </Button>
-            <Button variant="ghost" size="sm" className="text-gray-700 hover:text-blue-900">
+            <Button variant="light" size="sm" className="text-gray-700 hover:text-blue-900">
               <HeartIcon className="w-4 h-4 mr-2" />
             </Button>
             
@@ -138,7 +138,7 @@ export default function Header() {
                 )}
               </div>
             ) : (
-              <Button size="sm" className="bg-blue-900 hover:bg-blue-800">
+              <Button size="sm" color="primary" className="bg-blue-900 hover:bg-blue-800">
                 <Link href="/auth/signin" className="flex items-center">
                   <UserIcon className="w-4 h-4 mr-2" />
                   Se Connecter
@@ -362,11 +362,11 @@ export default function Header() {
               </div>
               <hr className="border-gray-200" />
               <div className="flex flex-col space-y-2">
-                <Button variant="ghost" size="sm" className="justify-start">
+                <Button variant="light" size="sm" className="justify-start">
                   <HeartIcon className="w-4 h-4 mr-2" />
                   Favoris
                 </Button>
-                <Button variant="ghost" size="sm" className="justify-start">
+                <Button variant="light" size="sm" className="justify-start">
                   <PhoneIcon className="w-4 h-4 mr-2" />
                   Contact
                 </Button>
@@ -392,8 +392,8 @@ export default function Header() {
                       <MagnifyingGlassIcon className="w-4 h-4 mr-2" />
                       Mes recherches sauvegardées
                     </Link>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="bordered"
                       size="sm" 
                       onClick={handleSignOut}
                       className="w-full justify-start text-red-600 hover:text-red-600"
@@ -403,7 +403,7 @@ export default function Header() {
                     </Button>
                   </div>
                 ) : (
-                  <Button size="sm" className="bg-blue-900 hover:bg-blue-800">
+                  <Button size="sm" color="primary" className="bg-blue-900 hover:bg-blue-800">
                     <Link href="/auth/signin" className="flex items-center">
                       <UserIcon className="w-4 h-4 mr-2" />
                       Se Connecter

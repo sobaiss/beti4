@@ -2,7 +2,7 @@
 
 import { HeartIcon, MapPinIcon, HomeIcon, UserIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button } from '@heroui/react';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -57,7 +57,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
         </div>
         
         <Button
-          variant="ghost"
+          variant="light"
           size="sm"
           className="absolute top-4 right-4 bg-white/90 hover:bg-white border-0 rounded-full p-2"
         >

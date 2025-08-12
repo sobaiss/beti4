@@ -6,7 +6,7 @@ import {
   MapPinIcon, 
   TrendingUpIcon 
 } from '@heroicons/react/24/outline';
-import { Button } from '@/components/ui/button';
+import { Button } from '@heroui/react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
@@ -153,7 +153,7 @@ export default function Home() {
           )}
 
           <div className="text-center mt-12">
-            <Button variant="outline" size="lg" className="px-8">
+            <Button variant="bordered" size="lg" className="px-8">
               <Link href="/properties" className="flex items-center">
                 Voir Tous les Biens
                 
@@ -173,10 +173,10 @@ export default function Home() {
             Rejoignez des milliers de clients satisfaits qui ont trouvé leur bien idéal avec nous
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-amber-500 hover:bg-amber-600 px-8">
+            <Button size="lg" color="warning" className="bg-amber-500 hover:bg-amber-600 px-8">
               <Link href="/properties">Commencer la Recherche</Link>
             </Button>
-            <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-blue-900 px-8">
+            <Button variant="bordered" size="lg" className="border-white text-white hover:bg-white hover:text-blue-900 px-8">
               <Link href="/contact">Obtenir de l'Aide</Link>
             </Button>
           </div>
