@@ -53,7 +53,7 @@ export default function PropertyDetailsView({property}: { property: Property }) 
 
           {/* Property Header */}
           <Card className="border shadow-sm">
-            <CardContent className="p-6">
+            <CardBody className="p-6">
               <div className="mb-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
@@ -108,7 +108,7 @@ export default function PropertyDetailsView({property}: { property: Property }) 
                   )}
                 </div>
               </div>
-            </CardContent>
+            </CardBody>
           </Card>
 
           {/* Property Details Sections */}
