@@ -2,22 +2,15 @@
 
 import { useEffect } from 'react';
 import { 
-  MapPin, 
-  Bed, 
-  Bath, 
-  Square, 
-  Home,
-  Calendar,
-  Phone,
-  Mail,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+  MapPinIcon, 
+  HomeIcon, 
+  CalendarIcon,
+  PhoneIcon,
+  EnvelopeIcon,
+  UserIcon,
+  BuildingOfficeIcon
+} from '@heroicons/react/24/outline';
+import { Button, Input, Textarea, Select, SelectItem, Card, CardBody, CardHeader, Chip, Divider } from '@heroui/react';
 import PropertyImageGallery from '@/components/PropertyImageGallery';
 import { Property } from '@/types/property';
 
@@ -69,7 +62,7 @@ export default function PropertyDetailsView({property}: { property: Property }) 
                     </h1>
                     
                     <div className="flex items-center text-gray-600 mb-4">
-                      <MapPin className="w-5 h-5 mr-2" />
+                      <MapPinIcon className="w-5 h-5 mr-2" />
                       <span className="text-lg">{property.location}</span>
                     </div>
                   </div>
@@ -80,36 +73,36 @@ export default function PropertyDetailsView({property}: { property: Property }) 
                       {property.transactionType === 'location' && 
                         <span className="text-xl text-gray-500">/mois</span>}
                     </div>
-                    <Badge variant={property.transactionType === 'achat' ? 'default' : 'secondary'} 
-                           className="bg-blue-900 text-white text-sm px-3 py-1">
+                    <Chip color={property.transactionType === 'achat' ? 'primary' : 'secondary'} 
+                          variant="solid" size="sm">
                       {property.transactionType === 'achat' ? 'À Vendre' : 'À Louer'}
-                    </Badge>
+                    </Chip>
                   </div>
                 </div>
 
                 {/* Key Features Bar */}
                 <div className="flex flex-wrap gap-8 py-4 px-6 bg-gray-50 rounded-lg">
                   <div className="flex items-center">
-                    <Square className="w-5 h-5 mr-2 text-blue-900" />
+                    <div className="w-5 h-5 mr-2 border-2 border-blue-900"></div>
                     <span className="font-semibold text-lg">{property.area || 0}m²</span>
                   </div>
                   <div className="flex items-center">
-                    <Bed className="w-5 h-5 mr-2 text-blue-900" />
+                    <UserIcon className="w-5 h-5 mr-2 text-blue-900" />
                     <span className="font-semibold text-lg">{property.bedrooms} chambres</span>
                   </div>
                   {property.bathrooms && (
                     <div className="flex items-center">
-                      <Bath className="w-5 h-5 mr-2 text-blue-900" />
+                      <BuildingOfficeIcon className="w-5 h-5 mr-2 text-blue-900" />
                       <span className="font-semibold text-lg">{property.bathrooms} salles de bain</span>
                     </div>
                   )}
                   <div className="flex items-center">
-                    <Home className="w-5 h-5 mr-2 text-blue-900" />
+                    <HomeIcon className="w-5 h-5 mr-2 text-blue-900" />
                     <span className="font-semibold text-lg capitalize">{property.type.toLowerCase()}</span>
                   </div>
                   {property.yearBuilt && (
                     <div className="flex items-center">
-                      <Calendar className="w-5 h-5 mr-2 text-blue-900" />
+                      <CalendarIcon className="w-5 h-5 mr-2 text-blue-900" />
                       <span className="font-semibold text-lg">{property.yearBuilt}</span>
                     </div>
                   )}
@@ -122,22 +115,22 @@ export default function PropertyDetailsView({property}: { property: Property }) 
           <div className="space-y-8">
             {/* Description */}
             <Card className="border shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-xl">Description</CardTitle>
+              <CardHeader className="pb-3">
+                <h3 className="text-xl font-semibold">Description</h3>
               </CardHeader>
-              <CardContent>
+              <CardBody className="pt-0">
                 <p className="text-gray-700 leading-relaxed text-lg">
                   {property.description}
                 </p>
-              </CardContent>
+              </CardBody>
             </Card>
 
             {/* Property Details */}
             <Card className="border shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-xl">Détails du bien</CardTitle>
+              <CardHeader className="pb-3">
+                <h3 className="text-xl font-semibold">Détails du bien</h3>
               </CardHeader>
-              <CardContent>
+              <CardBody className="pt-0">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div className="flex justify-between py-2 border-b border-gray-100">
@@ -186,16 +179,16 @@ export default function PropertyDetailsView({property}: { property: Property }) 
                     </div>
                   </div>
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
 
             {/* Amenities */}
             {property.amenities && property.amenities.length > 0 && (
               <Card className="border shadow-sm">
-                <CardHeader>
-                  <CardTitle className="text-xl">Équipements et services</CardTitle>
+                <CardHeader className="pb-3">
+                  <h3 className="text-xl font-semibold">Équipements et services</h3>
                 </CardHeader>
-                <CardContent>
+                <CardBody className="pt-0">
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {property.amenities.map((propertyAmenity, index) => (
                       <div key={index} className="flex items-center text-gray-700 py-2">
@@ -204,16 +197,16 @@ export default function PropertyDetailsView({property}: { property: Property }) 
                       </div>
                     ))}
                   </div>
-                </CardContent>
+                </CardBody>
               </Card>
             )}
 
             {/* Location */}
             <Card className="border shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-xl">Localisation</CardTitle>
+              <CardHeader className="pb-3">
+                <h3 className="text-xl font-semibold">Localisation</h3>
               </CardHeader>
-              <CardContent>
+              <CardBody className="pt-0">
                 <div className="space-y-4">
                   <div className="flex items-center text-gray-700">
                     <div>
@@ -230,11 +223,11 @@ export default function PropertyDetailsView({property}: { property: Property }) 
                   </div>
                   
                   <div className="text-center text-gray-500">
-                    <MapPin className="w-12 h-12 mx-auto mb-2" />
+                    <MapPinIcon className="w-12 h-12 mx-auto mb-2" />
                     <p>Carte interactive bientôt disponible</p>
                   </div>
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
           </div>
         </div>
@@ -243,10 +236,10 @@ export default function PropertyDetailsView({property}: { property: Property }) 
         <div className="lg:col-span-1 space-y-6">
           {/* Contact Agent */}
           <Card className="border shadow-sm sticky top-24">
-            <CardHeader>
-              <CardTitle className="text-lg">Contacter l'Agent</CardTitle>
+            <CardHeader className="pb-3">
+              <h3 className="text-lg font-semibold">Contacter l'Agent</h3>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardBody className="pt-0 space-y-4">
               <div className="space-y-6">
                 <div className="text-center">
                   <div className="w-16 h-16 bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -262,7 +255,7 @@ export default function PropertyDetailsView({property}: { property: Property }) 
                   </p>
                 </div>
 
-                <Separator />
+                <Divider />
 
                 <div className="space-y-3">
                   <Input placeholder="Votre nom" />
@@ -270,56 +263,51 @@ export default function PropertyDetailsView({property}: { property: Property }) 
                   <Input placeholder="Votre téléphone" type="tel" />
                   <Textarea 
                     placeholder="Je suis intéressé(e) par ce bien. Merci de me contacter pour plus d'informations."
-                    rows={4}
+                    minRows={4}
                   />
                 </div>
 
-                <Button className="w-full bg-blue-900 hover:bg-blue-800">
-                  <Mail className="w-4 h-4 mr-2" />
+                <Button color="primary" className="w-full">
+                  <EnvelopeIcon className="w-4 h-4 mr-2" />
                   Envoyer un Message
                 </Button>
 
-                <Button variant="outline" className="w-full">
-                  <Phone className="w-4 h-4 mr-2" />
+                <Button variant="bordered" className="w-full">
+                  <PhoneIcon className="w-4 h-4 mr-2" />
                   Appeler l'Agent
                 </Button>
               </div>
-            </CardContent>
+            </CardBody>
           </Card>
 
           {/* Schedule Visit */}
           <Card className="border shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-lg">Programmer une Visite</CardTitle>
+            <CardHeader className="pb-3">
+              <h3 className="text-lg font-semibold">Programmer une Visite</h3>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardBody className="pt-0 space-y-4">
               <Input type="date" />
               <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner l'heure" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="09:00">09:00</SelectItem>
-                  <SelectItem value="10:00">10:00</SelectItem>
-                  <SelectItem value="11:00">11:00</SelectItem>
-                  <SelectItem value="14:00">14:00</SelectItem>
-                  <SelectItem value="15:00">15:00</SelectItem>
-                  <SelectItem value="16:00">16:00</SelectItem>
-                </SelectContent>
+                <SelectItem key="09:00">09:00</SelectItem>
+                <SelectItem key="10:00">10:00</SelectItem>
+                <SelectItem key="11:00">11:00</SelectItem>
+                <SelectItem key="14:00">14:00</SelectItem>
+                <SelectItem key="15:00">15:00</SelectItem>
+                <SelectItem key="16:00">16:00</SelectItem>
               </Select>
-              <Button className="w-full bg-amber-500 hover:bg-amber-600">
-                <Calendar className="w-4 h-4 mr-2" />
+              <Button color="warning" className="w-full">
+                <CalendarIcon className="w-4 h-4 mr-2" />
                 Réserver une Visite
               </Button>
-            </CardContent>
+            </CardBody>
           </Card>
 
           {/* Property Stats */}
           <Card className="border shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-lg">Informations</CardTitle>
+            <CardHeader className="pb-3">
+              <h3 className="text-lg font-semibold">Informations</h3>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardBody className="pt-0 space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Référence</span>
                 <span className="font-medium">#{property.id.slice(-8).toUpperCase()}</span>
@@ -338,7 +326,7 @@ export default function PropertyDetailsView({property}: { property: Property }) 
                 <span className="text-gray-600">Favoris</span>
                 <span className="font-medium">{property._count?.favorites || 0}</span>
               </div>
-            </CardContent>
+            </CardBody>
           </Card>
         </div>
       </div>

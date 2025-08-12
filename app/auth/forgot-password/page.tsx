@@ -2,11 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
+import { EnvelopeIcon, ArrowLeftIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { Button, Input, Card, CardBody, CardHeader } from '@heroui/react';
 import Header from '@/components/Header';
 
 export default function ForgotPasswordPage() {
@@ -32,16 +29,16 @@ export default function ForgotPasswordPage() {
       <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-6">
           <Link href="/auth/signin" className="inline-flex items-center text-blue-900 hover:text-blue-800 mb-4">
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeftIcon className="w-4 h-4 mr-2" />
             Retour à la connexion
           </Link>
         </div>
 
         <Card className="border-0 shadow-lg">
           <CardHeader className="text-center pb-6">
-            <CardTitle className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-gray-900">
               {isSubmitted ? 'Vérifiez Votre Email' : 'Réinitialiser Votre Mot de Passe'}
-            </CardTitle>
+            </h1>
             <p className="text-gray-600 mt-2">
               {isSubmitted 
                 ? 'Nous avons envoyé un lien de réinitialisation à votre adresse email'
@@ -50,10 +47,10 @@ export default function ForgotPasswordPage() {
             </p>
           </CardHeader>
 
-          <CardContent>
+          <CardBody>
             {isSubmitted ? (
               <div className="text-center space-y-4">
-                <CheckCircle className="w-16 h-16 text-green-500 mx-auto" />
+                <CheckCircleIcon className="w-16 h-16 text-green-500 mx-auto" />
                 <div className="space-y-2">
                   <p className="text-sm text-gray-600">
                     Nous avons envoyé un lien de réinitialisation à :
@@ -65,13 +62,13 @@ export default function ForgotPasswordPage() {
                     Vous n'avez pas reçu l'email ? Vérifiez votre dossier spam ou réessayez.
                   </p>
                   <Button 
-                    variant="outline" 
+                    variant="bordered" 
                     onClick={() => setIsSubmitted(false)}
                     className="w-full"
                   >
                     Essayer un Autre Email
                   </Button>
-                  <Button asChild className="w-full bg-blue-900 hover:bg-blue-800">
+                  <Button color="primary" className="w-full">
                     <Link href="/auth/signin">Retour à la Connexion</Link>
                   </Button>
                 </div>
@@ -79,31 +76,29 @@ export default function ForgotPasswordPage() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Adresse Email</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="Entrez votre adresse email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="pl-10"
-                      required
-                    />
-                  </div>
+                  <label className="block text-sm font-medium text-gray-700">Adresse Email</label>
+                  <Input
+                    type="email"
+                    placeholder="Entrez votre adresse email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    startContent={<EnvelopeIcon className="w-4 h-4 text-gray-400" />}
+                    isRequired
+                  />
                 </div>
 
                 <Button 
                   type="submit" 
-                  className="w-full bg-blue-900 hover:bg-blue-800"
-                  disabled={isLoading}
+                  color="primary"
+                  className="w-full"
+                  isDisabled={isLoading}
+                  isLoading={isLoading}
                 >
                   {isLoading ? 'Envoi...' : 'Envoyer le Lien'}
                 </Button>
               </form>
             )}
-          </CardContent>
+          </CardBody>
         </Card>
       </div>
     </div>

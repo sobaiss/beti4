@@ -4,15 +4,28 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
-import { Eye, EyeOff, Mail, Lock, User, Phone, Building, ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { Textarea } from '@/components/ui/textarea';
+import { 
+  EyeIcon, 
+  EyeSlashIcon, 
+  EnvelopeIcon, 
+  LockClosedIcon, 
+  UserIcon, 
+  PhoneIcon, 
+  BuildingOfficeIcon, 
+  ArrowLeftIcon 
+} from '@heroicons/react/24/outline';
+import { 
+  Button, 
+  Input, 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  Checkbox, 
+  RadioGroup, 
+  Radio,
+  Divider, 
+  Textarea 
+} from '@heroui/react';
 import Header from '@/components/Header';
 
 export default function RegisterPage() {
@@ -103,16 +116,16 @@ export default function RegisterPage() {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-6">
           <Link href="/" className="inline-flex items-center text-blue-900 hover:text-blue-800 mb-4">
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeftIcon className="w-4 h-4 mr-2" />
             Retour à l'accueil
           </Link>
         </div>
 
         <Card className="border-0 shadow-lg">
           <CardHeader className="text-center pb-6">
-            <CardTitle className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-gray-900">
               Créer Votre Compte Beti
-            </CardTitle>
+            </h1>
             <p className="text-gray-600 mt-2">
               Rejoignez des milliers d'utilisateurs qui trouvent leur bien idéal
             </p>
@@ -121,26 +134,28 @@ export default function RegisterPage() {
           <CardContent className="space-y-6">
             {/* User Type Selection */}
             <div className="space-y-4">
-              <Label className="text-base font-medium text-gray-900">Je suis :</Label>
-              <RadioGroup value={userType} onValueChange={setUserType} className="grid grid-cols-2 gap-4">
+              <label className="block text-base font-medium text-gray-900">Je suis :</label>
+              <RadioGroup value={userType} onValueChange={setUserType} orientation="horizontal" className="grid grid-cols-2 gap-4">
                 <div className="flex items-center space-x-2 border rounded-lg p-4 hover:bg-gray-50">
-                  <RadioGroupItem value="particulier" id="particulier" />
-                  <Label htmlFor="particulier" className="flex items-center cursor-pointer">
-                    <User className="w-4 h-4 mr-2 text-blue-900" />
-                    Particulier
-                  </Label>
+                  <Radio value="particulier">
+                    <div className="flex items-center">
+                      <UserIcon className="w-4 h-4 mr-2 text-blue-900" />
+                      Particulier
+                    </div>
+                  </Radio>
                 </div>
                 <div className="flex items-center space-x-2 border rounded-lg p-4 hover:bg-gray-50">
-                  <RadioGroupItem value="professionnel" id="professionnel" />
-                  <Label htmlFor="professionnel" className="flex items-center cursor-pointer">
-                    <Building className="w-4 h-4 mr-2 text-blue-900" />
-                    Professionnel
-                  </Label>
+                  <Radio value="professionnel">
+                    <div className="flex items-center">
+                      <BuildingOfficeIcon className="w-4 h-4 mr-2 text-blue-900" />
+                      Professionnel
+                    </div>
+                  </Radio>
                 </div>
               </RadioGroup>
             </div>
 
-            <Separator />
+            <Divider />
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
@@ -152,105 +167,91 @@ export default function RegisterPage() {
               {/* Personal Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">Prénom</Label>
+                  <label className="block text-sm font-medium text-gray-700">Prénom</label>
                   <Input
-                    id="firstName"
                     placeholder="Entrez votre prénom"
                     value={formData.firstName}
                     onChange={(e) => handleInputChange('firstName', e.target.value)}
-                    required
+                    isRequired
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Nom</Label>
+                  <label className="block text-sm font-medium text-gray-700">Nom</label>
                   <Input
-                    id="lastName"
                     placeholder="Entrez votre nom"
                     value={formData.lastName}
                     onChange={(e) => handleInputChange('lastName', e.target.value)}
-                    required
+                    isRequired
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Adresse Email</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Entrez votre email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    className="pl-10"
-                    required
-                  />
-                </div>
+                <label className="block text-sm font-medium text-gray-700">Adresse Email</label>
+                <Input
+                  type="email"
+                  placeholder="Entrez votre email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  startContent={<EnvelopeIcon className="w-4 h-4 text-gray-400" />}
+                  isRequired
+                />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Numéro de Téléphone</Label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
-                    id="phone"
-                    type="tel"
-                    placeholder="Entrez votre numéro de téléphone"
-                    value={formData.phone}
-                    onChange={(e) => handleInputChange('phone', e.target.value)}
-                    className="pl-10"
-                    required
-                  />
-                </div>
+                <label className="block text-sm font-medium text-gray-700">Numéro de Téléphone</label>
+                <Input
+                  type="tel"
+                  placeholder="Entrez votre numéro de téléphone"
+                  value={formData.phone}
+                  onChange={(e) => handleInputChange('phone', e.target.value)}
+                  startContent={<PhoneIcon className="w-4 h-4 text-gray-400" />}
+                  isRequired
+                />
               </div>
 
               {/* Password Fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="password">Mot de Passe</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Créez un mot de passe"
-                      value={formData.password}
-                      onChange={(e) => handleInputChange('password', e.target.value)}
-                      className="pl-10 pr-10"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
-                  </div>
+                  <label className="block text-sm font-medium text-gray-700">Mot de Passe</label>
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Créez un mot de passe"
+                    value={formData.password}
+                    onChange={(e) => handleInputChange('password', e.target.value)}
+                    startContent={<LockClosedIcon className="w-4 h-4 text-gray-400" />}
+                    endContent={
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="text-gray-400 hover:text-gray-600"
+                      >
+                        {showPassword ? <EyeSlashIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                      </button>
+                    }
+                    isRequired
+                  />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirmer le Mot de Passe</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="confirmPassword"
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      placeholder="Confirmez votre mot de passe"
-                      value={formData.confirmPassword}
-                      onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                      className="pl-10 pr-10"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                    >
-                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
-                  </div>
+                  <label className="block text-sm font-medium text-gray-700">Confirmer le Mot de Passe</label>
+                  <Input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    placeholder="Confirmez votre mot de passe"
+                    value={formData.confirmPassword}
+                    onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                    startContent={<LockClosedIcon className="w-4 h-4 text-gray-400" />}
+                    endContent={
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="text-gray-400 hover:text-gray-600"
+                      >
+                        {showConfirmPassword ? <EyeSlashIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                      </button>
+                    }
+                    isRequired
+                  />
                 </div>
               </div>
 
@@ -258,12 +259,10 @@ export default function RegisterPage() {
               <div className="space-y-4">
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="terms"
-                    checked={formData.acceptTerms}
-                    onCheckedChange={(checked) => handleInputChange('acceptTerms', checked as boolean)}
-                    required
-                  />
-                  <Label htmlFor="terms" className="text-sm leading-relaxed">
+                    isSelected={formData.acceptTerms}
+                    onValueChange={(checked) => handleInputChange('acceptTerms', checked as boolean)}
+                    isRequired
+                  >
                     J'accepte les{' '}
                     <Link href="/terms" className="text-blue-900 hover:text-blue-800">
                       Conditions d'Utilisation
@@ -272,32 +271,32 @@ export default function RegisterPage() {
                     <Link href="/privacy" className="text-blue-900 hover:text-blue-800">
                       Politique de Confidentialité
                     </Link>
-                  </Label>
+                  </Checkbox>
                 </div>
 
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="marketing"
-                    checked={formData.acceptMarketing}
-                    onCheckedChange={(checked) => handleInputChange('acceptMarketing', checked as boolean)}
-                  />
-                  <Label htmlFor="marketing" className="text-sm text-gray-600">
+                    isSelected={formData.acceptMarketing}
+                    onValueChange={(checked) => handleInputChange('acceptMarketing', checked as boolean)}
+                  >
                     Je souhaite recevoir des communications marketing et des mises à jour de biens
-                  </Label>
+                  </Checkbox>
                 </div>
               </div>
 
               <Button 
                 type="submit" 
-                className="w-full bg-blue-900 hover:bg-blue-800"
-                disabled={isLoading || !formData.acceptTerms}
+                color="primary"
+                className="w-full"
+                isDisabled={isLoading || !formData.acceptTerms}
+                isLoading={isLoading}
               >
                 {isLoading ? 'Création du Compte...' : 'Créer un Compte'}
               </Button>
             </form>
 
             <div className="relative">
-              <Separator />
+              <Divider />
               <div className="absolute inset-0 flex items-center justify-center">
                 <span className="bg-white px-2 text-sm text-gray-500">ou</span>
               </div>
@@ -305,7 +304,7 @@ export default function RegisterPage() {
 
             <div className="space-y-3">
               <Button 
-                variant="outline" 
+                variant="bordered" 
                 className="w-full"
                 onClick={() => signIn('google', { callbackUrl: '/' })}
               >
@@ -319,7 +318,7 @@ export default function RegisterPage() {
               </Button>
               
               <Button 
-                variant="outline" 
+                variant="bordered" 
                 className="w-full"
                 onClick={() => signIn('facebook', { callbackUrl: '/' })}
               >

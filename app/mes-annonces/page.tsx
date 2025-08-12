@@ -4,28 +4,29 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { 
-  Plus, 
-  Edit, 
-  Eye, 
-  Trash2, 
-  MoreVertical,
-  MapPin,
-  Calendar,
-  Euro,
-  Square,
-  Bed,
-  Bath,
-  Home
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+  PlusIcon, 
+  PencilIcon, 
+  EyeIcon, 
+  TrashIcon, 
+  EllipsisVerticalIcon,
+  MapPinIcon,
+  CalendarIcon,
+  CurrencyEuroIcon,
+  UserIcon,
+  BuildingOfficeIcon,
+  HomeIcon
+} from '@heroicons/react/24/outline';
 import { 
+  Button, 
+  Card, 
+  CardBody, 
+  CardHeader, 
+  Chip, 
+  Dropdown, 
+  DropdownTrigger, 
   DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu';
+  DropdownItem 
+} from '@heroui/react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Header from '@/components/Header';
@@ -91,19 +92,19 @@ export default function MesAnnoncesPage() {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      'disponible': { label: 'Disponible', variant: 'default' as const, color: 'bg-green-500' },
-      'brouillon': { label: 'Brouillon', variant: 'secondary' as const, color: 'bg-gray-500' },
-      'vendu': { label: 'Vendu', variant: 'destructive' as const, color: 'bg-red-500' },
-      'loue': { label: 'Loué', variant: 'destructive' as const, color: 'bg-orange-500' },
-      'desactive': { label: 'Désactivé', variant: 'secondary' as const, color: 'bg-gray-400' }
+      'disponible': { label: 'Disponible', color: 'success' as const },
+      'brouillon': { label: 'Brouillon', color: 'default' as const },
+      'vendu': { label: 'Vendu', color: 'danger' as const },
+      'loue': { label: 'Loué', color: 'warning' as const },
+      'desactive': { label: 'Désactivé', color: 'default' as const }
     };
 
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.disponible;
     
     return (
-      <Badge variant={config.variant} className={`${config.color} text-white`}>
+      <Chip color={config.color} variant="solid" size="sm">
         {config.label}
-      </Badge>
+      </Chip>
     );
   };
 
@@ -174,7 +175,7 @@ export default function MesAnnoncesPage() {
           </div>
           <Button asChild className="mt-4 sm:mt-0 bg-blue-900 hover:bg-blue-800">
             <Link href="/deposer-une-annonce">
-              <Plus className="w-4 h-4 mr-2" />
+              <PlusIcon className="w-4 h-4 mr-2" />
               Nouvelle Annonce
             </Link>
           </Button>
@@ -183,28 +184,28 @@ export default function MesAnnoncesPage() {
         {/* Error Message */}
         {error && (
           <Card className="mb-6 border-red-200 bg-red-50">
-            <CardContent className="p-4">
+            <CardBody className="p-4">
               <p className="text-red-600">{error}</p>
-            </CardContent>
+            </CardBody>
           </Card>
         )}
 
         {/* Properties Grid */}
         {properties.length === 0 ? (
           <Card className="text-center py-12">
-            <CardContent>
+            <CardBody>
               <div className="text-gray-500 mb-4">
-                <Home className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                <HomeIcon className="w-16 h-16 mx-auto mb-4 text-gray-300" />
                 <h3 className="text-xl font-semibold mb-2">Aucune annonce</h3>
                 <p>Vous n'avez pas encore créé d'annonce.</p>
               </div>
-              <Button asChild className="bg-blue-900 hover:bg-blue-800">
+              <Button color="primary">
                 <Link href="/deposer-une-annonce">
-                  <Plus className="w-4 h-4 mr-2" />
+                  <PlusIcon className="w-4 h-4 mr-2" />
                   Créer ma première annonce
                 </Link>
               </Button>
-            </CardContent>
+            </CardBody>
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -243,47 +244,51 @@ export default function MesAnnoncesPage() {
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
-                            variant="ghost"
+                            variant="light"
                             size="sm"
                             className="bg-white/90 hover:bg-white rounded-full p-2"
+                            isIconOnly
                           >
-                            <MoreVertical className="w-4 h-4" />
+                            <EllipsisVerticalIcon className="w-4 h-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem asChild>
-                            <Link href={`/property/${property.id}`} className="flex items-center cursor-pointer">
-                              <Eye className="w-4 h-4 mr-2" />
+                        <DropdownMenu>
+                          <DropdownItem key="view">
+                            <Link href={`/property/${property.id}`} className="flex items-center w-full">
+                              <EyeIcon className="w-4 h-4 mr-2" />
                               Voir l'annonce
                             </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem asChild>
-                            <Link href={`/edit-property/${property.id}`} className="flex items-center cursor-pointer">
-                              <Edit className="w-4 h-4 mr-2" />
+                          </DropdownItem>
+                          <DropdownItem key="edit">
+                            <Link href={`/edit-property/${property.id}`} className="flex items-center w-full">
+                              <PencilIcon className="w-4 h-4 mr-2" />
                               Modifier
                             </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
+                          </DropdownItem>
+                          <DropdownItem 
+                            key="delete"
                             onClick={() => handleDeleteProperty(property.id)}
-                            className="flex items-center cursor-pointer text-red-600 focus:text-red-600"
+                            className="text-danger"
                           >
-                            <Trash2 className="w-4 h-4 mr-2" />
-                            Supprimer
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
+                            <div className="flex items-center">
+                              <TrashIcon className="w-4 h-4 mr-2" />
+                              Supprimer
+                            </div>
+                          </DropdownItem>
+                        </DropdownMenu>
                       </DropdownMenu>
                     </div>
 
                     {/* Transaction Type Badge */}
                     <div className="absolute bottom-4 left-4">
-                      <Badge variant={property.transactionType === 'achat' ? 'default' : 'secondary'} 
-                             className="bg-blue-900 text-white">
+                      <Chip color={property.transactionType === 'achat' ? 'primary' : 'secondary'} 
+                            variant="solid" size="sm">
                         {property.transactionType === 'achat' ? 'À Vendre' : 'À Louer'}
-                      </Badge>
+                      </Chip>
                     </div>
                   </div>
 
-                  <CardContent className="p-6">
+                  <CardBody className="p-6">
                     <div className="space-y-3">
                       {/* Price */}
                       <div className="text-2xl font-bold text-blue-900">
@@ -299,7 +304,7 @@ export default function MesAnnoncesPage() {
 
                       {/* Location */}
                       <div className="flex items-center text-gray-600 text-sm">
-                        <MapPin className="w-4 h-4 mr-1" />
+                        <MapPinIcon className="w-4 h-4 mr-1" />
                         <span className="truncate">{property.location}</span>
                       </div>
 
@@ -307,16 +312,16 @@ export default function MesAnnoncesPage() {
                       <div className="flex items-center justify-between text-sm text-gray-600">
                         <div className="flex items-center space-x-4">
                           <div className="flex items-center">
-                            <Square className="w-4 h-4 mr-1" />
+                            <div className="w-4 h-4 mr-1 border border-gray-400"></div>
                             <span>{property.area}m²</span>
                           </div>
                           <div className="flex items-center">
-                            <Bed className="w-4 h-4 mr-1" />
+                            <UserIcon className="w-4 h-4 mr-1" />
                             <span>{property.bedrooms}</span>
                           </div>
                           {property.bathrooms && (
                             <div className="flex items-center">
-                              <Bath className="w-4 h-4 mr-1" />
+                              <BuildingOfficeIcon className="w-4 h-4 mr-1" />
                               <span>{property.bathrooms}</span>
                             </div>
                           )}
@@ -326,32 +331,32 @@ export default function MesAnnoncesPage() {
                       {/* Creation Date and Views */}
                       <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t">
                         <div className="flex items-center">
-                          <Calendar className="w-3 h-3 mr-1" />
+                          <CalendarIcon className="w-3 h-3 mr-1" />
                           <span>Créé le {formatDate(property.createdAt)}</span>
                         </div>
                         <div className="flex items-center">
-                          <Eye className="w-3 h-3 mr-1" />
+                          <EyeIcon className="w-3 h-3 mr-1" />
                           <span>{property.views || 0} vues</span>
                         </div>
                       </div>
 
                       {/* Quick Actions */}
                       <div className="flex gap-2 pt-2">
-                        <Button asChild variant="outline" size="sm" className="flex-1">
+                        <Button variant="bordered" size="sm" className="flex-1">
                           <Link href={`/property/${property.id}`}>
-                            <Eye className="w-4 h-4 mr-1" />
+                            <EyeIcon className="w-4 h-4 mr-1" />
                             Voir
                           </Link>
                         </Button>
-                        <Button asChild variant="outline" size="sm" className="flex-1">
+                        <Button variant="bordered" size="sm" className="flex-1">
                           <Link href={`/edit-property/${property.id}`}>
-                            <Edit className="w-4 h-4 mr-1" />
+                            <PencilIcon className="w-4 h-4 mr-1" />
                             Modifier
                           </Link>
                         </Button>
                       </div>
                     </div>
-                  </CardContent>
+                  </CardBody>
                 </Card>
               );
             })}

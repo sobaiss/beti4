@@ -1,13 +1,24 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, Filter, MapPin, SlidersHorizontal, Grid, List } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Slider } from '@/components/ui/slider';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
+import { 
+  MagnifyingGlassIcon, 
+  AdjustmentsHorizontalIcon, 
+  MapPinIcon, 
+  Squares2X2Icon, 
+  ListBulletIcon 
+} from '@heroicons/react/24/outline';
+import { 
+  Button, 
+  Input, 
+  Select, 
+  SelectItem, 
+  Slider, 
+  Card, 
+  CardBody, 
+  CardHeader, 
+  ButtonGroup 
+} from '@heroui/react';
 import Header from '@/components/Header';
 import PropertyCard from '@/components/PropertyCard';
 import { Property } from '@/types/property';
@@ -68,67 +79,63 @@ export default function PropertiesPage() {
           {/* Sidebar Filters */}
           <div className="lg:w-80 space-y-6">
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Filter className="w-5 h-5 mr-2" />
-                  Search Filters
-                </CardTitle>
+              <CardHeader className="pb-3">
+                <div className="flex items-center">
+                  <AdjustmentsHorizontalIcon className="w-5 h-5 mr-2" />
+                  <h3 className="text-lg font-semibold">Search Filters</h3>
+                </div>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardBody className="pt-0 space-y-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Localisation</label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      placeholder="Rechercher une localisation..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
+                  <label className="block text-sm font-medium text-gray-700">Localisation</label>
+                  <Input
+                    placeholder="Rechercher une localisation..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    startContent={<MapPinIcon className="w-4 h-4 text-gray-400" />}
+                  />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Type de Transaction</label>
-                  <Select value={transactionType} onValueChange={setTransactionType}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Tous types" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Tous types</SelectItem>
-                      <SelectItem value="achat">Acheter</SelectItem>
-                      <SelectItem value="location">Louer</SelectItem>
-                    </SelectContent>
+                  <label className="block text-sm font-medium text-gray-700">Type de Transaction</label>
+                  <Select 
+                    selectedKeys={transactionType ? [transactionType] : []}
+                    onSelectionChange={(keys) => setTransactionType(Array.from(keys)[0] as string || '')}
+                    placeholder="Tous types"
+                  >
+                    <SelectItem key="all">Tous types</SelectItem>
+                    <SelectItem key="achat">Acheter</SelectItem>
+                    <SelectItem key="location">Louer</SelectItem>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Type de Bien</label>
-                  <Select value={propertyType} onValueChange={setPropertyType}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Tous les biens" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Tous les biens</SelectItem>
-                      <SelectItem value="appartement">Appartement</SelectItem>
-                      <SelectItem value="maison">Maison</SelectItem>
-                      <SelectItem value="villa">Villa</SelectItem>
-                      <SelectItem value="terrain">Terrain</SelectItem>
-                      <SelectItem value="bureau_commerce">Bureau/Commerce</SelectItem>
-                    </SelectContent>
+                  <label className="block text-sm font-medium text-gray-700">Type de Bien</label>
+                  <Select 
+                    selectedKeys={propertyType ? [propertyType] : []}
+                    onSelectionChange={(keys) => setPropertyType(Array.from(keys)[0] as string || '')}
+                    placeholder="Tous les biens"
+                  >
+                    <SelectItem key="all">Tous les biens</SelectItem>
+                    <SelectItem key="appartement">Appartement</SelectItem>
+                    <SelectItem key="maison">Maison</SelectItem>
+                    <SelectItem key="villa">Villa</SelectItem>
+                    <SelectItem key="terrain">Terrain</SelectItem>
+                    <SelectItem key="bureau_commerce">Bureau/Commerce</SelectItem>
                   </Select>
                 </div>
 
                 <div className="space-y-4">
-                  <label className="text-sm font-medium">Fourchette de Prix</label>
+                  <label className="block text-sm font-medium text-gray-700">Fourchette de Prix</label>
                   <div className="px-2">
                     <Slider
                       value={priceRange}
-                      onValueChange={setPriceRange}
-                      max={1000000}
-                      min={0}
+                      onChange={setPriceRange}
+                      maxValue={1000000}
+                      minValue={0}
                       step={10000}
                       className="w-full"
+                      formatOptions={{style: "currency", currency: "EUR"}}
                     />
                   </div>
                   <div className="flex justify-between text-sm text-gray-600">
@@ -136,7 +143,7 @@ export default function PropertiesPage() {
                     <span>€{priceRange[1].toLocaleString()}</span>
                   </div>
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
           </div>
 
@@ -153,35 +160,34 @@ export default function PropertiesPage() {
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <Select value={sortBy} onValueChange={setSortBy}>
-                    <SelectTrigger className="w-48">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="price-asc">Prix: Croissant</SelectItem>
-                      <SelectItem value="price-desc">Prix: Décroissant</SelectItem>
-                      <SelectItem value="area-desc">Surface: Plus Grande</SelectItem>
-                    </SelectContent>
+                  <Select 
+                    selectedKeys={[sortBy]}
+                    onSelectionChange={(keys) => setSortBy(Array.from(keys)[0] as string)}
+                    className="w-48"
+                  >
+                    <SelectItem key="price-asc">Prix: Croissant</SelectItem>
+                    <SelectItem key="price-desc">Prix: Décroissant</SelectItem>
+                    <SelectItem key="area-desc">Surface: Plus Grande</SelectItem>
                   </Select>
 
-                  <div className="flex border rounded-lg">
+                  <ButtonGroup>
                     <Button
-                      variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                      variant={viewMode === 'grid' ? 'solid' : 'bordered'}
                       size="sm"
                       onClick={() => setViewMode('grid')}
-                      className="rounded-r-none"
+                      isIconOnly
                     >
-                      <Grid className="w-4 h-4" />
+                      <Squares2X2Icon className="w-4 h-4" />
                     </Button>
                     <Button
-                      variant={viewMode === 'list' ? 'default' : 'ghost'}
+                      variant={viewMode === 'list' ? 'solid' : 'bordered'}
                       size="sm"
                       onClick={() => setViewMode('list')}
-                      className="rounded-l-none"
+                      isIconOnly
                     >
-                      <List className="w-4 h-4" />
+                      <ListBulletIcon className="w-4 h-4" />
                     </Button>
-                  </div>
+                  </ButtonGroup>
                 </div>
               </div>
             </div>
@@ -212,9 +218,9 @@ export default function PropertiesPage() {
               </div>
             ) : (
               <Card className="text-center py-12">
-                <CardContent>
+                <CardBody>
                   <div className="text-gray-500 mb-4">
-                    <Search className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                    <MagnifyingGlassIcon className="w-16 h-16 mx-auto mb-4 text-gray-300" />
                     <h3 className="text-xl font-semibold mb-2">Aucun bien trouvé</h3>
                     <p>Essayez d'ajuster vos critères de recherche pour trouver plus de résultats.</p>
                   </div>
@@ -226,7 +232,7 @@ export default function PropertiesPage() {
                   }}>
                     Effacer les Filtres
                   </Button>
-                </CardContent>
+                </CardBody>
               </Card>
             )}
           </div>

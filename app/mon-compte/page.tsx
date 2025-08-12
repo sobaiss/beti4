@@ -4,28 +4,30 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Camera, 
-  Save,
-  Eye,
-  EyeOff,
-  Shield,
-  Trash2,
-  AlertTriangle,
-  CheckCircle
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+  UserIcon, 
+  EnvelopeIcon, 
+  PhoneIcon, 
+  MapPinIcon, 
+  CameraIcon, 
+  EyeIcon,
+  EyeSlashIcon,
+  ShieldCheckIcon,
+  TrashIcon,
+  ExclamationTriangleIcon,
+  CheckCircleIcon
+} from '@heroicons/react/24/outline';
+import { 
+  Button, 
+  Input, 
+  Textarea, 
+  Card, 
+  CardBody, 
+  CardHeader, 
+  Checkbox, 
+  Divider, 
+  Tabs, 
+  Tab
+} from '@heroui/react';
 import Header from '@/components/Header';
 
 export default function MonComptePage() {
@@ -373,48 +375,57 @@ export default function MonComptePage() {
           <p className="text-gray-600">Gérez vos informations personnelles et vos préférences</p>
         </div>
 
-        <Tabs defaultValue="personal" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="personal" className="flex items-center gap-2">
-              <User className="w-4 h-4" />
-              Informations personnelles
-            </TabsTrigger>
-            <TabsTrigger value="privacy" className="flex items-center gap-2">
-              <Eye className="w-4 h-4" />
-              Confidentialité
-            </TabsTrigger>
-            <TabsTrigger value="security" className="flex items-center gap-2">
-              <Shield className="w-4 h-4" />
-              Connexion et sécurité
-            </TabsTrigger>
-          </TabsList>
+        <Tabs aria-label="Account settings" className="space-y-6">
+          <div className="flex space-x-1 border-b">
+            <Tab key="personal" title={
+              <div className="flex items-center gap-2">
+                <UserIcon className="w-4 h-4" />
+                <span>Informations personnelles</span>
+              </div>
+            }>
+            </Tab>
+            <Tab key="privacy" title={
+              <div className="flex items-center gap-2">
+                <EyeIcon className="w-4 h-4" />
+                <span>Confidentialité</span>
+              </div>
+            }>
+            </Tab>
+            <Tab key="security" title={
+              <div className="flex items-center gap-2">
+                <ShieldCheckIcon className="w-4 h-4" />
+                <span>Connexion et sécurité</span>
+              </div>
+            }>
+            </Tab>
+          </div>
 
           {/* Personal Information Section */}
-          <TabsContent value="personal">
+          <div key="personal">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="w-5 h-5" />
-                  Informations personnelles
-                </CardTitle>
+                <div className="flex items-center gap-2">
+                  <UserIcon className="w-5 h-5" />
+                  <h3 className="text-lg font-semibold">Informations personnelles</h3>
+                </div>
               </CardHeader>
-              <CardContent>
+              <CardBody>
                 {messages.personal && (
-                  <Alert className="mb-4 border-green-200 bg-green-50">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <AlertDescription className="text-green-800">
-                      {messages.personal}
-                    </AlertDescription>
-                  </Alert>
+                  <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="flex items-center">
+                      <CheckCircleIcon className="h-4 w-4 text-green-600 mr-2" />
+                      <span className="text-green-800">{messages.personal}</span>
+                    </div>
+                  </div>
                 )}
                 
                 {errors.personal && (
-                  <Alert className="mb-4 border-red-200 bg-red-50">
-                    <AlertTriangle className="h-4 w-4 text-red-600" />
-                    <AlertDescription className="text-red-800">
-                      {errors.personal}
-                    </AlertDescription>
-                  </Alert>
+                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="flex items-center">
+                      <ExclamationTriangleIcon className="h-4 w-4 text-red-600 mr-2" />
+                      <span className="text-red-800">{errors.personal}</span>
+                    </div>
+                  </div>
                 )}
 
                 <form onSubmit={handlePersonalInfoSubmit} className="space-y-6">
@@ -438,19 +449,18 @@ export default function MonComptePage() {
                         type="button"
                         size="sm"
                         className="absolute -bottom-2 -right-2 rounded-full p-2 h-8 w-8"
+                        isIconOnly
                       >
-                        <Camera className="w-3 h-3" />
+                        <CameraIcon className="w-3 h-3" />
                       </Button>
                     </div>
-                    <div>
-                      <Label htmlFor="avatar">URL de l'avatar</Label>
+                    <div className="flex-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">URL de l'avatar</label>
                       <Input
-                        id="avatar"
                         type="url"
                         placeholder="https://example.com/avatar.jpg"
                         value={personalInfo.avatar}
                         onChange={(e) => setPersonalInfo(prev => ({ ...prev, avatar: e.target.value }))}
-                        className="mt-1"
                       />
                     </div>
                   </div>
@@ -458,21 +468,19 @@ export default function MonComptePage() {
                   {/* Name Fields */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="firstName">Prénom *</Label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Prénom *</label>
                       <Input
-                        id="firstName"
                         value={personalInfo.firstName}
                         onChange={(e) => setPersonalInfo(prev => ({ ...prev, firstName: e.target.value }))}
-                        required
+                        isRequired
                       />
                     </div>
                     <div>
-                      <Label htmlFor="lastName">Nom *</Label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
                       <Input
-                        id="lastName"
                         value={personalInfo.lastName}
                         onChange={(e) => setPersonalInfo(prev => ({ ...prev, lastName: e.target.value }))}
-                        required
+                        isRequired
                       />
                     </div>
                   </div>
@@ -480,340 +488,51 @@ export default function MonComptePage() {
                   {/* Contact Fields */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="email">Email *</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                        <Input
-                          id="email"
-                          type="email"
-                          value={personalInfo.email}
-                          onChange={(e) => setPersonalInfo(prev => ({ ...prev, email: e.target.value }))}
-                          className="pl-10"
-                          required
-                        />
-                      </div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                      <Input
+                        type="email"
+                        value={personalInfo.email}
+                        onChange={(e) => setPersonalInfo(prev => ({ ...prev, email: e.target.value }))}
+                        startContent={<EnvelopeIcon className="w-4 h-4 text-gray-400" />}
+                        isRequired
+                      />
                     </div>
                     <div>
-                      <Label htmlFor="phone">Téléphone</Label>
-                      <div className="relative">
-                        <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                        <Input
-                          id="phone"
-                          type="tel"
-                          value={personalInfo.phone}
-                          onChange={(e) => setPersonalInfo(prev => ({ ...prev, phone: e.target.value }))}
-                          className="pl-10"
-                        />
-                      </div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
+                      <Input
+                        type="tel"
+                        value={personalInfo.phone}
+                        onChange={(e) => setPersonalInfo(prev => ({ ...prev, phone: e.target.value }))}
+                        startContent={<PhoneIcon className="w-4 h-4 text-gray-400" />}
+                      />
                     </div>
                   </div>
 
                   {/* Marketing Consent */}
                   <div className="flex items-center space-x-2">
                     <Checkbox
-                      id="acceptMarketing"
-                      checked={personalInfo.acceptMarketing}
-                      onCheckedChange={(checked) => 
+                      isSelected={personalInfo.acceptMarketing}
+                      onValueChange={(checked) => 
                         setPersonalInfo(prev => ({ ...prev, acceptMarketing: checked as boolean }))
                       }
-                    />
-                    <Label htmlFor="acceptMarketing" className="text-sm">
+                    >
                       J'accepte de recevoir des communications marketing et des mises à jour
-                    </Label>
+                    </Checkbox>
                   </div>
 
-                  <Button type="submit" disabled={saving} className="bg-blue-900 hover:bg-blue-800">
-                    <Save className="w-4 h-4 mr-2" />
+                  <Button 
+                    type="submit" 
+                    isDisabled={saving} 
+                    color="primary"
+                    startContent={!saving && <CheckCircleIcon className="w-4 h-4" />}
+                    isLoading={saving}
+                  >
                     {saving ? 'Enregistrement...' : 'Enregistrer les modifications'}
                   </Button>
                 </form>
-              </CardContent>
+              </CardBody>
             </Card>
-          </TabsContent>
-
-          {/* Privacy Settings Section */}
-          <TabsContent value="privacy">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Eye className="w-5 h-5" />
-                  Préférences de confidentialité
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {messages.privacy && (
-                  <Alert className="mb-4 border-green-200 bg-green-50">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <AlertDescription className="text-green-800">
-                      {messages.privacy}
-                    </AlertDescription>
-                  </Alert>
-                )}
-                
-                {errors.privacy && (
-                  <Alert className="mb-4 border-red-200 bg-red-50">
-                    <AlertTriangle className="h-4 w-4 text-red-600" />
-                    <AlertDescription className="text-red-800">
-                      {errors.privacy}
-                    </AlertDescription>
-                  </Alert>
-                )}
-
-                <form onSubmit={handlePrivacySettingsSubmit} className="space-y-6">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium text-gray-900">Préférences de contact</h3>
-                    
-                    <div className="space-y-4">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="acceptEmailContact"
-                          checked={privacySettings.acceptEmailContact}
-                          onCheckedChange={(checked) => 
-                            setPrivacySettings(prev => ({ ...prev, acceptEmailContact: checked as boolean }))
-                          }
-                        />
-                        <Label htmlFor="acceptEmailContact" className="text-sm">
-                          Accepter d'être contacté par email
-                        </Label>
-                      </div>
-
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="acceptPhoneContact"
-                          checked={privacySettings.acceptPhoneContact}
-                          onCheckedChange={(checked) => 
-                            setPrivacySettings(prev => ({ ...prev, acceptPhoneContact: checked as boolean }))
-                          }
-                        />
-                        <Label htmlFor="acceptPhoneContact" className="text-sm">
-                          Accepter d'être contacté par téléphone
-                        </Label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium text-gray-900">Visibilité des informations</h3>
-                    
-                    <div className="space-y-4">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="displayEmail"
-                          checked={privacySettings.displayEmail}
-                          onCheckedChange={(checked) => 
-                            setPrivacySettings(prev => ({ ...prev, displayEmail: checked as boolean }))
-                          }
-                        />
-                        <Label htmlFor="displayEmail" className="text-sm">
-                          Afficher mon email sur mes annonces
-                        </Label>
-                      </div>
-
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="displayPhone"
-                          checked={privacySettings.displayPhone}
-                          onCheckedChange={(checked) => 
-                            setPrivacySettings(prev => ({ ...prev, displayPhone: checked as boolean }))
-                          }
-                        />
-                        <Label htmlFor="displayPhone" className="text-sm">
-                          Afficher mon téléphone sur mes annonces
-                        </Label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Button type="submit" disabled={saving} className="bg-blue-900 hover:bg-blue-800">
-                    <Save className="w-4 h-4 mr-2" />
-                    {saving ? 'Enregistrement...' : 'Enregistrer les préférences'}
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Security Section */}
-          <TabsContent value="security">
-            <div className="space-y-6">
-              {/* Change Password */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Shield className="w-5 h-5" />
-                    Changer le mot de passe
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {messages.security && (
-                    <Alert className="mb-4 border-green-200 bg-green-50">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <AlertDescription className="text-green-800">
-                        {messages.security}
-                      </AlertDescription>
-                    </Alert>
-                  )}
-                  
-                  {errors.security && (
-                    <Alert className="mb-4 border-red-200 bg-red-50">
-                      <AlertTriangle className="h-4 w-4 text-red-600" />
-                      <AlertDescription className="text-red-800">
-                        {errors.security}
-                      </AlertDescription>
-                    </Alert>
-                  )}
-
-                  <form onSubmit={handlePasswordChange} className="space-y-4">
-                    <div>
-                      <Label htmlFor="currentPassword">Mot de passe actuel</Label>
-                      <div className="relative">
-                        <Input
-                          id="currentPassword"
-                          type={showPasswords.current ? 'text' : 'password'}
-                          value={securityInfo.currentPassword}
-                          onChange={(e) => setSecurityInfo(prev => ({ ...prev, currentPassword: e.target.value }))}
-                          required
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-2 top-1/2 -translate-y-1/2"
-                          onClick={() => setShowPasswords(prev => ({ ...prev, current: !prev.current }))}
-                        >
-                          {showPasswords.current ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="newPassword">Nouveau mot de passe</Label>
-                      <div className="relative">
-                        <Input
-                          id="newPassword"
-                          type={showPasswords.new ? 'text' : 'password'}
-                          value={securityInfo.newPassword}
-                          onChange={(e) => setSecurityInfo(prev => ({ ...prev, newPassword: e.target.value }))}
-                          required
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-2 top-1/2 -translate-y-1/2"
-                          onClick={() => setShowPasswords(prev => ({ ...prev, new: !prev.new }))}
-                        >
-                          {showPasswords.new ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="confirmPassword">Confirmer le nouveau mot de passe</Label>
-                      <div className="relative">
-                        <Input
-                          id="confirmPassword"
-                          type={showPasswords.confirm ? 'text' : 'password'}
-                          value={securityInfo.confirmPassword}
-                          onChange={(e) => setSecurityInfo(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                          required
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-2 top-1/2 -translate-y-1/2"
-                          onClick={() => setShowPasswords(prev => ({ ...prev, confirm: !prev.confirm }))}
-                        >
-                          {showPasswords.confirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </Button>
-                      </div>
-                    </div>
-
-                    <Button type="submit" disabled={saving} className="bg-blue-900 hover:bg-blue-800">
-                      {saving ? 'Modification...' : 'Changer le mot de passe'}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-
-              {/* Change Email */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Mail className="w-5 h-5" />
-                    Changer l'adresse email
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="currentEmail">Adresse email actuelle</Label>
-                      <Input
-                        id="currentEmail"
-                        type="email"
-                        value={personalInfo.email}
-                        disabled
-                        className="bg-gray-50"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="newEmail">Nouvelle adresse email</Label>
-                      <Input
-                        id="newEmail"
-                        type="email"
-                        value={securityInfo.newEmail}
-                        onChange={(e) => setSecurityInfo(prev => ({ ...prev, newEmail: e.target.value }))}
-                        placeholder="nouvelle@email.com"
-                      />
-                    </div>
-
-                    <Button 
-                      onClick={handleEmailChange} 
-                      disabled={saving || !securityInfo.newEmail}
-                      className="bg-blue-900 hover:bg-blue-800"
-                    >
-                      {saving ? 'Envoi...' : 'Envoyer la demande de changement'}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Delete Account */}
-              <Card className="border-red-200">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-red-600">
-                    <Trash2 className="w-5 h-5" />
-                    Supprimer le compte
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <Alert className="border-red-200 bg-red-50">
-                      <AlertTriangle className="h-4 w-4 text-red-600" />
-                      <AlertDescription className="text-red-800">
-                        <strong>Attention :</strong> Cette action est irréversible. Toutes vos données, 
-                        y compris vos annonces, seront définitivement supprimées.
-                      </AlertDescription>
-                    </Alert>
-
-                    <Button 
-                      onClick={handleDeleteAccount}
-                      disabled={saving}
-                      variant="destructive"
-                      className="bg-red-600 hover:bg-red-700"
-                    >
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      {saving ? 'Suppression...' : 'Supprimer définitivement mon compte'}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
+          </div>
         </Tabs>
       </div>
     </div>
