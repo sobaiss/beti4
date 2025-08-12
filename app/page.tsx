@@ -66,6 +66,9 @@ export default function Home() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     startContent={<MapPinIcon className="w-5 h-5 text-default-400" />}
                     size="lg"
+                    variant="bordered"
+                    radius="full"
+                    
                     classNames={{
                       input: "text-base",
                       inputWrapper: "h-12"
@@ -81,6 +84,8 @@ export default function Home() {
                       onSelectionChange={(keys) => setTransactionType(Array.from(keys)[0] as string)}
                       className="w-full sm:w-32"
                       size="lg"
+                      variant="bordered"
+                      radius="full"
                     >
                       <SelectItem key="achat">Acheter</SelectItem>
                       <SelectItem key="location">Louer</SelectItem>
@@ -95,6 +100,8 @@ export default function Home() {
                       placeholder="Tous types"
                       className="w-full sm:w-40"
                       size="lg"
+                      variant="bordered"
+                      radius="full"
                     >
                       <SelectItem key="">Tous types</SelectItem>
                       <SelectItem key="appartement">Appartement</SelectItem>
@@ -106,7 +113,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <Button size="lg" color="warning" className="h-12 px-8 font-semibold">
+                <Button size="lg" color="warning" className="h-12 px-8 font-semibold" radius="full">
                   <Link href="/search" className="flex items-center">
                     <MagnifyingGlassIcon className="mr-2 h-5 w-5" />
                     Rechercher

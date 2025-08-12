@@ -118,7 +118,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             <span className="capitalize">{property.type.toLowerCase()}</span>
           </div>
 
-          <Button color="primary" className="w-full mt-4">
+          <Button color="primary" className="w-full mt-4" radius="full">
             <Link href={`/property/${property.id}`}>Voir les Détails</Link>
           </Button>
         </div>

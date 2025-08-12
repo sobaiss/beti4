@@ -23,9 +23,6 @@ import {
   Select, 
   SelectItem, 
   Checkbox,
-  RadioGroup,
-  Radio,
-  Divider
 } from '@heroui/react';
 import Link from 'next/link';
 import { City } from '@/types/location';
