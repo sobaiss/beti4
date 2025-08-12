@@ -133,7 +133,7 @@ export default function MesAnnoncesPage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         <Header />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="animate-pulse space-y-6">
@@ -161,15 +161,15 @@ export default function MesAnnoncesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Header />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Mes Annonces</h1>
-            <p className="text-gray-600">
+            <h1 className="text-3xl font-bold text-default-900 mb-2">Mes Annonces</h1>
+            <p className="text-default-600">
               Gérez vos {properties.length} annonce{properties.length !== 1 ? 's' : ''}
             </p>
           </div>
@@ -183,7 +183,7 @@ export default function MesAnnoncesPage() {
 
         {/* Error Message */}
         {error && (
-          <Card className="mb-6 border-red-200 bg-red-50">
+          <Card className="mb-6 border-danger-200 bg-danger-50">
             <CardBody className="p-4">
               <p className="text-red-600">{error}</p>
             </CardBody>
@@ -289,7 +289,7 @@ export default function MesAnnoncesPage() {
                   </div>
 
                   <CardBody className="p-6">
-                    <div className="space-y-3">
+                    <div className="space-y-3 text-foreground">
                       {/* Price */}
                       <div className="text-2xl font-bold text-blue-900">
                         {formatPrice(property.price)}
@@ -298,12 +298,12 @@ export default function MesAnnoncesPage() {
                       </div>
 
                       {/* Title */}
-                      <h3 className="font-semibold text-lg text-gray-900 line-clamp-2 leading-tight">
+                      <h3 className="font-semibold text-lg text-default-900 line-clamp-2 leading-tight">
                         {property.title}
                       </h3>
 
                       {/* Location */}
-                      <div className="flex items-center text-gray-600 text-sm">
+                      <div className="flex items-center text-default-600 text-sm">
                         <MapPinIcon className="w-4 h-4 mr-1" />
                         <span className="truncate">{property.location}</span>
                       </div>
@@ -329,7 +329,7 @@ export default function MesAnnoncesPage() {
                       </div>
 
                       {/* Creation Date and Views */}
-                      <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t">
+                      <div className="flex items-center justify-between text-xs text-default-500 pt-2 border-t border-content4">
                         <div className="flex items-center">
                           <CalendarIcon className="w-3 h-3 mr-1" />
                           <span>Créé le {formatDate(property.createdAt)}</span>

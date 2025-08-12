@@ -71,13 +71,13 @@ export default function PropertiesPage() {
   }, [searchQuery, propertyType, transactionType, priceRange, sortBy]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Header />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar Filters */}
-          <div className="lg:w-80 space-y-6">
+          <div className="lg:w-80 space-y-6 text-foreground">
             <Card>
               <CardHeader className="pb-3">
                 <div className="flex items-center">
@@ -86,18 +86,18 @@ export default function PropertiesPage() {
                 </div>
               </CardHeader>
               <CardBody className="pt-0 space-y-6">
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Localisation</label>
+                <div className="space-y-2"> 
+                  <label className="block text-sm font-medium text-default-700">Localisation</label>
                   <Input
                     placeholder="Rechercher une localisation..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    startContent={<MapPinIcon className="w-4 h-4 text-gray-400" />}
+                    startContent={<MapPinIcon className="w-4 h-4 text-default-400" />}
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Type de Transaction</label>
+                <div className="space-y-2"> 
+                  <label className="block text-sm font-medium text-default-700">Type de Transaction</label>
                   <Select 
                     selectedKeys={transactionType ? [transactionType] : []}
                     onSelectionChange={(keys) => setTransactionType(Array.from(keys)[0] as string || '')}
@@ -109,8 +109,8 @@ export default function PropertiesPage() {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Type de Bien</label>
+                <div className="space-y-2"> 
+                  <label className="block text-sm font-medium text-default-700">Type de Bien</label>
                   <Select 
                     selectedKeys={propertyType ? [propertyType] : []}
                     onSelectionChange={(keys) => setPropertyType(Array.from(keys)[0] as string || '')}
@@ -126,7 +126,7 @@ export default function PropertiesPage() {
                 </div>
 
                 <div className="space-y-4">
-                  <label className="block text-sm font-medium text-gray-700">Fourchette de Prix</label>
+                  <label className="block text-sm font-medium text-default-700">Fourchette de Prix</label>
                   <div className="px-2">
                     <Slider
                       value={priceRange}
@@ -138,7 +138,7 @@ export default function PropertiesPage() {
                       formatOptions={{style: "currency", currency: "EUR"}}
                     />
                   </div>
-                  <div className="flex justify-between text-sm text-gray-600">
+                  <div className="flex justify-between text-sm text-default-600">
                     <span>€{priceRange[0].toLocaleString()}</span>
                     <span>€{priceRange[1].toLocaleString()}</span>
                   </div>
@@ -149,14 +149,14 @@ export default function PropertiesPage() {
 
           {/* Main Content */}
           <div className="flex-1">
-            {/* Header with view controls */}
-            <div className="bg-white rounded-lg border p-4 mb-6">
+            {/* Header with view controls */} 
+            <div className="bg-content1 rounded-lg border border-content4 p-4 mb-6">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">
+                  <h1 className="text-2xl font-bold text-default-900">
                     Biens ({totalProperties})
                   </h1>
-                  <p className="text-gray-600">Trouvez votre bien idéal</p>
+                  <p className="text-default-600">Trouvez votre bien idéal</p>
                 </div>
 
                 <div className="flex items-center gap-4">
@@ -237,7 +237,7 @@ export default function PropertiesPage() {
             )}
           </div>
         </div>
-      </div>
+      </div> 
     </div>
   );
 }

@@ -23,7 +23,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Header />
       
       <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -36,10 +36,10 @@ export default function ForgotPasswordPage() {
 
         <Card className="border-0 shadow-lg">
           <CardHeader className="text-center pb-6">
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-default-900">
               {isSubmitted ? 'Vérifiez Votre Email' : 'Réinitialiser Votre Mot de Passe'}
             </h1>
-            <p className="text-gray-600 mt-2">
+            <p className="text-default-600 mt-2">
               {isSubmitted 
                 ? 'Nous avons envoyé un lien de réinitialisation à votre adresse email'
                 : 'Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe'
@@ -50,15 +50,15 @@ export default function ForgotPasswordPage() {
           <CardBody>
             {isSubmitted ? (
               <div className="text-center space-y-4">
-                <CheckCircleIcon className="w-16 h-16 text-green-500 mx-auto" />
+                <CheckCircleIcon className="w-16 h-16 text-success-500 mx-auto" />
                 <div className="space-y-2">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-default-600">
                     Nous avons envoyé un lien de réinitialisation à :
                   </p>
                   <p className="font-medium text-gray-900">{email}</p>
                 </div>
                 <div className="space-y-3">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-default-600">
                     Vous n'avez pas reçu l'email ? Vérifiez votre dossier spam ou réessayez.
                   </p>
                   <Button 
@@ -76,13 +76,13 @@ export default function ForgotPasswordPage() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Adresse Email</label>
+                  <label className="block text-sm font-medium text-default-700">Adresse Email</label>
                   <Input
                     type="email"
                     placeholder="Entrez votre adresse email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    startContent={<EnvelopeIcon className="w-4 h-4 text-gray-400" />}
+                    startContent={<EnvelopeIcon className="w-4 h-4 text-default-400" />}
                     isRequired
                   />
                 </div>

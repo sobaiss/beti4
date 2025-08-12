@@ -37,7 +37,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Header />
       
       {/* Hero Section */}
@@ -56,15 +56,15 @@ export default function Home() {
 
           {/* Search Bar */}
           <Card className="max-w-4xl mx-auto bg-white/95 backdrop-blur-sm shadow-2xl">
-            <CardBody className="p-6">
+            <CardBody className="p-6 text-foreground">
               <div className="flex flex-col lg:flex-row gap-4 items-end">
                 <div className="flex-1 space-y-2">
-                  <label className="text-sm font-medium text-gray-700">Localisation</label>
+                  <label className="text-sm font-medium text-default-700">Localisation</label>
                   <Input
                     placeholder="Ville, adresse ou code postal"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    startContent={<MapPinIcon className="w-5 h-5 text-gray-400" />}
+                    startContent={<MapPinIcon className="w-5 h-5 text-default-400" />}
                     size="lg"
                     classNames={{
                       input: "text-base",
@@ -75,7 +75,7 @@ export default function Home() {
 
                 <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Transaction</label>
+                    <label className="text-sm font-medium text-default-700">Transaction</label>
                     <Select 
                       selectedKeys={[transactionType]}
                       onSelectionChange={(keys) => setTransactionType(Array.from(keys)[0] as string)}
@@ -88,7 +88,7 @@ export default function Home() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Type</label>
+                    <label className="text-sm font-medium text-default-700">Type</label>
                     <Select 
                       selectedKeys={propertyType ? [propertyType] : []}
                       onSelectionChange={(keys) => setPropertyType(Array.from(keys)[0] as string || '')}
@@ -119,13 +119,13 @@ export default function Home() {
       </section>
 
       {/* Featured Properties */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               Biens en Vedette
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-default-600 max-w-2xl mx-auto">
               Sélection de biens immobiliers les plus attractifs actuellement disponibles
             </p>
           </div>

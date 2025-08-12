@@ -344,7 +344,7 @@ export default function MonComptePage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         <Header />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="animate-pulse space-y-6">
@@ -365,14 +365,14 @@ export default function MonComptePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Header />
       
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Mon Compte</h1>
-          <p className="text-gray-600">Gérez vos informations personnelles et vos préférences</p>
+          <h1 className="text-3xl font-bold text-default-900 mb-2">Mon Compte</h1>
+          <p className="text-default-600">Gérez vos informations personnelles et vos préférences</p>
         </div>
 
         <Tabs aria-label="Account settings" className="space-y-6">
@@ -403,7 +403,7 @@ export default function MonComptePage() {
           {/* Personal Information Section */}
           <div key="personal">
             <Card>
-              <CardHeader>
+              <CardHeader className="text-foreground">
                 <div className="flex items-center gap-2">
                   <UserIcon className="w-5 h-5" />
                   <h3 className="text-lg font-semibold">Informations personnelles</h3>
@@ -432,14 +432,14 @@ export default function MonComptePage() {
                   {/* Avatar Section */}
                   <div className="flex items-center space-x-6">
                     <div className="relative">
-                      <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center overflow-hidden">
+                      <div className="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center overflow-hidden">
                         {personalInfo.avatar ? (
                           <img 
                             src={personalInfo.avatar} 
                             alt="Avatar" 
                             className="w-full h-full object-cover"
                           />
-                        ) : (
+                        ) : ( // Changed from text-blue-900 to text-primary-900
                           <span className="text-blue-900 font-bold text-xl">
                             {personalInfo.firstName?.[0]}{personalInfo.lastName?.[0]}
                           </span>
@@ -455,7 +455,7 @@ export default function MonComptePage() {
                       </Button>
                     </div>
                     <div className="flex-1">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">URL de l'avatar</label>
+                      <label className="block text-sm font-medium text-default-700 mb-1">URL de l'avatar</label>
                       <Input
                         type="url"
                         placeholder="https://example.com/avatar.jpg"
@@ -468,7 +468,7 @@ export default function MonComptePage() {
                   {/* Name Fields */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Prénom *</label>
+                      <label className="block text-sm font-medium text-default-700 mb-1">Prénom *</label>
                       <Input
                         value={personalInfo.firstName}
                         onChange={(e) => setPersonalInfo(prev => ({ ...prev, firstName: e.target.value }))}
@@ -476,7 +476,7 @@ export default function MonComptePage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
+                      <label className="block text-sm font-medium text-default-700 mb-1">Nom *</label>
                       <Input
                         value={personalInfo.lastName}
                         onChange={(e) => setPersonalInfo(prev => ({ ...prev, lastName: e.target.value }))}
@@ -488,22 +488,22 @@ export default function MonComptePage() {
                   {/* Contact Fields */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                      <label className="block text-sm font-medium text-default-700 mb-1">Email *</label>
                       <Input
                         type="email"
                         value={personalInfo.email}
                         onChange={(e) => setPersonalInfo(prev => ({ ...prev, email: e.target.value }))}
-                        startContent={<EnvelopeIcon className="w-4 h-4 text-gray-400" />}
+                        startContent={<EnvelopeIcon className="w-4 h-4 text-default-400" />}
                         isRequired
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
+                      <label className="block text-sm font-medium text-default-700 mb-1">Téléphone</label>
                       <Input
                         type="tel"
                         value={personalInfo.phone}
                         onChange={(e) => setPersonalInfo(prev => ({ ...prev, phone: e.target.value }))}
-                        startContent={<PhoneIcon className="w-4 h-4 text-gray-400" />}
+                        startContent={<PhoneIcon className="w-4 h-4 text-default-400" />}
                       />
                     </div>
                   </div>

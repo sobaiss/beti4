@@ -36,7 +36,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
   
   return (
     <Card className="group overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-      <div className="relative">
+      <div className="relative text-foreground">
         <div className="aspect-[4/3] overflow-hidden">
           <Image
             src={firstImage.url}
@@ -63,7 +63,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           size="sm"
           isIconOnly
           className="absolute top-4 right-4 bg-white/90 hover:bg-white rounded-full"
-        >
+        > 
           <HeartIcon className="w-4 h-4 text-gray-600" />
         </Button>
 
@@ -79,19 +79,19 @@ export default function PropertyCard({ property }: PropertyCardProps) {
       <CardBody className="p-6">
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-2xl font-bold text-blue-900">
+            <span className="text-2xl font-bold text-primary-900">
               {formatPrice(property.price)}
-              {property.transactionType === 'location' && <span className="text-sm text-gray-500">/month</span>}
+              {property.transactionType === 'location' && <span className="text-sm text-default-500">/month</span>}
             </span>
           </div>
 
-          <h3 className="font-semibold text-lg text-gray-900 line-clamp-2 leading-tight">
+          <h3 className="font-semibold text-lg text-default-900 line-clamp-2 leading-tight">
             {property.title}
           </h3>
 
-          <div className="flex items-center text-gray-600 text-sm">
+          <div className="flex items-center text-default-600 text-sm">
             <MapPinIcon className="w-4 h-4 mr-1" />
-            <span className="truncate">{property.location}</span>
+            <span className="truncate text-default-600">{property.location}</span>
           </div>
 
           <div className="flex items-center justify-between text-sm text-gray-600">
@@ -113,7 +113,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             </div>
           </div>
 
-          <div className="flex items-center text-xs text-gray-500">
+          <div className="flex items-center text-xs text-default-500">
             <HomeIcon className="w-3 h-3 mr-1" />
             <span className="capitalize">{property.type.toLowerCase()}</span>
           </div>

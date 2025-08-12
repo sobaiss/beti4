@@ -137,8 +137,8 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
       case 1:
         return (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Quel type de bien souhaitez-vous mettre en ligne ?</h2>
+            <div> 
+              <h2 className="text-2xl font-bold text-default-900 mb-4">Quel type de bien souhaitez-vous mettre en ligne ?</h2>
               <p className="text-gray-600 mb-6">Sélectionnez le type de transaction et le type de bien</p>
             </div>
 
@@ -149,8 +149,8 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                   <button
                     onClick={() => setTransactionType('achat')}
                     className={`p-6 border-2 rounded-lg text-left transition-all ${
-                      transactionType === 'achat' 
-                        ? 'border-blue-500 bg-blue-50' 
+                      transactionType === 'achat' // Changed from border-blue-500 bg-blue-50 to border-primary-500 bg-primary-50
+                        ? 'border-primary-500 bg-primary-50' 
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
@@ -160,8 +160,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                   <button
                     onClick={() => setTransactionType('location')}
                     className={`p-6 border-2 rounded-lg text-left transition-all ${
-                      transactionType === 'location' 
-                        ? 'border-blue-500 bg-blue-50' 
+                      transactionType === 'location' // Changed from border-blue-500 bg-blue-50 to border-primary-500 bg-primary-50
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
@@ -185,8 +184,8 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                       key={type.value}
                       onClick={() => setPropertyType(type.value)}
                       className={`p-4 border-2 rounded-lg text-center transition-all ${
-                        propertyType === type.value 
-                          ? 'border-blue-500 bg-blue-50' 
+                        propertyType === type.value // Changed from border-blue-500 bg-blue-50 to border-primary-500 bg-primary-50
+                          ? 'border-primary-500 bg-primary-50' 
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
@@ -203,8 +202,8 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
       case 2:
         return (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Où se situe votre bien ?</h2>
+            <div> 
+              <h2 className="text-2xl font-bold text-default-900 mb-4">Où se situe votre bien ?</h2>
               <p className="text-gray-600 mb-6">Indiquez l'adresse complète de votre propriété</p>
             </div>
 
@@ -219,7 +218,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-foreground">
                 <div>
                   <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-1">Code postal</label>
                   <Input
@@ -268,8 +267,8 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
       case 3:
         return (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Caractéristiques du bien</h2>
+            <div> 
+              <h2 className="text-2xl font-bold text-default-900 mb-4">Caractéristiques du bien</h2>
               <p className="text-gray-600 mb-6">Décrivez les principales caractéristiques de votre bien</p>
             </div>
 
@@ -353,7 +352,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
               </div>
 
               <div>
-                <label className="text-base font-medium text-gray-900 mb-4 block">Équipements et caractéristiques</label>
+                <label className="text-base font-medium text-default-900 mb-4 block">Équipements et caractéristiques</label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {[
                     { key: 'furnished', label: 'Meublé' },
@@ -368,7 +367,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                       <Checkbox
                         id={item.key}
                         isSelected={formData[item.key as keyof typeof formData] as boolean}
-                        onValueChange={(checked) => handleInputChange(item.key, checked)}
+                        onValueChange={(checked) => handleInputChange(item.key, checked)} // Changed from checked to checked
                       >
                         {item.label}
                       </Checkbox>
@@ -394,8 +393,8 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
       case 4:
         return (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Quel est le prix de votre bien ?</h2>
+            <div> 
+              <h2 className="text-2xl font-bold text-default-900 mb-4">Quel est le prix de votre bien ?</h2>
               <p className="text-gray-600 mb-6">
                 {transactionType === 'achat' 
                   ? 'Indiquez le prix de vente souhaité' 
@@ -425,7 +424,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
               </div>
 
               {transactionType === 'location' && (
-                <div className="bg-blue-50 p-4 rounded-lg">
+                <div className="bg-primary-50 p-4 rounded-lg">
                   <h3 className="font-medium text-blue-900 mb-2">Charges et frais supplémentaires</h3>
                   <div className="space-y-3">
                     <div className="flex items-center space-x-2">
@@ -442,10 +441,10 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                 </div>
               )}
 
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="font-medium text-gray-900 mb-2">Estimation automatique</h3>
-                <p className="text-sm text-gray-600">
-                  Basée sur les biens similaires dans votre secteur, nous estimons votre bien entre{' '}
+              <div className="bg-content2 p-4 rounded-lg">
+                <h3 className="font-medium text-default-900 mb-2">Estimation automatique</h3>
+                <p className="text-sm text-default-600">
+                  Basée sur les biens similaires dans votre secteur, nous estimons votre bien entre{' '} 
                   <span className="font-medium text-blue-900">
                     {transactionType === 'achat' ? '420 000€ et 480 000€' : '1 100€ et 1 400€/mois'}
                   </span>
@@ -458,16 +457,16 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
       case 5:
         return (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Ajoutez des photos de votre bien</h2>
-              <p className="text-gray-600 mb-6">Les annonces avec photos reçoivent 5 fois plus de contacts</p>
+            <div> 
+              <h2 className="text-2xl font-bold text-default-900 mb-4">Ajoutez des photos de votre bien</h2>
+              <p className="text-default-600 mb-6">Les annonces avec photos reçoivent 5 fois plus de contacts</p>
             </div>
 
             <div className="space-y-4">
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
-                <CloudArrowUpIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Glissez vos photos ici</h3>
-                <p className="text-gray-600 mb-4">ou cliquez pour sélectionner des fichiers</p>
+              <div className="border-2 border-dashed border-default-300 rounded-lg p-8 text-center hover:border-primary-400 transition-colors text-foreground">
+                <CloudArrowUpIcon className="w-12 h-12 text-default-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-default-900 mb-2">Glissez vos photos ici</h3>
+                <p className="text-default-600 mb-4">ou cliquez pour sélectionner des fichiers</p>
                 <Button variant="outline">Choisir des photos</Button>
               </div>
 
@@ -487,8 +486,8 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
       case 6:
         return (
           <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Vos informations de contact</h2>
+            <div> 
+              <h2 className="text-2xl font-bold text-default-900 mb-4">Vos informations de contact</h2>
               <p className="text-gray-600 mb-6">Ces informations seront visibles par les personnes intéressées</p>
             </div>
 
@@ -498,7 +497,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                   id="isAgent"
                   isSelected={formData.isAgent}
                   onValueChange={(checked) => handleInputChange('isAgent', checked)}
-                >
+                > 
                   Je suis un professionnel de l'immobilier
                 </Checkbox>
               </div>
@@ -535,9 +534,9 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                 />
               </div>
 
-              <div className="bg-green-50 p-4 rounded-lg">
-                <h3 className="font-medium text-green-900 mb-2">Votre annonce est prête !</h3>
-                <p className="text-sm text-green-800">
+              <div className="bg-success-50 p-4 rounded-lg">
+                <h3 className="font-medium text-success-900 mb-2">Votre annonce est prête !</h3>
+                <p className="text-sm text-success-800">
                   Elle sera mise en ligne après validation par notre équipe (sous 24h).
                 </p>
               </div>
@@ -573,11 +572,11 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
       {/* Header */}
       <div className="mb-8">
         <Link href="/" className="inline-flex items-center text-blue-900 hover:text-blue-800 mb-4">
-          <ArrowLeftIcon className="w-4 h-4 mr-2" />
+          <ArrowLeftIcon className="w-4 h-4 mr-2 text-primary-900" />
           Retour à l'accueil
         </Link>
-        <h1 className="text-3xl font-bold text-gray-900">Déposer une annonce</h1>
-        <p className="text-gray-600 mt-2">Vendez ou louez votre bien rapidement et facilement</p>
+        <h1 className="text-3xl font-bold text-default-900">Déposer une annonce</h1>
+        <p className="text-default-600 mt-2">Vendez ou louez votre bien rapidement et facilement</p>
       </div>
 
       {/* Main Content with Sidebar */}
@@ -585,7 +584,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
         {/* Sidebar - Progress Steps */}
         <div className="lg:w-80 flex-shrink-0">
           <Card className="sticky top-24">
-            <CardHeader>
+            <CardHeader className="text-foreground">
               <h3 className="text-lg font-semibold">Étapes</h3>
             </CardHeader>
             <CardBody className="pt-0">
@@ -598,11 +597,11 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                   return (
                     <div key={step.id} className="flex items-center relative">
                       <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 flex-shrink-0 ${
-                        isCompleted 
-                          ? 'bg-green-500 border-green-500 text-white' 
-                          : isActive 
-                            ? 'bg-blue-500 border-blue-500 text-white' 
-                            : 'border-gray-300 text-gray-400'
+                        isCompleted // Changed from bg-green-500 border-green-500 to bg-success-500 border-success-500
+                          ? 'bg-success-500 border-success-500 text-white' 
+                          : isActive // Changed from bg-blue-500 border-blue-500 to bg-primary-500 border-primary-500
+                            ? 'bg-primary-500 border-primary-500 text-white' 
+                            : 'border-default-300 text-default-400'
                       }`}>
                         {isCompleted ? (
                           <CheckIcon className="w-5 h-5" />
@@ -610,7 +609,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                           <Icon className="w-5 h-5" />
                         )}
                       </div>
-                      <div className="ml-4 flex-1">
+                      <div className="ml-4 flex-1 text-foreground">
                         <div className={`text-sm font-medium ${
                           isActive ? 'text-blue-900' : isCompleted ? 'text-green-700' : 'text-gray-500'
                         }`}>
@@ -622,9 +621,9 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                           {step.title}
                         </div>
                       </div>
-                      {index < steps.length - 1 && (
-                        <div className={`absolute left-[1.25rem] top-12 w-0.5 h-8 ${
-                          isCompleted ? 'bg-green-500' : 'bg-gray-300'
+                      {index < steps.length - 1 && ( // Changed from bg-green-500 to bg-success-500
+                        <div className={`absolute left-[1.25rem] top-12 w-0.5 h-8 ${ // Changed from bg-gray-300 to bg-default-300
+                          isCompleted ? 'bg-success-500' : 'bg-default-300'
                         }`} />
                       )}
                     </div>
@@ -638,7 +637,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
         {/* Main Content */}
         <div className="flex-1">
           {/* Step Content */}
-          <Card className="mb-8">
+          <Card className="mb-8 text-foreground">
             <CardBody className="p-8">
               {renderStepContent()}
             </CardBody>

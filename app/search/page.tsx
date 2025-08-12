@@ -135,20 +135,20 @@ export default function SearchPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Header />
       
       {/* Search Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
+      <div className="bg-content1 border-b border-content4 sticky top-16 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
+          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center text-foreground">
             {/* Search Bar */}
             <div className="flex-1 flex gap-2">
               <Input
                 placeholder="Localisation, ville, code postal..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                startContent={<MapPinIcon className="w-4 h-4 text-gray-400" />}
+                startContent={<MapPinIcon className="w-4 h-4 text-default-400" />}
                 className="flex-1"
               />
               <Select 
@@ -183,11 +183,11 @@ export default function SearchPage() {
           </div>
 
           {/* Advanced Filters */}
-          {showFilters && (
-            <div className="mt-4 p-4 bg-gray-50 rounded-lg border">
+          {showFilters && ( // Changed from bg-gray-50 to bg-content2
+            <div className="mt-4 p-4 bg-content2 rounded-lg border border-content4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Property Types */}
-                <div className="space-y-3">
+                <div className="space-y-3"> 
                   <label className="text-sm font-medium text-gray-700">Type de Bien</label>
                   <div className="space-y-2">
                     {[
@@ -214,7 +214,7 @@ export default function SearchPage() {
                 </div>
 
                 {/* Price Range */}
-                <div className="space-y-3">
+                <div className="space-y-3"> 
                   <label className="text-sm font-medium text-gray-700">Fourchette de Prix</label>
                   <div className="px-2">
                     <Slider
@@ -227,12 +227,12 @@ export default function SearchPage() {
                       formatOptions={{style: "currency", currency: "EUR"}}
                     />
                   </div>
-                  <div className="flex justify-between text-xs text-gray-600">
+                  <div className="flex justify-between text-xs text-default-600">
                     <span>€{priceRange[0].toLocaleString()}</span>
                     <span>€{priceRange[1].toLocaleString()}</span>
                   </div>
                 </div>
-
+ 
                 {/* Area Range */}
                 <div className="space-y-3">
                   <label className="text-sm font-medium text-gray-700">Surface (m²)</label>
@@ -246,12 +246,11 @@ export default function SearchPage() {
                       className="w-full"
                     />
                   </div>
-                  <div className="flex justify-between text-xs text-gray-600">
+                  <div className="flex justify-between text-xs text-default-600">
                     <span>{areaRange[0]}m²</span>
                     <span>{areaRange[1]}m²</span>
                   </div>
                 </div>
-
                 {/* Bedrooms */}
                 <div className="space-y-3">
                   <label className="text-sm font-medium text-gray-700">Chambres</label>
@@ -268,11 +267,11 @@ export default function SearchPage() {
                 </div>
               </div>
 
-              <div className="flex justify-between items-center mt-4 pt-4 border-t">
+              <div className="flex justify-between items-center mt-4 pt-4 border-t border-content4">
                 <Button variant="light" onClick={clearAllFilters} startContent={<XMarkIcon className="w-4 h-4" />}>
                   Effacer tous les filtres
                 </Button>
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-default-600">
                   {totalProperties} biens trouvés
                 </div>
               </div>
@@ -284,13 +283,13 @@ export default function SearchPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Results Header */}
         <Card className="mb-6">
-          <CardBody className="p-4">
+          <CardBody className="p-4 text-foreground">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-2xl font-bold text-default-900">
                   Résultats de Recherche
                 </h1>
-                <p className="text-gray-600">
+                <p className="text-default-600">
                   {totalProperties} biens trouvés
                   {searchQuery && ` dans "${searchQuery}"`}
                 </p>
@@ -339,7 +338,7 @@ export default function SearchPage() {
             </div>
 
             {/* Active Filters */}
-            {activeFiltersCount > 0 && (
+            {activeFiltersCount > 0 && ( // Changed from border-t to border-t border-content4
               <div className="mt-4 pt-4 border-t">
                 <div className="flex flex-wrap gap-2">
                   {searchQuery && (
@@ -389,7 +388,7 @@ export default function SearchPage() {
         {viewMode === 'map' ? (
           <Card className="h-96">
             <CardBody className="flex items-center justify-center">
-              <div className="text-center text-gray-500">
+              <div className="text-center text-default-500">
                 <MapIcon className="w-16 h-16 mx-auto mb-4 text-gray-300" />
                 <h3 className="text-lg font-semibold mb-2">Vue Carte</h3>
                 <p>La carte interactive sera affichée ici</p>
@@ -420,7 +419,7 @@ export default function SearchPage() {
             ))}
           </div>
         ) : (
-          <Card className="text-center py-12">
+          <Card className="text-center py-12 text-foreground">
             <CardBody>
               <div className="text-gray-500 mb-4">
                 <MagnifyingGlassIcon className="w-16 h-16 mx-auto mb-4 text-gray-300" />

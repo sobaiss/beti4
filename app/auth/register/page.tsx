@@ -110,7 +110,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Header />
       
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -123,10 +123,10 @@ export default function RegisterPage() {
 
         <Card className="border-0 shadow-lg">
           <CardHeader className="text-center pb-6">
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-default-900">
               Créer Votre Compte Beti
             </h1>
-            <p className="text-gray-600 mt-2">
+            <p className="text-default-600 mt-2">
               Rejoignez des milliers d'utilisateurs qui trouvent leur bien idéal
             </p>
           </CardHeader>
@@ -134,7 +134,7 @@ export default function RegisterPage() {
           <CardContent className="space-y-6">
             {/* User Type Selection */}
             <div className="space-y-4">
-              <label className="block text-base font-medium text-gray-900">Je suis :</label>
+              <label className="block text-base font-medium text-default-900">Je suis :</label>
               <RadioGroup value={userType} onValueChange={setUserType} orientation="horizontal" className="grid grid-cols-2 gap-4">
                 <div className="flex items-center space-x-2 border rounded-lg p-4 hover:bg-gray-50">
                   <Radio value="particulier">
@@ -147,7 +147,7 @@ export default function RegisterPage() {
                 <div className="flex items-center space-x-2 border rounded-lg p-4 hover:bg-gray-50">
                   <Radio value="professionnel">
                     <div className="flex items-center">
-                      <BuildingOfficeIcon className="w-4 h-4 mr-2 text-blue-900" />
+                      <BuildingOfficeIcon className="w-4 h-4 mr-2 text-primary-900" />
                       Professionnel
                     </div>
                   </Radio>
@@ -159,7 +159,7 @@ export default function RegisterPage() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
-                <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+                <div className="p-3 text-sm text-danger-600 bg-danger-50 border border-danger-200 rounded-md">
                   {error}
                 </div>
               )}
@@ -167,7 +167,7 @@ export default function RegisterPage() {
               {/* Personal Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Prénom</label>
+                  <label className="block text-sm font-medium text-default-700">Prénom</label>
                   <Input
                     placeholder="Entrez votre prénom"
                     value={formData.firstName}
@@ -175,8 +175,8 @@ export default function RegisterPage() {
                     isRequired
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Nom</label>
+                <div className="space-y-2"> 
+                  <label className="block text-sm font-medium text-default-700">Nom</label>
                   <Input
                     placeholder="Entrez votre nom"
                     value={formData.lastName}
@@ -186,26 +186,26 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Adresse Email</label>
+              <div className="space-y-2"> 
+                <label className="block text-sm font-medium text-default-700">Adresse Email</label>
                 <Input
                   type="email"
                   placeholder="Entrez votre email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  startContent={<EnvelopeIcon className="w-4 h-4 text-gray-400" />}
+                  startContent={<EnvelopeIcon className="w-4 h-4 text-default-400" />}
                   isRequired
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Numéro de Téléphone</label>
+              <div className="space-y-2"> 
+                <label className="block text-sm font-medium text-default-700">Numéro de Téléphone</label>
                 <Input
                   type="tel"
                   placeholder="Entrez votre numéro de téléphone"
                   value={formData.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
-                  startContent={<PhoneIcon className="w-4 h-4 text-gray-400" />}
+                  startContent={<PhoneIcon className="w-4 h-4 text-default-400" />}
                   isRequired
                 />
               </div>
@@ -213,18 +213,18 @@ export default function RegisterPage() {
               {/* Password Fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Mot de Passe</label>
+                  <label className="block text-sm font-medium text-default-700">Mot de Passe</label>
                   <Input
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Créez un mot de passe"
                     value={formData.password}
                     onChange={(e) => handleInputChange('password', e.target.value)}
-                    startContent={<LockClosedIcon className="w-4 h-4 text-gray-400" />}
+                    startContent={<LockClosedIcon className="w-4 h-4 text-default-400" />}
                     endContent={
                       <button
                         type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="text-gray-400 hover:text-gray-600"
+                        onClick={() => setShowPassword(!showPassword)} // Changed from text-gray-400 to text-default-400
+                        className="text-default-400 hover:text-default-600"
                       >
                         {showPassword ? <EyeSlashIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
                       </button>
@@ -234,18 +234,18 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Confirmer le Mot de Passe</label>
+                  <label className="block text-sm font-medium text-default-700">Confirmer le Mot de Passe</label>
                   <Input
                     type={showConfirmPassword ? 'text' : 'password'}
                     placeholder="Confirmez votre mot de passe"
                     value={formData.confirmPassword}
                     onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                    startContent={<LockClosedIcon className="w-4 h-4 text-gray-400" />}
+                    startContent={<LockClosedIcon className="w-4 h-4 text-default-400" />}
                     endContent={
                       <button
                         type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="text-gray-400 hover:text-gray-600"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)} // Changed from text-gray-400 to text-default-400
+                        className="text-default-400 hover:text-default-600"
                       >
                         {showConfirmPassword ? <EyeSlashIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
                       </button>
@@ -262,7 +262,7 @@ export default function RegisterPage() {
                     isSelected={formData.acceptTerms}
                     onValueChange={(checked) => handleInputChange('acceptTerms', checked as boolean)}
                     isRequired
-                  >
+                  > 
                     J'accepte les{' '}
                     <Link href="/terms" className="text-blue-900 hover:text-blue-800">
                       Conditions d'Utilisation
@@ -278,7 +278,7 @@ export default function RegisterPage() {
                   <Checkbox
                     isSelected={formData.acceptMarketing}
                     onValueChange={(checked) => handleInputChange('acceptMarketing', checked as boolean)}
-                  >
+                  > 
                     Je souhaite recevoir des communications marketing et des mises à jour de biens
                   </Checkbox>
                 </div>
@@ -297,8 +297,8 @@ export default function RegisterPage() {
 
             <div className="relative">
               <Divider />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="bg-white px-2 text-sm text-gray-500">ou</span>
+              <div className="absolute inset-0 flex items-center justify-center text-default-500">
+                <span className="bg-background px-2 text-sm">ou</span>
               </div>
             </div>
 
