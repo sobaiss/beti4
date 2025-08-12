@@ -1,9 +1,7 @@
 'use client';
 
 import { HeartIcon, MapPinIcon, HomeIcon, UserIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@heroui/react';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardBody, Button, Chip } from '@heroui/react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Property } from '@/types/property';
@@ -37,7 +35,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
   const altText = firstImage.alt || `${property.title} - ${property.location} - ${property.transactionType === 'achat' ? 'À vendre' : 'À louer'}`;
   
   return (
-    <Card className="group overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+    <Card className="group overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
       <div className="relative">
         <div className="aspect-[4/3] overflow-hidden">
           <Image
@@ -51,27 +49,34 @@ export default function PropertyCard({ property }: PropertyCardProps) {
         </div>
         
         <div className="absolute top-4 left-4">
-          <Badge variant={property.transactionType === 'achat' ? 'default' : 'secondary'} className="bg-blue-900 text-white">
+          <Chip 
+            color={property.transactionType === 'achat' ? 'primary' : 'secondary'}
+            variant="solid"
+            size="sm"
+          >
             {property.transactionType === 'achat' ? 'À Vendre' : 'À Louer'}
-          </Badge>
+          </Chip>
         </div>
         
         <Button
           variant="light"
           size="sm"
-          className="absolute top-4 right-4 bg-white/90 hover:bg-white border-0 rounded-full p-2"
+          isIconOnly
+          className="absolute top-4 right-4 bg-white/90 hover:bg-white rounded-full"
         >
           <HeartIcon className="w-4 h-4 text-gray-600" />
         </Button>
 
         {property.featured && (
           <div className="absolute bottom-4 left-4">
-            <Badge className="bg-amber-500 text-white">En Vedette</Badge>
+            <Chip color="warning" variant="solid" size="sm">
+              En Vedette
+            </Chip>
           </div>
         )}
       </div>
 
-      <CardContent className="p-6">
+      <CardBody className="p-6">
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-2xl font-bold text-blue-900">
@@ -113,11 +118,11 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             <span className="capitalize">{property.type.toLowerCase()}</span>
           </div>
 
-          <Button className="w-full mt-4 bg-blue-900 hover:bg-blue-800">
+          <Button color="primary" className="w-full mt-4">
             <Link href={`/property/${property.id}`}>Voir les Détails</Link>
           </Button>
         </div>
-      </CardContent>
+      </CardBody>
     </Card>
   );
 }

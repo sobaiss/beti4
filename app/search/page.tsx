@@ -3,28 +3,34 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { 
-  Search,
-  MapPin,
-  SlidersHorizontal, 
-  Grid, 
-  List,
-  Map,
-  ChevronDown,
-  X,
-  Home,
-  Building,
-  Building2,
-  Mountain,
-  ShoppingBag
-} from 'lucide-react';
-import { Button } from '@heroui/react';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Slider } from '@/components/ui/slider';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Checkbox } from '@/components/ui/checkbox';
+  MagnifyingGlassIcon,
+  MapPinIcon,
+  AdjustmentsHorizontalIcon, 
+  Squares2X2Icon, 
+  ListBulletIcon,
+  MapIcon,
+  ChevronDownIcon,
+  XMarkIcon,
+  HomeIcon,
+  BuildingOfficeIcon,
+  BuildingOffice2Icon,
+  GlobeAltIcon,
+  ShoppingBagIcon
+} from '@heroicons/react/24/outline';
+import { 
+  Button, 
+  Input, 
+  Select, 
+  SelectItem, 
+  Slider, 
+  Card, 
+  CardBody, 
+  CardHeader, 
+  Chip, 
+  Divider, 
+  Checkbox,
+  ButtonGroup
+} from '@heroui/react';
 import Header from '@/components/Header';
 import PropertyCard from '@/components/PropertyCard';
 import { Property } from '@/types/property';
@@ -119,12 +125,12 @@ export default function SearchPage() {
 
   const getPropertyTypeIcon = (type: string) => {
     switch (type) {
-      case 'appartement': return <Building className="w-4 h-4" />;
-      case 'maison': return <Home className="w-4 h-4" />;
-      case 'villa': return <Building2 className="w-4 h-4" />;
-      case 'terrain': return <Mountain className="w-4 h-4" />;
-      case 'bureau_commerce': return <ShoppingBag className="w-4 h-4" />;
-      default: return <Home className="w-4 h-4" />;
+      case 'appartement': return <BuildingOfficeIcon className="w-4 h-4" />;
+      case 'maison': return <HomeIcon className="w-4 h-4" />;
+      case 'villa': return <BuildingOffice2Icon className="w-4 h-4" />;
+      case 'terrain': return <GlobeAltIcon className="w-4 h-4" />;
+      case 'bureau_commerce': return <ShoppingBagIcon className="w-4 h-4" />;
+      default: return <HomeIcon className="w-4 h-4" />;
     }
   };
 
@@ -138,24 +144,21 @@ export default function SearchPage() {
           <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
             {/* Search Bar */}
             <div className="flex-1 flex gap-2">
-              <div className="relative flex-1">
-                <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Localisation, ville, code postal..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Select value={transactionType} onValueChange={setTransactionType}>
-                <SelectTrigger className="w-32">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tous</SelectItem>
-                  <SelectItem value="achat">Acheter</SelectItem>
-                  <SelectItem value="location">Louer</SelectItem>
-                </SelectContent>
+              <Input
+                placeholder="Localisation, ville, code postal..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                startContent={<MapPinIcon className="w-4 h-4 text-gray-400" />}
+                className="flex-1"
+              />
+              <Select 
+                selectedKeys={[transactionType]}
+                onSelectionChange={(keys) => setTransactionType(Array.from(keys)[0] as string)}
+                className="w-32"
+              >
+                <SelectItem key="all">Tous</SelectItem>
+                <SelectItem key="achat">Acheter</SelectItem>
+                <SelectItem key="location">Louer</SelectItem>
               </Select>
             </div>
 
@@ -163,16 +166,19 @@ export default function SearchPage() {
             <Button
               variant="bordered"
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2"
+              startContent={<AdjustmentsHorizontalIcon className="w-4 h-4" />}
+              endContent={
+                <>
+                  {activeFiltersCount > 0 && (
+                    <Chip size="sm" color="primary" variant="solid">
+                      {activeFiltersCount}
+                    </Chip>
+                  )}
+                  <ChevronDownIcon className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+                </>
+              }
             >
-              <SlidersHorizontal className="w-4 h-4" />
               Filtres
-              {activeFiltersCount > 0 && (
-                <Badge variant="secondary" className="ml-1">
-                  {activeFiltersCount}
-                </Badge>
-              )}
-              <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
             </Button>
           </div>
 
@@ -191,19 +197,18 @@ export default function SearchPage() {
                       { value: 'terrain', label: 'Terrain' },
                       { value: 'bureau_commerce', label: 'Bureau/Commerce' }
                     ].map((type) => (
-                      <div key={type.value} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={type.value}
-                          checked={propertyTypes.includes(type.value)}
-                          onCheckedChange={(checked) => 
-                            handlePropertyTypeChange(type.value, checked as boolean)
-                          }
-                        />
-                        <label htmlFor={type.value} className="text-sm flex items-center gap-2">
+                      <Checkbox
+                        key={type.value}
+                        isSelected={propertyTypes.includes(type.value)}
+                        onValueChange={(checked) => 
+                          handlePropertyTypeChange(type.value, checked)
+                        }
+                      >
+                        <div className="flex items-center gap-2">
                           {getPropertyTypeIcon(type.value)}
                           {type.label}
-                        </label>
-                      </div>
+                        </div>
+                      </Checkbox>
                     ))}
                   </div>
                 </div>
@@ -214,11 +219,12 @@ export default function SearchPage() {
                   <div className="px-2">
                     <Slider
                       value={priceRange}
-                      onValueChange={setPriceRange}
-                      max={2000000}
-                      min={0}
+                      onChange={setPriceRange}
+                      maxValue={2000000}
+                      minValue={0}
                       step={10000}
                       className="w-full"
+                      formatOptions={{style: "currency", currency: "EUR"}}
                     />
                   </div>
                   <div className="flex justify-between text-xs text-gray-600">
@@ -233,9 +239,9 @@ export default function SearchPage() {
                   <div className="px-2">
                     <Slider
                       value={areaRange}
-                      onValueChange={setAreaRange}
-                      max={300}
-                      min={0}
+                      onChange={setAreaRange}
+                      maxValue={300}
+                      minValue={0}
                       step={5}
                       className="w-full"
                     />
@@ -249,24 +255,21 @@ export default function SearchPage() {
                 {/* Bedrooms */}
                 <div className="space-y-3">
                   <label className="text-sm font-medium text-gray-700">Chambres</label>
-                  <Select value={bedrooms} onValueChange={setBedrooms}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Toutes</SelectItem>
-                      <SelectItem value="1">1+</SelectItem>
-                      <SelectItem value="2">2+</SelectItem>
-                      <SelectItem value="3">3+</SelectItem>
-                      <SelectItem value="4">4+</SelectItem>
-                    </SelectContent>
+                  <Select 
+                    selectedKeys={[bedrooms]}
+                    onSelectionChange={(keys) => setBedrooms(Array.from(keys)[0] as string)}
+                  >
+                    <SelectItem key="all">Toutes</SelectItem>
+                    <SelectItem key="1">1+</SelectItem>
+                    <SelectItem key="2">2+</SelectItem>
+                    <SelectItem key="3">3+</SelectItem>
+                    <SelectItem key="4">4+</SelectItem>
                   </Select>
                 </div>
               </div>
 
               <div className="flex justify-between items-center mt-4 pt-4 border-t">
-                <Button variant="ghost" onClick={clearAllFilters} className="text-gray-600">
-                  <X className="w-4 h-4 mr-2" />
+                <Button variant="light" onClick={clearAllFilters} startContent={<XMarkIcon className="w-4 h-4" />}>
                   Effacer tous les filtres
                 </Button>
                 <div className="text-sm text-gray-600">
@@ -280,126 +283,130 @@ export default function SearchPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Results Header */}
-        <div className="bg-white rounded-lg border p-4 mb-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Résultats de Recherche
-              </h1>
-              <p className="text-gray-600">
-                {totalProperties} biens trouvés
-                {searchQuery && ` dans "${searchQuery}"`}
-              </p>
-            </div>
+        <Card className="mb-6">
+          <CardBody className="p-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Résultats de Recherche
+                </h1>
+                <p className="text-gray-600">
+                  {totalProperties} biens trouvés
+                  {searchQuery && ` dans "${searchQuery}"`}
+                </p>
+              </div>
 
-            <div className="flex items-center gap-4">
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-48">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="relevance">Plus Pertinent</SelectItem>
-                  <SelectItem value="price-asc">Prix: Croissant</SelectItem>
-                  <SelectItem value="price-desc">Prix: Décroissant</SelectItem>
-                  <SelectItem value="area-desc">Surface: Plus Grande</SelectItem>
-                  <SelectItem value="newest">Plus Récent</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="flex items-center gap-4">
+                <Select 
+                  selectedKeys={[sortBy]}
+                  onSelectionChange={(keys) => setSortBy(Array.from(keys)[0] as string)}
+                  className="w-48"
+                >
+                  <SelectItem key="relevance">Plus Pertinent</SelectItem>
+                  <SelectItem key="price-asc">Prix: Croissant</SelectItem>
+                  <SelectItem key="price-desc">Prix: Décroissant</SelectItem>
+                  <SelectItem key="area-desc">Surface: Plus Grande</SelectItem>
+                  <SelectItem key="newest">Plus Récent</SelectItem>
+                </Select>
 
-              <div className="flex border rounded-lg">
-                <Button
-                  variant={viewMode === 'grid' ? 'solid' : 'light'}
-                  size="sm"
-                  onClick={() => setViewMode('grid')}
-                  className="rounded-r-none"
-                >
-                  <Grid className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant={viewMode === 'list' ? 'solid' : 'light'}
-                  size="sm"
-                  onClick={() => setViewMode('list')}
-                  className="rounded-none"
-                >
-                  <List className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant={viewMode === 'map' ? 'solid' : 'light'}
-                  size="sm"
-                  onClick={() => setViewMode('map')}
-                  className="rounded-l-none"
-                >
-                  <Map className="w-4 h-4" />
-                </Button>
+                <ButtonGroup>
+                  <Button
+                    variant={viewMode === 'grid' ? 'solid' : 'bordered'}
+                    size="sm"
+                    onClick={() => setViewMode('grid')}
+                    isIconOnly
+                  >
+                    <Squares2X2Icon className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === 'list' ? 'solid' : 'bordered'}
+                    size="sm"
+                    onClick={() => setViewMode('list')}
+                    isIconOnly
+                  >
+                    <ListBulletIcon className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === 'map' ? 'solid' : 'bordered'}
+                    size="sm"
+                    onClick={() => setViewMode('map')}
+                    isIconOnly
+                  >
+                    <MapIcon className="w-4 h-4" />
+                  </Button>
+                </ButtonGroup>
               </div>
             </div>
-          </div>
 
-          {/* Active Filters */}
-          {activeFiltersCount > 0 && (
-            <div className="mt-4 pt-4 border-t">
-              <div className="flex flex-wrap gap-2">
-                {searchQuery && (
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    Localisation: {searchQuery}
-                    <X 
-                      className="w-3 h-3 cursor-pointer" 
-                      onClick={() => setSearchQuery('')}
-                    />
-                  </Badge>
-                )}
-                {transactionType !== 'all' && (
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    {transactionType === 'achat' ? 'À Vendre' : 'À Louer'}
-                    <X 
-                      className="w-3 h-3 cursor-pointer" 
-                      onClick={() => setTransactionType('all')}
-                    />
-                  </Badge>
-                )}
-                {propertyTypes.map(type => (
-                  <Badge key={type} variant="secondary" className="flex items-center gap-1">
-                    {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
-                    <X 
-                      className="w-3 h-3 cursor-pointer" 
-                      onClick={() => handlePropertyTypeChange(type, false)}
-                    />
-                  </Badge>
-                ))}
-                {bedrooms !== 'all' && (
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    {bedrooms}+ chambres
-                    <X 
-                      className="w-3 h-3 cursor-pointer" 
-                      onClick={() => setBedrooms('all')}
-                    />
-                  </Badge>
-                )}
+            {/* Active Filters */}
+            {activeFiltersCount > 0 && (
+              <div className="mt-4 pt-4 border-t">
+                <div className="flex flex-wrap gap-2">
+                  {searchQuery && (
+                    <Chip 
+                      variant="flat" 
+                      onClose={() => setSearchQuery('')}
+                      size="sm"
+                    >
+                      Localisation: {searchQuery}
+                    </Chip>
+                  )}
+                  {transactionType !== 'all' && (
+                    <Chip 
+                      variant="flat" 
+                      onClose={() => setTransactionType('all')}
+                      size="sm"
+                    >
+                      {transactionType === 'achat' ? 'À Vendre' : 'À Louer'}
+                    </Chip>
+                  )}
+                  {propertyTypes.map(type => (
+                    <Chip 
+                      key={type} 
+                      variant="flat" 
+                      onClose={() => handlePropertyTypeChange(type, false)}
+                      size="sm"
+                    >
+                      {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
+                    </Chip>
+                  ))}
+                  {bedrooms !== 'all' && (
+                    <Chip 
+                      variant="flat" 
+                      onClose={() => setBedrooms('all')}
+                      size="sm"
+                    >
+                      {bedrooms}+ chambres
+                    </Chip>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </CardBody>
+        </Card>
 
         {/* Results */}
         {viewMode === 'map' ? (
-          <Card className="h-96 flex items-center justify-center">
-            <div className="text-center text-gray-500">
-              <Map className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-              <h3 className="text-lg font-semibold mb-2">Vue Carte</h3>
-              <p>La carte interactive sera affichée ici</p>
-            </div>
+          <Card className="h-96">
+            <CardBody className="flex items-center justify-center">
+              <div className="text-center text-gray-500">
+                <MapIcon className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                <h3 className="text-lg font-semibold mb-2">Vue Carte</h3>
+                <p>La carte interactive sera affichée ici</p>
+              </div>
+            </CardBody>
           </Card>
         ) : loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-white rounded-lg shadow-md animate-pulse">
-                <div className="aspect-[4/3] bg-gray-200 rounded-t-lg"></div>
-                <div className="p-6 space-y-3">
+              <Card key={i} className="animate-pulse">
+                <div className="aspect-[4/3] bg-gray-200"></div>
+                <CardBody className="space-y-3">
                   <div className="h-4 bg-gray-200 rounded w-3/4"></div>
                   <div className="h-4 bg-gray-200 rounded w-1/2"></div>
                   <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                </div>
-              </div>
+                </CardBody>
+              </Card>
             ))}
           </div>
         ) : properties.length > 0 ? (
@@ -414,16 +421,16 @@ export default function SearchPage() {
           </div>
         ) : (
           <Card className="text-center py-12">
-            <CardContent>
+            <CardBody>
               <div className="text-gray-500 mb-4">
-                <Search className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                <MagnifyingGlassIcon className="w-16 h-16 mx-auto mb-4 text-gray-300" />
                 <h3 className="text-xl font-semibold mb-2">Aucun bien trouvé</h3>
                 <p>Essayez d'ajuster vos critères de recherche pour trouver plus de résultats.</p>
               </div>
               <Button onClick={clearAllFilters}>
                 Effacer Tous les Filtres
               </Button>
-            </CardContent>
+            </CardBody>
           </Card>
         )}
 

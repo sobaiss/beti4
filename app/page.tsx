@@ -6,10 +6,7 @@ import {
   MapPinIcon, 
   TrendingUpIcon 
 } from '@heroicons/react/24/outline';
-import { Button } from '@heroui/react';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent } from '@/components/ui/card';
+import { Button, Input, Select, SelectItem, Card, CardBody } from '@heroui/react';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import PropertyCard from '@/components/PropertyCard';
@@ -59,62 +56,65 @@ export default function Home() {
           </div>    
 
           {/* Search Bar */}
-          <Card className="max-w-4xl mx-auto bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
-            <CardContent className="p-6">
+          <Card className="max-w-4xl mx-auto bg-white/95 backdrop-blur-sm shadow-2xl">
+            <CardBody className="p-6">
               <div className="flex flex-col lg:flex-row gap-4 items-end">
                 <div className="flex-1 space-y-2">
                   <label className="text-sm font-medium text-gray-700">Localisation</label>
-                  <div className="relative">
-                    <MapPinIcon className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                    <Input
-                      placeholder="Ville, adresse ou code postal"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 h-12 text-base"
-                    />
-                  </div>
+                  <Input
+                    placeholder="Ville, adresse ou code postal"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    startContent={<MapPinIcon className="w-5 h-5 text-gray-400" />}
+                    size="lg"
+                    classNames={{
+                      input: "text-base",
+                      inputWrapper: "h-12"
+                    }}
+                  />
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700">Transaction</label>
-                    <Select value={transactionType} onValueChange={setTransactionType}>
-                      <SelectTrigger className="h-12 w-full sm:w-32">
-                        <SelectValue placeholder="Transaction" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="achat">Acheter</SelectItem>
-                        <SelectItem value="location">Louer</SelectItem>
-                      </SelectContent>
+                    <Select 
+                      selectedKeys={[transactionType]}
+                      onSelectionChange={(keys) => setTransactionType(Array.from(keys)[0] as string)}
+                      className="w-full sm:w-32"
+                      size="lg"
+                    >
+                      <SelectItem key="achat">Acheter</SelectItem>
+                      <SelectItem key="location">Louer</SelectItem>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700">Type</label>
-                    <Select value={propertyType} onValueChange={setPropertyType}>
-                      <SelectTrigger className="h-12 w-full sm:w-40">
-                        <SelectValue placeholder="Tous types" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="">Tous types</SelectItem>
-                        <SelectItem value="appartement">Appartement</SelectItem>
-                        <SelectItem value="maison">Maison</SelectItem>
-                        <SelectItem value="villa">Villa</SelectItem>
-                        <SelectItem value="terrain">Terrain</SelectItem>
-                        <SelectItem value="bureau_commerce">Bureau/Commerce</SelectItem>
-                      </SelectContent>
+                    <Select 
+                      selectedKeys={propertyType ? [propertyType] : []}
+                      onSelectionChange={(keys) => setPropertyType(Array.from(keys)[0] as string || '')}
+                      placeholder="Tous types"
+                      className="w-full sm:w-40"
+                      size="lg"
+                    >
+                      <SelectItem key="">Tous types</SelectItem>
+                      <SelectItem key="appartement">Appartement</SelectItem>
+                      <SelectItem key="maison">Maison</SelectItem>
+                      <SelectItem key="villa">Villa</SelectItem>
+                      <SelectItem key="terrain">Terrain</SelectItem>
+                      <SelectItem key="bureau_commerce">Bureau/Commerce</SelectItem>
                     </Select>
                   </div>
                 </div>
 
-                <Button size="lg" className="h-12 px-8 bg-amber-500 hover:bg-amber-600 text-white font-semibold">
+                <Button size="lg" color="warning" className="h-12 px-8 font-semibold">
                   <Link href="/search" className="flex items-center">
                     <MagnifyingGlassIcon className="mr-2 h-5 w-5" />
                     Rechercher
                   </Link>
                 </Button>
               </div>
-            </CardContent>
+            </CardBody>
           </Card>
         </div>
       </section>
@@ -134,14 +134,14 @@ export default function Home() {
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-white rounded-lg shadow-md animate-pulse">
-                  <div className="aspect-[4/3] bg-gray-200 rounded-t-lg"></div>
-                  <div className="p-6 space-y-3">
+                <Card key={i} className="animate-pulse">
+                  <div className="aspect-[4/3] bg-gray-200"></div>
+                  <CardBody className="space-y-3">
                     <div className="h-4 bg-gray-200 rounded w-3/4"></div>
                     <div className="h-4 bg-gray-200 rounded w-1/2"></div>
                     <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                  </div>
-                </div>
+                  </CardBody>
+                </Card>
               ))}
             </div>
           ) : (
@@ -154,9 +154,8 @@ export default function Home() {
 
           <div className="text-center mt-12">
             <Button variant="bordered" size="lg" className="px-8">
-              <Link href="/properties" className="flex items-center">
+              <Link href="/properties">
                 Voir Tous les Biens
-                
               </Link>
             </Button>
           </div>
@@ -173,7 +172,7 @@ export default function Home() {
             Rejoignez des milliers de clients satisfaits qui ont trouvé leur bien idéal avec nous
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" color="warning" className="bg-amber-500 hover:bg-amber-600 px-8">
+            <Button size="lg" color="warning" className="px-8">
               <Link href="/properties">Commencer la Recherche</Link>
             </Button>
             <Button variant="bordered" size="lg" className="border-white text-white hover:bg-white hover:text-blue-900 px-8">

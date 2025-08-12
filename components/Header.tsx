@@ -21,7 +21,15 @@ import {
   MagnifyingGlassIcon,
   ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/outline';
-import { Button } from '@heroui/react';
+import { 
+  Button, 
+  Dropdown, 
+  DropdownTrigger, 
+  DropdownMenu, 
+  DropdownItem,
+  Avatar,
+  Divider
+} from '@heroui/react';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -71,74 +79,55 @@ export default function Header() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="bordered" size="sm" className="text-blue-900 border-blue-900 hover:bg-blue-50">
+            <Button variant="bordered" size="sm" color="primary" className="border-blue-900 text-blue-900">
               <Link href="/deposer-une-annonce">
                 Déposer une annonce
               </Link>
             </Button>
-            <Button variant="light" size="sm" className="text-gray-700 hover:text-blue-900">
-              <HeartIcon className="w-4 h-4 mr-2" />
+            <Button variant="light" size="sm" isIconOnly>
+              <HeartIcon className="w-4 h-4" />
             </Button>
             
             {session?.user ? (
-              <div className="relative">
-                <button 
-                  className="relative h-10 w-10 rounded-full bg-blue-100 hover:bg-blue-200 flex items-center justify-center"
-                  onClick={() => setActiveDropdown(activeDropdown === 'user' ? null : 'user')}
-                >
-                  {session.user.avatar ? (
-                    <img 
-                      src={session.user.avatar} 
-                      alt={`${session.user.firstName} ${session.user.lastName}`}
-                      className="w-8 h-8 rounded-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-blue-900 font-semibold text-sm">
-                      {session.user.firstName?.[0]}{session.user.lastName?.[0]}
-                    </span>
-                  )}
-                </button>
-                
-                {activeDropdown === 'user' && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
-                    <div className="py-1">
-                      <div className="px-4 py-2 border-b border-gray-100">
-                        <p className="font-medium text-sm text-gray-900">
-                          {session.user.firstName} {session.user.lastName}
-                        </p>
-                        <p className="text-xs text-gray-600">
-                          {session.user.email}
-                        </p>
-                      </div>
-                      <Link href="/mon-compte" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <Cog6ToothIcon className="mr-2 h-4 w-4" />
-                        Mon compte
-                      </Link>
-                      <Link href="/mes-annonces" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <DocumentTextIcon className="mr-2 h-4 w-4" />
-                        Mes annonces
-                      </Link>
-                      <Link href="/favorites" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <HeartIcon className="mr-2 h-4 w-4" />
-                        Mes favoris
-                      </Link>
-                      <Link href="/saved-searches" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <MagnifyingGlassIcon className="mr-2 h-4 w-4" />
-                        Mes recherches sauvegardées
-                      </Link>
-                      <button 
-                        className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                        onClick={handleSignOut}
-                      >
-                        <ArrowRightOnRectangleIcon className="mr-2 h-4 w-4" />
-                        Déconnexion
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
+              <Dropdown placement="bottom-end">
+                <DropdownTrigger>
+                  <Avatar
+                    as="button"
+                    className="transition-transform"
+                    src={session.user.avatar}
+                    name={`${session.user.firstName} ${session.user.lastName}`}
+                    size="sm"
+                  />
+                </DropdownTrigger>
+                <DropdownMenu aria-label="Profile Actions" variant="flat">
+                  <DropdownItem key="profile" className="h-14 gap-2">
+                    <p className="font-semibold">Connecté en tant que</p>
+                    <p className="font-semibold">{session.user.firstName} {session.user.lastName}</p>
+                  </DropdownItem>
+                  <DropdownItem key="account" startContent={<Cog6ToothIcon className="w-4 h-4" />}>
+                    <Link href="/mon-compte">Mon compte</Link>
+                  </DropdownItem>
+                  <DropdownItem key="properties" startContent={<DocumentTextIcon className="w-4 h-4" />}>
+                    <Link href="/mes-annonces">Mes annonces</Link>
+                  </DropdownItem>
+                  <DropdownItem key="favorites" startContent={<HeartIcon className="w-4 h-4" />}>
+                    <Link href="/favorites">Mes favoris</Link>
+                  </DropdownItem>
+                  <DropdownItem key="searches" startContent={<MagnifyingGlassIcon className="w-4 h-4" />}>
+                    <Link href="/saved-searches">Mes recherches sauvegardées</Link>
+                  </DropdownItem>
+                  <DropdownItem 
+                    key="logout" 
+                    color="danger" 
+                    startContent={<ArrowRightOnRectangleIcon className="w-4 h-4" />}
+                    onClick={handleSignOut}
+                  >
+                    Déconnexion
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
             ) : (
-              <Button size="sm" color="primary" className="bg-blue-900 hover:bg-blue-800">
+              <Button size="sm" color="primary">
                 <Link href="/auth/signin" className="flex items-center">
                   <UserIcon className="w-4 h-4 mr-2" />
                   Se Connecter
@@ -148,12 +137,14 @@ export default function Header() {
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2"
+          <Button
+            variant="light"
+            isIconOnly
+            className="md:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <XMarkIcon className="w-6 h-6" /> : <Bars3Icon className="w-6 h-6" />}
-          </button>
+          </Button>
         </div>
 
         {/* Full-width Dropdown Menus */}
@@ -360,7 +351,7 @@ export default function Header() {
                   </Link>
                 </div>
               </div>
-              <hr className="border-gray-200" />
+              <Divider />
               <div className="flex flex-col space-y-2">
                 <Button variant="light" size="sm" className="justify-start">
                   <HeartIcon className="w-4 h-4 mr-2" />
@@ -403,7 +394,7 @@ export default function Header() {
                     </Button>
                   </div>
                 ) : (
-                  <Button size="sm" color="primary" className="bg-blue-900 hover:bg-blue-800">
+                  <Button size="sm" color="primary">
                     <Link href="/auth/signin" className="flex items-center">
                       <UserIcon className="w-4 h-4 mr-2" />
                       Se Connecter
