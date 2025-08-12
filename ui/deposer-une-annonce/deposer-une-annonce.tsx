@@ -22,7 +22,10 @@ import {
   CardHeader, 
   Select, 
   SelectItem, 
-  Checkbox 
+  Checkbox,
+  RadioGroup,
+  Radio,
+  Divider
 } from '@heroui/react';
 import Link from 'next/link';
 import { City } from '@/types/location';
@@ -231,9 +234,8 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Ville</label>
                   <Select
-                    value={formData.city}
-                    onSelectionChange={(keys) => handleInputChange('city', Array.from(keys)[0] as string)}
                     selectedKeys={formData.city ? [formData.city] : []}
+                    onSelectionChange={(keys) => handleInputChange('city', Array.from(keys)[0] as string)}
                     placeholder="Sélectionner une ville..."
                   >
                     {cityOptions.map((city) => (
@@ -248,9 +250,8 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Quartier / Secteur (optionnel)</label>
                 <Select
-                  value={formData.location}
-                  onSelectionChange={(keys) => handleInputChange('location', Array.from(keys)[0] as string)}
                   selectedKeys={formData.location ? [formData.location] : []}
+                  onSelectionChange={(keys) => handleInputChange('location', Array.from(keys)[0] as string)}
                   placeholder="Sélectionner un quartier..."
                 >
                   {locationOptions.map((location) => (
@@ -424,16 +425,16 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
               </div>
 
               {transactionType === 'location' && (
-                <div className="bg-primary-50 p-4 rounded-lg">
-                  <h3 className="font-medium text-blue-900 mb-2">Charges et frais supplémentaires</h3>
+                <div className="bg-primary/10 p-4 rounded-lg">
+                  <h3 className="font-medium text-primary-900 mb-2">Charges et frais supplémentaires</h3>
                   <div className="space-y-3">
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="charges">
+                      <Checkbox>
                         Charges comprises dans le loyer
                       </Checkbox>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="deposit">
+                      <Checkbox>
                         Dépôt de garantie demandé
                       </Checkbox>
                     </div>
@@ -494,7 +495,6 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
             <div className="space-y-4">
               <div className="flex items-center space-x-2 mb-4">
                 <Checkbox
-                  id="isAgent"
                   isSelected={formData.isAgent}
                   onValueChange={(checked) => handleInputChange('isAgent', checked)}
                 > 
@@ -646,7 +646,6 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
           {/* Navigation Buttons */}
           <div className="flex justify-between">
             <Button
-              variant="outline"
               variant="bordered"
               onClick={prevStep}
               isDisabled={currentStep === 1}
