@@ -79,13 +79,13 @@ export default function Header() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="bordered" size="sm" color="primary" className="border-blue-900 text-blue-900">
+            <Button variant="solid" radius="full" size="md" color="warning">
               <Link href="/deposer-une-annonce">
                 Déposer une annonce
               </Link>
             </Button>
-            <Button variant="light" size="sm" isIconOnly>
-              <HeartIcon className="w-4 h-4" />
+            <Button variant="light" color="warning" size="sm" isIconOnly>
+              <HeartIcon />
             </Button>
             
             {session?.user ? (
@@ -95,11 +95,13 @@ export default function Header() {
                     as="button"
                     className="transition-transform"
                     src={session.user.avatar}
-                    name={`${session.user.firstName} ${session.user.lastName}`}
+                    name={`${session.user.firstName?.[0]}${session.user.lastName?.[0]}`}
                     size="sm"
+                    isBordered
+                    color="default"
                   />
                 </DropdownTrigger>
-                <DropdownMenu aria-label="Profile Actions" variant="flat">
+                <DropdownMenu color="default" aria-label="Profile Actions" variant="flat">
                   <DropdownItem key="profile" className="h-14 gap-2">
                     <p className="font-semibold">Connecté en tant que</p>
                     <p className="font-semibold">{session.user.firstName} {session.user.lastName}</p>

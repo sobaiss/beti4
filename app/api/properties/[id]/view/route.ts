@@ -3,10 +3,10 @@ import { PropertyService } from '@/lib/services/property'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
-    const property = await PropertyService.incrementPropertyViews(params.id)
+    const property = await PropertyService.incrementPropertyViews((await props.params).id)
 
     return NextResponse.json({
       success: true,
