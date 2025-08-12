@@ -13,14 +13,17 @@ import {
   DocumentTextIcon, 
   CheckIcon, 
 } from '@heroicons/react/24/outline';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { SearchableCombobox } from '@/components/ui/combobox';
+import { 
+  Button, 
+  Input, 
+  Textarea, 
+  Card, 
+  CardBody, 
+  CardHeader, 
+  Select, 
+  SelectItem, 
+  Checkbox 
+} from '@heroui/react';
 import Link from 'next/link';
 import { City } from '@/types/location';
 
@@ -141,7 +144,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
 
             <div className="space-y-6">
               <div>
-                <Label className="text-base font-medium text-gray-900 mb-4 block">Type de transaction</Label>
+                <label className="text-base font-medium text-gray-900 mb-4 block">Type de transaction</label>
                 <div className="grid grid-cols-2 gap-4">
                   <button
                     onClick={() => setTransactionType('achat')}
@@ -169,7 +172,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
               </div>
 
               <div>
-                <Label className="text-base font-medium text-gray-900 mb-4 block">Type de bien</Label>
+                <label className="text-base font-medium text-gray-900 mb-4 block">Type de bien</label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {[
                     { value: 'appartement', label: 'Appartement', icon: '🏢' },
@@ -207,7 +210,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
 
             <div className="space-y-4">
               <div>
-                <Label htmlFor="address">Adresse complète</Label>
+                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Adresse complète</label>
                 <Input
                   id="address"
                   placeholder="Numéro et nom de rue"
@@ -218,7 +221,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="postalCode">Code postal</Label>
+                  <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-1">Code postal</label>
                   <Input
                     id="postalCode"
                     placeholder="75001"
@@ -227,26 +230,36 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                   />
                 </div>
                 <div>
-                  <Label>Ville</Label>
-                  <SearchableCombobox
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Ville</label>
+                  <Select
                     value={formData.city}
-                    onValueChange={(value) => handleInputChange('city', value)}
-                    options={cityOptions}
+                    onSelectionChange={(keys) => handleInputChange('city', Array.from(keys)[0] as string)}
+                    selectedKeys={formData.city ? [formData.city] : []}
                     placeholder="Sélectionner une ville..."
-                    searchPlaceholder="Rechercher une ville..."
-                  />
+                  >
+                    {cityOptions.map((city) => (
+                      <SelectItem key={city.value} value={city.value}>
+                        {city.label}
+                      </SelectItem>
+                    ))}
+                  </Select>
                 </div>
               </div>
 
               <div>
-                <Label>Quartier / Secteur (optionnel)</Label>
-                <SearchableCombobox
+                <label className="block text-sm font-medium text-gray-700 mb-1">Quartier / Secteur (optionnel)</label>
+                <Select
                   value={formData.location}
-                  onValueChange={(value) => handleInputChange('location', value)}
-                  options={locationOptions}
+                  onSelectionChange={(keys) => handleInputChange('location', Array.from(keys)[0] as string)}
+                  selectedKeys={formData.location ? [formData.location] : []}
                   placeholder="Sélectionner un quartier..."
-                  searchPlaceholder="Rechercher un quartier..."
-                />
+                >
+                  {locationOptions.map((location) => (
+                    <SelectItem key={location.value} value={location.value}>
+                      {location.label}
+                    </SelectItem>
+                  ))}
+                </Select>
               </div>
             </div>
           </div>
@@ -263,7 +276,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="area">Surface (m²)</Label>
+                  <label htmlFor="area" className="block text-sm font-medium text-gray-700 mb-1">Surface (m²)</label>
                   <Input
                     id="area"
                     type="number"
@@ -273,56 +286,53 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="rooms">Nombre de pièces</Label>
+                  <label htmlFor="rooms" className="block text-sm font-medium text-gray-700 mb-1">Nombre de pièces</label>
                   <Select 
-                    value={formData.rooms} 
-                    onValueChange={(value) => handleInputChange('rooms', value)}
-                    options={[
-                      { value: '1', label: '1 pièce' },
-                      { value: '2', label: '2 pièces' },
-                      { value: '3', label: '3 pièces' },
-                      { value: '4', label: '4 pièces' },
-                      { value: '5', label: '5 pièces' },
-                      { value: '6+', label: '6+ pièces' }
-                    ]}
+                    selectedKeys={formData.rooms ? [formData.rooms] : []}
+                    onSelectionChange={(keys) => handleInputChange('rooms', Array.from(keys)[0] as string)}
                     placeholder="Sélectionner"
-                  />
+                  >
+                    <SelectItem key="1">1 pièce</SelectItem>
+                    <SelectItem key="2">2 pièces</SelectItem>
+                    <SelectItem key="3">3 pièces</SelectItem>
+                    <SelectItem key="4">4 pièces</SelectItem>
+                    <SelectItem key="5">5 pièces</SelectItem>
+                    <SelectItem key="6+">6+ pièces</SelectItem>
+                  </Select>
                 </div>
                 <div>
-                  <Label htmlFor="bedrooms">Chambres</Label>
+                  <label htmlFor="bedrooms" className="block text-sm font-medium text-gray-700 mb-1">Chambres</label>
                   <Select 
-                    value={formData.bedrooms} 
-                    onValueChange={(value) => handleInputChange('bedrooms', value)}
-                    options={[
-                      { value: '0', label: '0 chambre' },
-                      { value: '1', label: '1 chambre' },
-                      { value: '2', label: '2 chambres' },
-                      { value: '3', label: '3 chambres' },
-                      { value: '4', label: '4 chambres' },
-                      { value: '5+', label: '5+ chambres' }
-                    ]}
+                    selectedKeys={formData.bedrooms ? [formData.bedrooms] : []}
+                    onSelectionChange={(keys) => handleInputChange('bedrooms', Array.from(keys)[0] as string)}
                     placeholder="Sélectionner"
-                  />
+                  >
+                    <SelectItem key="0">0 chambre</SelectItem>
+                    <SelectItem key="1">1 chambre</SelectItem>
+                    <SelectItem key="2">2 chambres</SelectItem>
+                    <SelectItem key="3">3 chambres</SelectItem>
+                    <SelectItem key="4">4 chambres</SelectItem>
+                    <SelectItem key="5+">5+ chambres</SelectItem>
+                  </Select>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="bathrooms">Salles de bain</Label>
+                  <label htmlFor="bathrooms" className="block text-sm font-medium text-gray-700 mb-1">Salles de bain</label>
                   <Select 
-                    value={formData.bathrooms} 
-                    onValueChange={(value) => handleInputChange('bathrooms', value)}
-                    options={[
-                      { value: '1', label: '1 salle de bain' },
-                      { value: '2', label: '2 salles de bain' },
-                      { value: '3', label: '3 salles de bain' },
-                      { value: '4+', label: '4+ salles de bain' }
-                    ]}
+                    selectedKeys={formData.bathrooms ? [formData.bathrooms] : []}
+                    onSelectionChange={(keys) => handleInputChange('bathrooms', Array.from(keys)[0] as string)}
                     placeholder="Sélectionner"
-                  />
+                  >
+                    <SelectItem key="1">1 salle de bain</SelectItem>
+                    <SelectItem key="2">2 salles de bain</SelectItem>
+                    <SelectItem key="3">3 salles de bain</SelectItem>
+                    <SelectItem key="4+">4+ salles de bain</SelectItem>
+                  </Select>
                 </div>
                 <div>
-                  <Label htmlFor="floor">Étage</Label>
+                  <label htmlFor="floor" className="block text-sm font-medium text-gray-700 mb-1">Étage</label>
                   <Input
                     id="floor"
                     placeholder="2"
@@ -331,7 +341,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="yearBuilt">Année de construction</Label>
+                  <label htmlFor="yearBuilt" className="block text-sm font-medium text-gray-700 mb-1">Année de construction</label>
                   <Input
                     id="yearBuilt"
                     type="number"
@@ -343,7 +353,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
               </div>
 
               <div>
-                <Label className="text-base font-medium text-gray-900 mb-4 block">Équipements et caractéristiques</Label>
+                <label className="text-base font-medium text-gray-900 mb-4 block">Équipements et caractéristiques</label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {[
                     { key: 'furnished', label: 'Meublé' },
@@ -357,21 +367,22 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                     <div key={item.key} className="flex items-center space-x-2">
                       <Checkbox
                         id={item.key}
-                        checked={formData[item.key as keyof typeof formData] as boolean}
-                        onCheckedChange={(checked) => handleInputChange(item.key, checked as boolean)}
-                      />
-                      <Label htmlFor={item.key}>{item.label}</Label>
+                        isSelected={formData[item.key as keyof typeof formData] as boolean}
+                        onValueChange={(checked) => handleInputChange(item.key, checked)}
+                      >
+                        {item.label}
+                      </Checkbox>
                     </div>
                   ))}
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="description">Description du bien</Label>
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">Description du bien</label>
                 <Textarea
                   id="description"
                   placeholder="Décrivez votre bien, ses atouts, son environnement..."
-                  rows={6}
+                  minRows={6}
                   value={formData.description}
                   onChange={(e) => handleInputChange('description', e.target.value)}
                 />
@@ -395,9 +406,9 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
 
             <div className="space-y-4">
               <div>
-                <Label htmlFor="price" className="text-lg font-medium">
+                <label htmlFor="price" className="text-lg font-medium block mb-2">
                   {transactionType === 'achat' ? 'Prix de vente' : 'Loyer mensuel'}
-                </Label>
+                </label>
                 <div className="relative mt-2">
                   <Input
                     id="price"
@@ -418,12 +429,14 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                   <h3 className="font-medium text-blue-900 mb-2">Charges et frais supplémentaires</h3>
                   <div className="space-y-3">
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="charges" />
-                      <Label htmlFor="charges">Charges comprises dans le loyer</Label>
+                      <Checkbox id="charges">
+                        Charges comprises dans le loyer
+                      </Checkbox>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="deposit" />
-                      <Label htmlFor="deposit">Dépôt de garantie demandé</Label>
+                      <Checkbox id="deposit">
+                        Dépôt de garantie demandé
+                      </Checkbox>
                     </div>
                   </div>
                 </div>
@@ -483,14 +496,15 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
               <div className="flex items-center space-x-2 mb-4">
                 <Checkbox
                   id="isAgent"
-                  checked={formData.isAgent}
-                  onCheckedChange={(checked) => handleInputChange('isAgent', checked as boolean)}
-                />
-                <Label htmlFor="isAgent">Je suis un professionnel de l'immobilier</Label>
+                  isSelected={formData.isAgent}
+                  onValueChange={(checked) => handleInputChange('isAgent', checked)}
+                >
+                  Je suis un professionnel de l'immobilier
+                </Checkbox>
               </div>
 
               <div>
-                <Label htmlFor="contactName">Nom complet</Label>
+                <label htmlFor="contactName" className="block text-sm font-medium text-gray-700 mb-1">Nom complet</label>
                 <Input
                   id="contactName"
                   placeholder="Jean Dupont"
@@ -500,7 +514,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
               </div>
 
               <div>
-                <Label htmlFor="contactEmail">Adresse email</Label>
+                <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700 mb-1">Adresse email</label>
                 <Input
                   id="contactEmail"
                   type="email"
@@ -511,7 +525,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
               </div>
 
               <div>
-                <Label htmlFor="contactPhone">Numéro de téléphone</Label>
+                <label htmlFor="contactPhone" className="block text-sm font-medium text-gray-700 mb-1">Numéro de téléphone</label>
                 <Input
                   id="contactPhone"
                   type="tel"
@@ -572,9 +586,9 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
         <div className="lg:w-80 flex-shrink-0">
           <Card className="sticky top-24">
             <CardHeader>
-              <CardTitle className="text-lg">Étapes</CardTitle>
+              <h3 className="text-lg font-semibold">Étapes</h3>
             </CardHeader>
-            <CardContent className="p-6 pt-0">
+            <CardBody className="pt-0">
               <div className="space-y-4">
                 {steps.map((step, index) => {
                   const Icon = step.icon;
@@ -617,7 +631,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                   );
                 })}
               </div>
-            </CardContent>
+            </CardBody>
           </Card>
         </div>
 
@@ -625,36 +639,38 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
         <div className="flex-1">
           {/* Step Content */}
           <Card className="mb-8">
-            <CardContent className="p-8">
+            <CardBody className="p-8">
               {renderStepContent()}
-            </CardContent>
+            </CardBody>
           </Card>
 
           {/* Navigation Buttons */}
           <div className="flex justify-between">
             <Button
               variant="outline"
+              variant="bordered"
               onClick={prevStep}
-              disabled={currentStep === 1}
+              isDisabled={currentStep === 1}
               className="px-8"
             >
               Précédent
             </Button>
             
             {currentStep === steps.length ? (
-              <Button className="px-8 bg-green-600 hover:bg-green-700">
+              <Button color="success" className="px-8">
                 Publier l'annonce
               </Button>
             ) : (
               <Button
                 onClick={nextStep}
-                disabled={
+                isDisabled={
                   (currentStep === 1 && (!propertyType || !transactionType)) ||
                   (currentStep === 2 && (!formData.address || !formData.postalCode || !formData.city)) ||
                   (currentStep === 4 && !formData.price) ||
                   (currentStep === 6 && (!formData.contactName || !formData.contactEmail || !formData.contactPhone))
                 }
-                className="px-8 bg-blue-900 hover:bg-blue-800"
+                color="primary"
+                className="px-8"
               >
                 Suivant
               </Button>
