@@ -25,9 +25,7 @@ import {
   Slider, 
   Card, 
   CardBody, 
-  CardHeader, 
   Chip, 
-  Divider, 
   Checkbox,
   ButtonGroup
 } from '@heroui/react';

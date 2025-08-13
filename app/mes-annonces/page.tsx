@@ -11,7 +11,6 @@ import {
   EllipsisVerticalIcon,
   MapPinIcon,
   CalendarIcon,
-  CurrencyEuroIcon,
   UserIcon,
   BuildingOfficeIcon,
   HomeIcon
@@ -20,7 +19,6 @@ import {
   Button, 
   Card, 
   CardBody, 
-  CardHeader, 
   Chip, 
   Dropdown, 
   DropdownTrigger, 
@@ -56,7 +54,7 @@ export default function MesAnnoncesPage() {
       try {
         setLoading(true);
         const response = await fetch(`/api/users/${session.user.id}/properties`);
-        
+
         if (response.ok) {
           const data = await response.json();
           setProperties(data.properties || []);
@@ -173,7 +171,7 @@ export default function MesAnnoncesPage() {
               Gérez vos {properties.length} annonce{properties.length !== 1 ? 's' : ''}
             </p>
           </div>
-          <Button asChild className="mt-4 sm:mt-0 bg-blue-900 hover:bg-blue-800">
+          <Button className="mt-4 sm:mt-0 bg-blue-900 hover:bg-blue-800">
             <Link href="/deposer-une-annonce">
               <PlusIcon className="w-4 h-4 mr-2" />
               Nouvelle Annonce
@@ -242,7 +240,7 @@ export default function MesAnnoncesPage() {
                     {/* Actions Menu */}
                     <div className="absolute top-4 right-4">
                       <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
+                        <DropdownTrigger>
                           <Button
                             variant="light"
                             size="sm"
@@ -251,7 +249,7 @@ export default function MesAnnoncesPage() {
                           >
                             <EllipsisVerticalIcon className="w-4 h-4" />
                           </Button>
-                        </DropdownMenuTrigger>
+                        </DropdownTrigger>
                         <DropdownMenu>
                           <DropdownItem key="view">
                             <Link href={`/property/${property.id}`} className="flex items-center w-full">

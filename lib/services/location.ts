@@ -3,6 +3,7 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, QueryCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 
 let client: DynamoDBClient | undefined;
+
 if (!client) {
     const region = process.env.AWS_REGION || 'eu-north-1';
     const accessKeyId = process.env.AWS_ACCESS_KEY;
@@ -44,3 +45,18 @@ export async function getCities() {
 
   return response.Items as City[] || [];
 };
+
+export async function getCitiesAndNeighborhood(): Promise<City[]> {
+  const command = new ScanCommand({
+    TableName: 'location-dev',
+    ConsistentRead: true,
+    ExpressionAttributeNames: {
+      "#name": "name"
+    },
+    ProjectionExpression: "pk, sk, #name, zip",
+  });
+
+  const response = await docClient.send(command);
+
+  return response.Items as City[] || [];
+}

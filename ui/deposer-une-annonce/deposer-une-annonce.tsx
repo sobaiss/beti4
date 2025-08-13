@@ -11,7 +11,12 @@ import {
   CurrencyEuroIcon, 
   CameraIcon, 
   DocumentTextIcon, 
-  CheckIcon, 
+  CheckIcon,
+  BuildingOffice2Icon,
+  HomeModernIcon,
+  BuildingOfficeIcon,
+  BriefcaseIcon,
+  PhotoIcon, 
 } from '@heroicons/react/24/outline';
 import { 
   Button, 
@@ -23,6 +28,8 @@ import {
   Select, 
   SelectItem, 
   Checkbox,
+  Autocomplete,
+  AutocompleteItem,
 } from '@heroui/react';
 import Link from 'next/link';
 import { City } from '@/types/location';
@@ -122,8 +129,8 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
   };
 
   // Convert cities to combobox options
-  const cityOptions = cities.map(city => ({
-    value: city.name,
+  const cityMap = cities.map(city => ({
+    key: city.sk,
     label: city.name
   }));
 
@@ -146,28 +153,36 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
               <div>
                 <label className="text-base font-medium text-gray-900 mb-4 block">Type de transaction</label>
                 <div className="grid grid-cols-2 gap-4">
-                  <button
-                    onClick={() => setTransactionType('achat')}
-                    className={`p-6 border-2 rounded-lg text-left transition-all ${
-                      transactionType === 'achat' // Changed from border-blue-500 bg-blue-50 to border-primary-500 bg-primary-50
-                        ? 'border-primary-500 bg-primary-50' 
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
+                  <Button
+                    onPress={() => setTransactionType('achat')}
+                    size="lg"
+                    radius="full"
+                    variant={transactionType === 'achat'
+                      ? 'solid'
+                      : 'faded'
+                    }
+                    color={transactionType === 'achat'
+                      ? 'primary'
+                      : 'default'
+                    }
                   >
-                    <div className="font-semibold text-lg mb-2">Vendre</div>
-                    <div className="text-gray-600">Je souhaite vendre mon bien</div>
-                  </button>
-                  <button
-                    onClick={() => setTransactionType('location')}
-                    className={`p-6 border-2 rounded-lg text-left transition-all ${
-                      transactionType === 'location' // Changed from border-blue-500 bg-blue-50 to border-primary-500 bg-primary-50
-                        ? 'border-primary-500 bg-primary-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
+                    <div className="text-gray-600"><span className="font-semibold text-lg mb-2">Vendre</span><br />Je souhaite vendre mon bien</div>
+                  </Button>
+                  <Button
+                    onPress={() => setTransactionType('location')}
+                    size="lg"
+                    radius="full"
+                    variant={transactionType === 'location'
+                      ? 'solid'
+                      : 'faded'
+                    }
+                    color={transactionType === 'location'
+                      ? 'primary'
+                      : 'default'
+                    }
                   >
-                    <div className="font-semibold text-lg mb-2">Louer</div>
-                    <div className="text-gray-600">Je souhaite louer mon bien</div>
-                  </button>
+                    <div className="text-gray-600"><span className="font-semibold text-lg mb-2">Louer</span><br />Je souhaite louer mon bien</div>
+                  </Button>
                 </div>
               </div>
 
@@ -175,11 +190,13 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                 <label className="text-base font-medium text-gray-900 mb-4 block">Type de bien</label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {[
-                    { value: 'appartement', label: 'Appartement', icon: '🏢' },
-                    { value: 'maison', label: 'Maison', icon: '🏠' },
-                    { value: 'villa', label: 'Villa', icon: '🏡' },
-                    { value: 'terrain', label: 'Terrain', icon: '⛰️' },
-                    { value: 'bureau_commerce', label: 'Bureau/Commerce', icon: '🏪' }
+                    { value: 'terrain', label: 'Terrain', icon: <MapPinIcon /> },
+                    { value: 'maison', label: 'Maison', icon: <HomeIcon /> },
+                    { value: 'villa', label: 'Villa', icon: <BuildingOffice2Icon /> },
+                    { value: 'appartement', label: 'Appartement', icon: <HomeModernIcon /> },
+                    { value: 'terrain_agricole', label: 'Terrain Agricole', icon: <PhotoIcon /> },
+                    { value: 'immeuble', label: 'Immeuble', icon: <BuildingOfficeIcon /> },
+                    { value: 'bureau_commerce', label: 'Bureaux & Commerces', icon: <BriefcaseIcon /> }
                   ].map((type) => (
                     <button
                       key={type.value}
@@ -190,7 +207,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
-                      <div className="text-2xl mb-2">{type.icon}</div>
+                      <div className="mb-2">{type.icon}</div>
                       <div className="font-medium">{type.label}</div>
                     </button>
                   ))}
@@ -231,17 +248,21 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Ville</label>
-                  <Select
-                    selectedKeys={formData.city ? [formData.city] : []}
-                    onSelectionChange={(keys) => handleInputChange('city', Array.from(keys)[0] as string)}
-                    placeholder="Sélectionner une ville..."
-                  >
-                    {cityOptions.map((city) => (
-                      <SelectItem key={city.value}>
-                        {city.label}
-                      </SelectItem>
-                    ))}
-                  </Select>
+                  <Autocomplete
+                    allowsCustomValue
+                    onChange={(e) => handleInputChange('city', e.target.value)}
+                    className="max-w-xs"
+                    defaultItems={cityMap}
+                    defaultSelectedKey=""
+                    placeholder="Ville"
+                    startContent={<MapPinIcon className="w-5 h-5 text-default-400" />}
+                    variant="bordered"
+                    radius="full"
+                    size="lg"
+                    isClearable
+                    >
+                    {(locationItem) => <AutocompleteItem key={locationItem.label}>{locationItem.label}</AutocompleteItem>}
+                </Autocomplete>
                 </div>
               </div>
 

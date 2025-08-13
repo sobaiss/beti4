@@ -19,7 +19,10 @@ import {
   Cog6ToothIcon,
   DocumentTextIcon,
   MagnifyingGlassIcon,
-  ArrowRightOnRectangleIcon
+  ArrowRightOnRectangleIcon,
+  PlusIcon,
+  PhotoIcon,
+  HomeModernIcon
 } from '@heroicons/react/24/outline';
 import { 
   Button, 
@@ -81,6 +84,7 @@ export default function Header() {
           <div className="hidden md:flex items-center space-x-4">
             <Button variant="solid" radius="full" size="md" color="warning">
               <Link href="/deposer-une-annonce">
+                <PlusIcon className="mr-2 h-5 w-5" />
                 Déposer une annonce
               </Link>
             </Button>
@@ -159,7 +163,18 @@ export default function Header() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 <Link 
-                  href="/properties?type=maison&transaction=achat"
+                  href="/rechercher?propertyTypes=terrain&transactionType=achat"
+                  className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group"
+                  onClick={() => setActiveDropdown(null)}
+                >
+                  <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-3 group-hover:bg-primary-200 transition-colors">
+                    <MapPinIcon className="w-6 h-6 text-primary-900" />
+                  </div>
+                  <span className="font-medium text-gray-900 group-hover:text-blue-900">Terrain</span>
+                  <span className="text-sm text-gray-500 mt-1">Acheter un terrain</span>
+                </Link>
+                <Link 
+                  href="/rechercher?propertyTypes=maison&transactionType=achat"
                   className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group"
                   onClick={() => setActiveDropdown(null)}
                 >
@@ -171,19 +186,7 @@ export default function Header() {
                 </Link>
                 
                 <Link 
-                  href="/properties?type=terrain&transaction=achat"
-                  className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group"
-                  onClick={() => setActiveDropdown(null)}
-                >
-                  <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-3 group-hover:bg-primary-200 transition-colors">
-                    <MapPinIcon className="w-6 h-6 text-primary-900" />
-                  </div>
-                  <span className="font-medium text-gray-900 group-hover:text-blue-900">Terrain</span>
-                  <span className="text-sm text-gray-500 mt-1">Acheter un terrain</span>
-                </Link>
-                
-                <Link 
-                  href="/properties?type=villa&transaction=achat"
+                  href="/rechercher?propertyTypes=villa&transactionType=achat"
                   className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group"
                   onClick={() => setActiveDropdown(null)}
                 >
@@ -195,7 +198,7 @@ export default function Header() {
                 </Link>
                 
                 <Link 
-                  href="/properties?type=immeuble&transaction=achat"
+                  href="/rechercher?propertyTypes=immeuble&transactionType=achat"
                   className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group"
                   onClick={() => setActiveDropdown(null)}
                 >
@@ -207,7 +210,7 @@ export default function Header() {
                 </Link>
                 
                 <Link 
-                  href="/properties?type=bureau_commerce&transaction=achat"
+                  href="/rechercher?propertyTypes=bureau_commerce&transactionType=achat"
                   className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group"
                   onClick={() => setActiveDropdown(null)}
                 >
@@ -215,7 +218,18 @@ export default function Header() {
                     <BriefcaseIcon className="w-6 h-6 text-primary-900" />
                   </div>
                   <span className="font-medium text-gray-900 group-hover:text-blue-900">Bureaux & Commerces</span>
-                  <span className="text-sm text-gray-500 mt-1">Acheter un local</span>
+                  <span className="text-sm text-gray-500 mt-1">Acheter un local commercial</span>
+                </Link>
+                <Link 
+                  href="/rechercher?propertyTypes=terrain_agricole&transactionType=achat"
+                  className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group"
+                  onClick={() => setActiveDropdown(null)}
+                >
+                  <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-3 group-hover:bg-primary-200 transition-colors">
+                    <PhotoIcon className="w-6 h-6 text-primary-900" />
+                  </div>
+                  <span className="font-medium text-gray-900 group-hover:text-blue-900">Terrain agricole</span>
+                  <span className="text-sm text-gray-500 mt-1">Acheter un terrain agricole</span>
                 </Link>
               </div>
             </div>
@@ -231,19 +245,19 @@ export default function Header() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
                 <Link 
-                  href="/properties?type=appartement&transaction=location"
+                  href="/rechercher?propertyTypes=appartement&transactionType=location"
                   className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group"
                   onClick={() => setActiveDropdown(null)}
                 >
                   <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-3 group-hover:bg-primary-200 transition-colors">
-                    <BuildingOfficeIcon className="w-6 h-6 text-primary-900" />
+                    <HomeModernIcon className="w-6 h-6 text-primary-900" />
                   </div>
                   <span className="font-medium text-gray-900 group-hover:text-blue-900">Appartement</span>
                   <span className="text-sm text-gray-500 mt-1">Louer un appartement</span>
                 </Link>
                 
                 <Link 
-                  href="/properties?type=maison&transaction=location"
+                  href="/rechercher?propertyTypes=maison&transactionType=location"
                   className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group"
                   onClick={() => setActiveDropdown(null)}
                 >
@@ -255,7 +269,7 @@ export default function Header() {
                 </Link>
                 
                 <Link 
-                  href="/properties?type=villa&transaction=location"
+                  href="/rechercher?propertyTypes=villa&transactionType=location"
                   className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group"
                   onClick={() => setActiveDropdown(null)}
                 >
@@ -267,7 +281,7 @@ export default function Header() {
                 </Link>
                 
                 <Link 
-                  href="/properties?type=immeuble&transaction=location"
+                  href="/rechercher?propertyTypes=immeuble&transactionType=location"
                   className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group"
                   onClick={() => setActiveDropdown(null)}
                 >
@@ -279,7 +293,7 @@ export default function Header() {
                 </Link>
                 
                 <Link 
-                  href="/properties?type=bureau_commerce&transaction=location"
+                  href="/rechercher?propertyTypes=bureau_commerce&transactionType=location"
                   className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group"
                   onClick={() => setActiveDropdown(null)}
                 >
@@ -289,9 +303,19 @@ export default function Header() {
                   <span className="font-medium text-gray-900 group-hover:text-blue-900">Bureaux & Commerces</span>
                   <span className="text-sm text-gray-500 mt-1">Louer un local</span>
                 </Link>
-                
                 <Link 
-                  href="/properties?type=terrain&transaction=location"
+                  href="/rechercher?propertyTypes=terrain&transactionType=location"
+                  className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group"
+                  onClick={() => setActiveDropdown(null)}
+                >
+                  <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-3 group-hover:bg-primary-200 transition-colors">
+                    <MapPinIcon className="w-6 h-6 text-primary-900" />
+                  </div>
+                  <span className="font-medium text-gray-900 group-hover:text-blue-900">Terrain</span>
+                  <span className="text-sm text-gray-500 mt-1">Louer un terrain</span>
+                </Link>
+                <Link 
+                  href="/rechercher?propertyTypes=terrain&transactionType=location"
                   className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group"
                   onClick={() => setActiveDropdown(null)}
                 >
@@ -299,7 +323,7 @@ export default function Header() {
                     <GlobeAltIcon className="w-6 h-6 text-primary-900" />
                   </div>
                   <span className="font-medium text-gray-900 group-hover:text-blue-900">Terrain agricole</span>
-                  <span className="text-sm text-gray-500 mt-1">Louer un terrain</span>
+                  <span className="text-sm text-gray-500 mt-1">Louer un terrain agricole</span>
                 </Link>
               </div>
             </div>
@@ -313,19 +337,19 @@ export default function Header() {
               <div className="space-y-2">
                 <div className="text-default-700 font-medium">Acheter</div>
                 <div className="pl-4 space-y-2">
-                  <Link href="/properties?type=maison&transaction=achat" className="block text-default-600 hover:text-primary-900">
+                  <Link href="/rechercher?propertyTypes=maison&transactionType=achat" className="block text-default-600 hover:text-primary-900">
                     Maison
                   </Link>
-                  <Link href="/properties?type=terrain&transaction=achat" className="block text-default-600 hover:text-primary-900">
+                  <Link href="/rechercher?propertyTypes=terrain&transactionType=achat" className="block text-default-600 hover:text-primary-900">
                     Terrain
                   </Link>
-                  <Link href="/properties?type=villa&transaction=achat" className="block text-default-600 hover:text-primary-900">
+                  <Link href="/rechercher?propertyTypes=villa&transactionType=achat" className="block text-default-600 hover:text-primary-900">
                     Villa
                   </Link>
-                  <Link href="/properties?type=immeuble&transaction=achat" className="block text-default-600 hover:text-primary-900">
+                  <Link href="/rechercher?propertyTypes=immeuble&transactionType=achat" className="block text-default-600 hover:text-primary-900">
                     Immeuble
                   </Link>
-                  <Link href="/properties?type=bureau_commerce&transaction=achat" className="block text-default-600 hover:text-primary-900">
+                  <Link href="/rechercher?propertyTypes=bureau_commerce&transactionType=achat" className="block text-default-600 hover:text-primary-900">
                     Bureaux & Commerces
                   </Link>
                 </div>
@@ -333,22 +357,22 @@ export default function Header() {
               <div className="space-y-2">
                 <div className="text-default-700 font-medium">Louer</div>
                 <div className="pl-4 space-y-2">
-                  <Link href="/properties?type=appartement&transaction=location" className="block text-default-600 hover:text-primary-900">
+                  <Link href="/rechercher?propertyTypes=appartement&transactionType=location" className="block text-default-600 hover:text-primary-900">
                     Appartement
                   </Link>
-                  <Link href="/properties?type=maison&transaction=location" className="block text-default-600 hover:text-primary-900">
+                  <Link href="/rechercher?propertyTypes=maison&transactionType=location" className="block text-default-600 hover:text-primary-900">
                     Maison
                   </Link>
-                  <Link href="/properties?type=villa&transaction=location" className="block text-default-600 hover:text-primary-900">
+                  <Link href="/rechercher?propertyTypes=villa&transactionType=location" className="block text-default-600 hover:text-primary-900">
                     Villa
                   </Link>
-                  <Link href="/properties?type=immeuble&transaction=location" className="block text-default-600 hover:text-primary-900">
+                  <Link href="/rechercher?propertyTypes=immeuble&transactionType=location" className="block text-default-600 hover:text-primary-900">
                     Immeuble
                   </Link>
-                  <Link href="/properties?type=bureau_commerce&transaction=location" className="block text-default-600 hover:text-primary-900">
+                  <Link href="/rechercher?propertyTypes=bureau_commerce&transactionType=location" className="block text-default-600 hover:text-primary-900">
                     Bureaux & Commerces
                   </Link>
-                  <Link href="/properties?type=terrain&transaction=location" className="block text-default-600 hover:text-primary-900">
+                  <Link href="/rechercher?propertyTypes=terrain&transactionType=location" className="block text-default-600 hover:text-primary-900">
                     Terrain agricole
                   </Link>
                 </div>
