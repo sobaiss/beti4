@@ -17,9 +17,9 @@ import {
 import { 
   Button, 
   Input, 
-  Card, 
-  CardContent, 
-  CardHeader, 
+  Card,
+  CardBody,
+  CardHeader,
   Checkbox, 
   RadioGroup, 
   Radio,
@@ -131,7 +131,7 @@ export default function RegisterPage() {
             </p>
           </CardHeader>
 
-          <CardContent className="space-y-6">
+          <CardBody className="space-y-6">
             {/* User Type Selection */}
             <div className="space-y-4">
               <label className="block text-base font-medium text-default-900">Je suis :</label>
@@ -337,7 +337,7 @@ export default function RegisterPage() {
                 </Link>
               </p>
             </div>
-          </CardContent>
+          </CardBody>
         </Card>
       </div>
     </div>
