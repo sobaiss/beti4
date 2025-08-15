@@ -16,6 +16,7 @@
     "@headlessui/react": "^2.0.4",
     "@heroicons/react": "^2.1.1",
     "@heroui/react": "^2.8.2",
+    "@heroui/theme": "^2.4.20",
     "@hookform/resolvers": "^3.9.0",
     "@next/swc-wasm-nodejs": "13.5.1",
     "@prisma/client": "^6.13.0",
