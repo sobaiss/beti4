@@ -29,6 +29,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Header from '@/components/Header';
 import { Property } from '@/types/property';
+import { PropertyService } from '@/lib/services/property';
 
 export default function MesAnnoncesPage() {
   const { data: session, status } = useSession();
@@ -53,11 +54,10 @@ export default function MesAnnoncesPage() {
 
       try {
         setLoading(true);
-        const response = await fetch(`/api/users/${session.user.id}/properties`);
+        const response = await PropertyService.getProperties({ owner: session.user.id });
 
-        if (response.ok) {
-          const data = await response.json();
-          setProperties(data.properties || []);
+        if (response) {
+          setProperties(response.properties || []);
         } else {
           setError('Erreur lors du chargement de vos annonces');
         }
@@ -107,16 +107,15 @@ export default function MesAnnoncesPage() {
   };
 
   const handleDeleteProperty = async (propertyId: string) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')) return;
+    if (!session?.user?.id) {
+      // @todo add modal
+      return;
+    }
+    // @todo add modal
+    // if (!confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')) return;
 
     try {
-      const response = await fetch(`/api/properties/${propertyId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ownerId: session?.user?.id })
-      });
+      const response = await PropertyService.deleteUserProperty(propertyId, session.user.id);
 
       if (response.ok) {
         setProperties(prev => prev.filter(p => p.id !== propertyId));
@@ -239,7 +238,7 @@ export default function MesAnnoncesPage() {
 
                     {/* Actions Menu */}
                     <div className="absolute top-4 right-4">
-                      <DropdownMenu>
+                      <Dropdown>
                         <DropdownTrigger>
                           <Button
                             variant="light"
@@ -274,7 +273,7 @@ export default function MesAnnoncesPage() {
                             </div>
                           </DropdownItem>
                         </DropdownMenu>
-                      </DropdownMenu>
+                      </Dropdown>
                     </div>
 
                     {/* Transaction Type Badge */}

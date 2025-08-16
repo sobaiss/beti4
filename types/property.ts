@@ -82,3 +82,13 @@ export interface PropertyFavorite {
   propertyId: string;
   property?: Property;
 }
+
+export type PaginatedProperty = {
+  properties: Property[];
+  pagination: {
+    total: number;
+    page: number;
+    pages: number;
+    limit: number;
+  };
+}

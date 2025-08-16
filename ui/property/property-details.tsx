@@ -1,6 +1,3 @@
-'use client';
-
-import { useEffect } from 'react';
 import { 
   MapPinIcon, 
   HomeIcon, 
@@ -17,19 +14,6 @@ import { Property } from '@/types/property';
 
 export default function PropertyDetailsView({property}: { property: Property }) {
   // Track property view on component mount
-  useEffect(() => {
-    const trackView = async () => {
-      try {
-        await fetch(`/api/properties/${property.id}/view`, {
-          method: 'POST'
-        })
-      } catch (error) {
-        console.error('Error tracking property view:', error)
-      }
-    }
-
-    trackView()
-  }, [property.id])
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('fr-FR', {
@@ -235,7 +219,7 @@ export default function PropertyDetailsView({property}: { property: Property }) 
         {/* Contact Sidebar (1 column) */}
         <div className="lg:col-span-1 space-y-6">
           {/* Contact Agent */}
-          <Card className="border shadow-sm sticky top-24">
+          <Card className="border shadow-sm">
             <CardHeader className="pb-3 text-foreground">
               <h3 className="text-lg font-semibold">Contacter l'Agent</h3>
             </CardHeader>
@@ -277,28 +261,6 @@ export default function PropertyDetailsView({property}: { property: Property }) 
                   Appeler l'Agent
                 </Button>
               </div>
-            </CardBody>
-          </Card>
-
-          {/* Schedule Visit */}
-          <Card className="border shadow-sm">
-            <CardHeader className="pb-3 text-foreground">
-              <h3 className="text-lg font-semibold">Programmer une Visite</h3>
-            </CardHeader>
-            <CardBody className="pt-0 space-y-4">
-              <Input type="date" />
-              <Select>
-                <SelectItem key="09:00">09:00</SelectItem>
-                <SelectItem key="10:00">10:00</SelectItem>
-                <SelectItem key="11:00">11:00</SelectItem>
-                <SelectItem key="14:00">14:00</SelectItem>
-                <SelectItem key="15:00">15:00</SelectItem>
-                <SelectItem key="16:00">16:00</SelectItem>
-              </Select>
-              <Button color="warning" className="w-full">
-                <CalendarIcon className="w-4 h-4 mr-2" />
-                Réserver une Visite
-              </Button>
             </CardBody>
           </Card>
 

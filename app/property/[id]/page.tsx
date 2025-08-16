@@ -15,7 +15,13 @@ export default async function PropertyDetailPage(props: { params: Promise<{ id: 
   
   let property;
   try {
-    property = await PropertyService.getPropertyById(id);
+    property = await PropertyService.getPropertyByIdFromServer(id);
+    if (property) {
+      // Track property view on component mount
+      PropertyService.incrementViewCount(property.id).catch(error => {
+        console.error('Error tracking property view:', error);
+      });
+    }
   } catch (error) {
     console.error('Error fetching property:', error);
     property = null;

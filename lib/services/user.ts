@@ -1,467 +1,131 @@
-import { prisma } from '@/lib/prisma'
-import { CreateUserInput, UpdateUserInput, SavedSearchInput, UserSettingsInput, UpdateUserSettingsInput } from '@/lib/validations/user'
+import { UpdateUserInput, UpdateUserSettingsInput } from '@/lib/validations/user'
+import { PaginatedProperty } from '@/types/property';
+import { User } from '@/types/user';
 
 export class UserService {
-  static async createUser(data: CreateUserInput) {
-    const user = await prisma.user.create({
-      data,
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
-        userType: true,
-        avatar: true,
-        status: true,
-        validatedAt: true,
-        verifiedAt: true,
-        lockedAt: true,
-        acceptMarketing: true,
-        createdAt: true,
-        updatedAt: true
-      }
-    })
-
-    // Create default user settings
-    await prisma.userSettings.create({
-      data: {
-        userId: user.id,
-        acceptEmailContact: true,
-        acceptPhoneContact: true,
-        displayEmail: false,
-        displayPhone: false
-      }
-    })
-
-    return user
+  static async login(email: string, password: string) {
+    return await fetch('http://localhost:3000/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username: email, password })
+    });
   }
 
-  static async getUserById(id: string) {
-    return await prisma.user.findUnique({
-      where: { id },
-      include: {
-        settings: true,
-        rights: {
-          include: {
-            right: true
-          }
-        }
-      },
-      // select: {
-      //   id: true,
-      //   email: true,
-      //   firstName: true,
-      //   lastName: true,
-      //   phone: true,
-      //   userType: true,
-      //   avatar: true,
-      //   status: true,
-      //   validatedAt: true,
-      //   verifiedAt: true,
-      //   lockedAt: true,
-      //   acceptMarketing: true,
-      //   settings: true,
-      //   rights: true,
-      //   createdAt: true,
-      //   updatedAt: true,
-      //   _count: {
-      //     select: {
-      //       properties: true,
-      //       favoriteProperties: true,
-      //       savedSearches: true
-      //     }
-      //   }
-      // }
-    })
+  static async getProfile(accessToken: string): Promise<User | null> {
+    const response = await fetch('http://localhost:3000/users/profile', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    return await response.json() as User;
   }
 
-  static async getUserByEmail(email: string) {
-    return await prisma.user.findUnique({
-      where: { email },
-      include: {
-        settings: true,
-        rights: {
-          include: {
-            right: true
-          }
-        }
+  static async updateUserInfos(id: string, data: UpdateUserInput) {
+    const response = await fetch(`http://localhost:3000/user/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
       },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
-        userType: true,
-        avatar: true,
-        status: true,
-        validatedAt: true,
-        verifiedAt: true,
-        lockedAt: true,
-        acceptMarketing: true,
-        settings: true,
-        rights: true,
-        createdAt: true,
-        updatedAt: true
-      }
-    })
+      body: JSON.stringify(data)
+    });
+
+    return response;
   }
 
-  static async updateUser(id: string, data: UpdateUserInput) {
-    return await prisma.user.update({
-      where: { id },
-      data,
-      include: {
-        settings: true,
-        rights: {
-          include: {
-            right: true
-          }
-        }
+  static async updateUserSettings(id: string, data: UpdateUserSettingsInput) {
+    const response = await fetch(`http://localhost:3000/user/${id}/settings`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
       },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
-        userType: true,
-        avatar: true,
-        status: true,
-        validatedAt: true,
-        verifiedAt: true,
-        lockedAt: true,
-        acceptMarketing: true,
-        settings: true,
-        rights: true,
-        createdAt: true,
-        updatedAt: true
-      }
-    })
+      body: JSON.stringify(data)
+    });
+
+    return response;
+  }
+
+  // @todo change parameter data type
+  static async updateUserPassword(id: string, data: Record<string, string>) {
+    const response = await fetch(`http://localhost:3000/user/${id}/password`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    });
+
+    return response;
+  }
+
+  static async updateUserEmail(id: string, newEmail: string) {
+    const response = await fetch(`http://localhost:3000/user/${id}/email`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ newEmail })
+    });
+
+    return response;
   }
 
   static async deleteUser(id: string) {
-    return await prisma.user.delete({
-      where: { id }
-    })
+    const response = await fetch(`http://localhost:3000/users/${id}`, {
+      method: 'DELETE',
+    });
+
+    return response;
   }
 
-  static async getUserProperties(userId: string, page = 1, limit = 20) {
-    const skip = (page - 1) * limit
-    
-    const [properties, total] = await Promise.all([
-      prisma.property.findMany({
-        where: { ownerId: userId },
-        include: {
-          images: {
-            orderBy: { order: 'asc' }
-          },
-          amenities: true,
-          _count: {
-            select: { favorites: true }
-          }
-        },
-        orderBy: { createdAt: 'desc' },
-        skip,
-        take: limit
-      }),
-      prisma.property.count({
-        where: { ownerId: userId }
-      })
-    ])
-
-    return {
-      properties,
-      pagination: {
-        page,
-        limit,
-        total,
-        pages: Math.ceil(total / limit)
-      }
-    }
-  }
-
-  static async getUserFavorites(userId: string, page = 1, limit = 20) {
-    const skip = (page - 1) * limit
-    
-    const [favorites, total] = await Promise.all([
-      prisma.propertyFavorite.findMany({
-        where: { userId },
-        include: {
-          property: {
-            include: {
-              owner: {
-                select: {
-                  id: true,
-                  firstName: true,
-                  lastName: true,
-                  userType: true,
-                  status: true
-                }
-              },
-              images: {
-                orderBy: { order: 'asc' }
-              },
-              amenities: true,
-              _count: {
-                select: { favorites: true }
-              }
-            }
-          }
-        },
-        orderBy: { createdAt: 'desc' },
-        skip,
-        take: limit
-      }),
-      prisma.propertyFavorite.count({
-        where: { userId }
-      })
-    ])
-
-    return {
-      favorites: favorites.map(f => f.property),
-      pagination: {
-        page,
-        limit,
-        total,
-        pages: Math.ceil(total / limit)
-      }
-    }
-  }
-
-  static async validateUser(id: string) {
-    return await prisma.user.update({
-      where: { id },
-      data: {
-        status: 'valide',
-        validatedAt: new Date()
+  // @todo change parameter data type
+  static async createUser(data: Record<string, any>) {
+    const response = await fetch(`http://localhost:3000/user`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
-        userType: true,
-        avatar: true,
-        status: true,
-        validatedAt: true,
-        verifiedAt: true,
-        lockedAt: true,
-        acceptMarketing: true,
-        createdAt: true,
-        updatedAt: true
-      }
-    })
+      body: JSON.stringify(data)
+    });
+
+    return response;
   }
 
-  static async verifyUser(id: string) {
-    return await prisma.user.update({
-      where: { id },
-      data: {
-        status: 'verifie',
-        verifiedAt: new Date()
-      },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
-        userType: true,
-        avatar: true,
-        status: true,
-        validatedAt: true,
-        verifiedAt: true,
-        lockedAt: true,
-        acceptMarketing: true,
-        createdAt: true,
-        updatedAt: true
-      }
-    })
+  static async getUserById(id: string) {
+    return await fetch(`http://localhost:3000/user/${id}`);
   }
 
-  static async lockUser(id: string) {
-    return await prisma.user.update({
-      where: { id },
-      data: {
-        status: 'bloque',
-        lockedAt: new Date()
-      },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
-        userType: true,
-        avatar: true,
-        status: true,
-        validatedAt: true,
-        verifiedAt: true,
-        lockedAt: true,
-        acceptMarketing: true,
-        createdAt: true,
-        updatedAt: true
-      }
-    })
+  static async getUserByEmail(email: string) {
+    return await fetch(`http://localhost:3000/user/email/${email}`);
   }
 
-  static async unlockUser(id: string) {
-    return await prisma.user.update({
-      where: { id },
-      data: {
-        status: 'valide',
-        lockedAt: null
-      },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
-        userType: true,
-        avatar: true,
-        status: true,
-        validatedAt: true,
-        verifiedAt: true,
-        lockedAt: true,
-        acceptMarketing: true,
-        createdAt: true,
-        updatedAt: true
-      }
-    })
-  }
+  static async getUserFavorites(page = 1, limit = 12) {
+    const queryParams: Record<string, string> = {
+      page: `${page}`,
+      limit: `${limit}`,
+    };
 
-  static async createSavedSearch(userId: string, data: SavedSearchInput) {
-    return await prisma.savedSearch.create({
-      data: {
-        ...data,
-        userId
-      }
-    })
-  }
+    const response = await fetch('http://localhost:3000/users/properties?' + new URLSearchParams(queryParams).toString());
 
-  static async getUserSavedSearches(userId: string) {
-    return await prisma.savedSearch.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' }
-    })
-  }
-
-  static async deleteSavedSearch(id: string, userId: string) {
-    const savedSearch = await prisma.savedSearch.findFirst({
-      where: { id, userId }
-    })
-    
-    if (!savedSearch) {
-      throw new Error('Saved search not found or access denied')
+    if (!response.ok) {
+      return null;
     }
 
-    return await prisma.savedSearch.delete({
-      where: { id }
-    })
+    return await response.json() as PaginatedProperty;
   }
 
-  static async getUserSettings(userId: string) {
-    return await prisma.userSettings.findUnique({
-      where: { userId }
-    })
-  }
+  static async updateUserStatus(id: string, action: string) {
+    const response = await fetch(`http://localhost:3000/user/${id}/action`, {
+      method: 'POST',
+    });
 
-  static async updateUserSettings(userId: string, data: UpdateUserSettingsInput) {
-    return await prisma.userSettings.upsert({
-      where: { userId },
-      update: data,
-      create: {
-        userId,
-        ...data
-      }
-    })
-  }
-
-  static async createDefaultUserSettings(userId: string) {
-    return await prisma.userSettings.create({
-      data: {
-        userId,
-        acceptEmailContact: true,
-        acceptPhoneContact: true,
-        displayEmail: false,
-        displayPhone: false
-      }
-    })
-  }
-
-  static async assignRightsToUser(userId: string, rightIds: string[]) {
-    // Remove existing rights
-    await prisma.userRight.deleteMany({
-      where: { userId }
-    })
-
-    // Add new rights
-    const userRights = rightIds.map(rightId => ({
-      userId,
-      rightId
-    }))
-
-    await prisma.userRight.createMany({
-      data: userRights
-    })
-
-    return await this.getUserById(userId)
-  }
-
-  static async addRightToUser(userId: string, rightId: string) {
-    const existingRight = await prisma.userRight.findUnique({
-      where: {
-        userId_rightId: {
-          userId,
-          rightId
-        }
-      }
-    })
-
-    if (existingRight) {
-      throw new Error('User already has this right')
-    }
-
-    await prisma.userRight.create({
-      data: { userId, rightId }
-    })
-
-    return await this.getUserById(userId)
-  }
-
-  static async removeRightFromUser(userId: string, rightId: string) {
-    await prisma.userRight.deleteMany({
-      where: { userId, rightId }
-    })
-
-    return await this.getUserById(userId)
-  }
-
-  static async getUserRights(userId: string) {
-    const userRights = await prisma.userRight.findMany({
-      where: { userId },
-      include: {
-        right: true
-      }
-    })
-
-    return userRights.map(ur => ur.right)
-  }
-
-  static async hasRight(userId: string, rightName: string): Promise<boolean> {
-    const userRight = await prisma.userRight.findFirst({
-      where: {
-        userId,
-        right: {
-          name: rightName
-        }
-      }
-    })
-
-    return !!userRight
+    return response;
   }
 }

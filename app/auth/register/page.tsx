@@ -23,10 +23,10 @@ import {
   Checkbox, 
   RadioGroup, 
   Radio,
-  Divider, 
-  Textarea 
+  Divider,
 } from '@heroui/react';
 import Header from '@/components/Header';
+import { UserService } from '@/lib/services/user';
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -71,15 +71,9 @@ export default function RegisterPage() {
     setError('');
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const response = await UserService.createUser({
           ...formData,
-          userType,
-        }),
+          userType: userType as 'particulier' | 'professionnel',
       });
 
       const data = await response.json();

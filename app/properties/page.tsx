@@ -22,11 +22,14 @@ import {
 import Header from '@/components/Header';
 import PropertyCard from '@/components/PropertyCard';
 import { Property } from '@/types/property';
+import { PropertyService } from '@/lib/services/property';
+import { useSearchParams } from 'next/navigation';
 
 export default function PropertiesPage() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [propertyType, setPropertyType] = useState('');
-  const [transactionType, setTransactionType] = useState('');
+  const searchParams = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('location') || '');
+  const [propertyTypes, setPropertyTypes] = useState<string[]>(searchParams.get('propertyTypes')?.split(',') || []);
+  const [transactionType, setTransactionType] = useState(searchParams.get('transactionType') || 'all');
   const [priceRange, setPriceRange] = useState([0, 1000000]);
   const [sortBy, setSortBy] = useState('price-asc');
   const [viewMode, setViewMode] = useState('grid');
@@ -39,27 +42,19 @@ export default function PropertiesPage() {
     const fetchProperties = async () => {
       setLoading(true);
       try {
-        const params = new URLSearchParams();
-        
-        if (searchQuery) params.append('location', searchQuery);
-        if (propertyType && propertyType !== 'all') params.append('propertyTypes', propertyType.toUpperCase());
-        if (transactionType && transactionType !== 'all') params.append('transactionType', transactionType.toUpperCase());
-        if (priceRange[0] > 0) params.append('priceMin', priceRange[0].toString());
-        if (priceRange[1] < 1000000) params.append('priceMax', priceRange[1].toString());
-        
-        // Sort parameters
-        const sortField = sortBy === 'price-asc' || sortBy === 'price-desc' ? 'price' :
-                         sortBy === 'area-desc' ? 'area' : 'createdAt';
-        const sortDirection = sortBy === 'price-desc' || sortBy === 'area-desc' ? 'desc' : 'asc';
-        params.append('sortField', sortField);
-        params.append('sortDirection', sortDirection);
-        
-        const response = await fetch(`/api/properties?${params.toString()}`);
-        if (response.ok) {
-          const data = await response.json();
-          setProperties(data.properties);
-          setTotalProperties(data.pagination.total);
+        const filters = {
+          location: searchQuery !== '' ? searchQuery : undefined,
+          propertyTypes: propertyTypes.length > 0 ? propertyTypes.join(',') : undefined,
+          transactionType: transactionType !== 'all' ? transactionType : undefined,
+          // priceRange: (priceMin && priceMax) ? [parseInt(priceMin), parseInt(priceMax)] as [number, number] : undefined,
+          // areaRange: (areaMin && areaMax) ? [parseInt(areaMin), parseInt(areaMax)] as [number, number] : undefined,
+          // bedrooms: bedrooms
         }
+
+        const response = await PropertyService.getProperties(filters);
+
+        setProperties(response?.properties || []);
+        setTotalProperties(response?.pagination.total || 0);
       } catch (error) {
         console.error('Error fetching properties:', error);
       } finally {
@@ -68,7 +63,7 @@ export default function PropertiesPage() {
     };
 
     fetchProperties();
-  }, [searchQuery, propertyType, transactionType, priceRange, sortBy]);
+  }, [searchQuery, propertyTypes, transactionType, priceRange, sortBy]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -112,8 +107,8 @@ export default function PropertiesPage() {
                 <div className="space-y-2"> 
                   <label className="block text-sm font-medium text-default-700">Type de Bien</label>
                   <Select 
-                    selectedKeys={propertyType ? [propertyType] : []}
-                    onSelectionChange={(keys) => setPropertyType(Array.from(keys)[0] as string || '')}
+                    selectedKeys={propertyTypes ? [propertyTypes] : []}
+                    onSelectionChange={(keys) => setPropertyTypes(Array.from(keys) as string[] || [])}
                     placeholder="Tous les biens"
                   >
                     <SelectItem key="all">Tous les biens</SelectItem>
@@ -226,7 +221,7 @@ export default function PropertiesPage() {
                   </div>
                   <Button onClick={() => {
                     setSearchQuery('');
-                    setPropertyType('all');
+                    setPropertyTypes(['all']);
                     setTransactionType('all');
                     setPriceRange([0, 1000000]);
                   }}>

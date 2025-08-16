@@ -1,21 +1,9 @@
 import PropertyCard from "@/components/PropertyCard";
-import { PropertyService } from "@/lib/services/property";
-import { Property } from "@/types/property";
+import { PaginatedProperty } from "@/types/property";
 import { Button } from "@heroui/react";
 import Link from "next/link";
 
-export default async function PropertyList() {
-    let properties: Property[] = [];
-
-    // try {
-        properties = await PropertyService.getFeaturedProperties(6);
-        // if (response.ok) {
-        //     properties = await response.json() as Property[];
-        // }
-    // } catch (error) {
-    //     console.error('Error fetching featured properties:', error);
-    // }
-
+export default function PropertyList({featuredProperties}: { featuredProperties: PaginatedProperty }) {
   return (
       <section className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,9 +15,8 @@ export default async function PropertyList() {
               Sélection de biens immobiliers les plus attractifs actuellement disponibles
             </p>
           </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {properties.map((property) => (
+                {featuredProperties.properties.map((property) => (
                 <PropertyCard key={property.id} property={property} />
                 ))}
             </div>

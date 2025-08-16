@@ -1,9 +1,8 @@
 import NextAuth from 'next-auth'
-import { PrismaAdapter } from '@auth/prisma-adapter'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { prisma } from '@/lib/prisma'
-import bcrypt from 'bcrypt'
 import { z } from 'zod'
+import { UserService } from '@/lib/services/user'
+import { cookies } from 'next/headers'
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -11,7 +10,6 @@ const loginSchema = z.object({
 })
 
 const handler = NextAuth({
-  adapter: PrismaAdapter(prisma),
   session: {
     strategy: 'jwt' as const,
   },
@@ -30,32 +28,26 @@ const handler = NextAuth({
         try {
           const { email, password } = loginSchema.parse(credentials)
 
-          const user = await prisma.user.findUnique({
-            where: { email: email.toLowerCase() },
-            include: {
-              settings: true,
-              rights: {
-                include: {
-                  right: true
-                }
-              },
-              agency: true
-            }
-          })
+          const response = await UserService.login(email, password)
+          if (!response.ok) {
+            return null
+          }
+          
+          const data = await response.json();
 
+          const accessToken = data.access_token
+          if (!accessToken) {
+            return null
+          }
+
+          const user = await UserService.getProfile(accessToken)
           if (!user) {
             return null
           }
 
-          // Check if user is blocked
-          if (user.status === 'bloque') {
-            throw new Error('Votre compte a été bloqué. Contactez le support.')
-          }
-
-          const isPasswordValid = await bcrypt.compare(password, user.password)
-          if (!isPasswordValid) {
-            return null
-          }
+          const cookieStore = await cookies()
+          cookieStore.set('access_token', accessToken)
+          cookieStore.set('user_id', user.id)
 
           return {
             id: user.id,
@@ -71,8 +63,8 @@ const handler = NextAuth({
             verifiedAt: user.verifiedAt,
             acceptMarketing: user.acceptMarketing,
             settings: user.settings,
-            rights: user.rights.map(ur => ur.right),
-            agency: user.agency,
+            rights: user.rights?.map(ur => ur.name),
+            //agency: user.agency,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt
           }

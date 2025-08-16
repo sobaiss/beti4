@@ -32,15 +32,16 @@ import {
 import Header from '@/components/Header';
 import PropertyCard from '@/components/PropertyCard';
 import { Property } from '@/types/property';
+import { PropertyService } from '@/lib/services/property';
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get('location') || '');
-  const [propertyTypes, setPropertyTypes] = useState<string[]>([]);
-  const [transactionType, setTransactionType] = useState(searchParams.get('type') || 'all');
+  const [propertyTypes, setPropertyTypes] = useState<string[]>(searchParams.get('propertyTypes')?.split(',') || []);
+  const [transactionType, setTransactionType] = useState(searchParams.get('transactionType') || 'all');
   const [priceRange, setPriceRange] = useState([0, 2000000]);
   const [areaRange, setAreaRange] = useState([0, 300]);
-  const [bedrooms, setBedrooms] = useState('all');
+  const [bedrooms, setBedrooms] = useState<string>(searchParams.get('bedrooms') || '');
   const [sortBy, setSortBy] = useState('relevance');
   const [viewMode, setViewMode] = useState('grid');
   const [showFilters, setShowFilters] = useState(false);
@@ -61,30 +62,19 @@ export default function SearchPage() {
     const fetchProperties = async () => {
       setLoading(true);
       try {
-        const params = new URLSearchParams();
-        
-        if (searchQuery) params.append('location', searchQuery);
-        if (propertyTypes.length > 0) params.append('propertyTypes', propertyTypes.join(','));
-        if (transactionType && transactionType !== 'all') params.append('transactionType', transactionType.toUpperCase());
-        if (priceRange[0] > 0) params.append('priceMin', priceRange[0].toString());
-        if (priceRange[1] < 2000000) params.append('priceMax', priceRange[1].toString());
-        if (areaRange[0] > 0) params.append('areaMin', areaRange[0].toString());
-        if (areaRange[1] < 300) params.append('areaMax', areaRange[1].toString());
-        if (bedrooms !== 'all') params.append('bedrooms', bedrooms);
-        
-        // Sort parameters
-        const sortField = sortBy === 'price-asc' || sortBy === 'price-desc' ? 'price' :
-                         sortBy === 'area-desc' ? 'area' : 'createdAt';
-        const sortDirection = sortBy === 'price-desc' || sortBy === 'area-desc' ? 'desc' : 'asc';
-        params.append('sortField', sortField);
-        params.append('sortDirection', sortDirection);
-        
-        const response = await fetch(`/api/properties?${params.toString()}`);
-        if (response.ok) {
-          const data = await response.json();
-          setProperties(data.properties);
-          setTotalProperties(data.pagination.total);
+        const filters = {
+          location: searchQuery !== '' ? searchQuery : undefined,
+          propertyTypes: propertyTypes.length > 0 ? propertyTypes.join(',') : undefined,
+          transactionType: transactionType !== 'all' ? transactionType : undefined,
+          // priceRange: (priceMin && priceMax) ? [parseInt(priceMin), parseInt(priceMax)] as [number, number] : undefined,
+          // areaRange: (areaMin && areaMax) ? [parseInt(areaMin), parseInt(areaMax)] as [number, number] : undefined,
+          // bedrooms: bedrooms
         }
+
+        const response = await PropertyService.getProperties(filters);
+
+        setProperties(response?.properties || []);
+        setTotalProperties(response?.pagination.total || 0);
       } catch (error) {
         console.error('Error fetching properties:', error);
       } finally {
@@ -109,7 +99,7 @@ export default function SearchPage() {
     setTransactionType('all');
     setPriceRange([0, 2000000]);
     setAreaRange([0, 300]);
-    setBedrooms('all');
+    setBedrooms('');
   };
 
   const activeFiltersCount = [
@@ -118,15 +108,17 @@ export default function SearchPage() {
     transactionType !== 'all',
     priceRange[0] > 0 || priceRange[1] < 2000000,
     areaRange[0] > 0 || areaRange[1] < 300,
-    bedrooms !== 'all'
+    bedrooms !== undefined
   ].filter(Boolean).length;
 
   const getPropertyTypeIcon = (type: string) => {
     switch (type) {
       case 'appartement': return <BuildingOfficeIcon className="w-4 h-4" />;
       case 'maison': return <HomeIcon className="w-4 h-4" />;
+      case 'immeuble': return <BuildingOfficeIcon className="w-4 h-4" />;
       case 'villa': return <BuildingOffice2Icon className="w-4 h-4" />;
-      case 'terrain': return <GlobeAltIcon className="w-4 h-4" />;
+      case 'terrain': return <MapIcon className="w-4 h-4" />;
+      case 'terrain_agricole': return <GlobeAltIcon className="w-4 h-4" />;
       case 'bureau_commerce': return <ShoppingBagIcon className="w-4 h-4" />;
       default: return <HomeIcon className="w-4 h-4" />;
     }
@@ -149,7 +141,7 @@ export default function SearchPage() {
                 startContent={<MapPinIcon className="w-4 h-4 text-default-400" />}
                 className="flex-1"
               />
-              <Select 
+              <Select
                 selectedKeys={[transactionType]}
                 onSelectionChange={(keys) => setTransactionType(Array.from(keys)[0] as string)}
                 className="w-32"
@@ -252,11 +244,11 @@ export default function SearchPage() {
                 {/* Bedrooms */}
                 <div className="space-y-3">
                   <label className="text-sm font-medium text-gray-700">Chambres</label>
-                  <Select 
+                  <Select
                     selectedKeys={[bedrooms]}
                     onSelectionChange={(keys) => setBedrooms(Array.from(keys)[0] as string)}
                   >
-                    <SelectItem key="all">Toutes</SelectItem>
+                    <SelectItem key="">Toutes</SelectItem>
                     <SelectItem key="1">1+</SelectItem>
                     <SelectItem key="2">2+</SelectItem>
                     <SelectItem key="3">3+</SelectItem>
@@ -367,10 +359,10 @@ export default function SearchPage() {
                       {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
                     </Chip>
                   ))}
-                  {bedrooms !== 'all' && (
+                  {bedrooms !== '' && (
                     <Chip 
                       variant="flat" 
-                      onClose={() => setBedrooms('all')}
+                      onClose={() => setBedrooms('')}
                       size="sm"
                     >
                       {bedrooms}+ chambres

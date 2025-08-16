@@ -29,6 +29,7 @@ import {
   Tab
 } from '@heroui/react';
 import Header from '@/components/Header';
+import { UserService } from '@/lib/services/user';
 
 export default function MonComptePage() {
   const { data: session, status, update } = useSession();
@@ -95,74 +96,26 @@ export default function MonComptePage() {
         setLoading(true);
         
         // Load user info
-        const userResponse = await fetch(`/api/users/${session.user.id}`);
-        if (userResponse.ok) {
-          const userData = await userResponse.json();
+        const user = await UserService.getProfile();
+        if (user) {
           setPersonalInfo({
-            firstName: userData.firstName || '',
-            lastName: userData.lastName || '',
-            email: userData.email || '',
-            phone: userData.phone || '',
-            avatar: userData.avatar || '',
-            acceptMarketing: userData.acceptMarketing || false
+            firstName: user.firstName || '',
+            lastName: user.lastName || '',
+            email: user.email || '',
+            phone: user.phone || '',
+            avatar: user.avatar || '',
+            acceptMarketing: user.acceptMarketing || false
           });
-        }
 
-        // Load user settings
-        const settingsResponse = await fetch(`/api/users/${session.user.id}/settings`);
-        if (settingsResponse.ok) {
-          const settingsData = await settingsResponse.json();
           setPrivacySettings({
-            acceptEmailContact: settingsData.acceptEmailContact ?? true,
-            acceptPhoneContact: settingsData.acceptPhoneContact ?? true,
-            displayEmail: settingsData.displayEmail ?? false,
-            displayPhone: settingsData.displayPhone ?? false
-          });
-        }
-      } catch (error) {
-        console.error('Error loading user data:', error);
-        setErrors(prev => ({ ...prev, personal: 'Erreur lors du chargement des données' }));
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadUserData();
-  }, [session?.user?.id]);
-
-  // Load user data
-  useEffect(() => {
-    const loadUserData = async () => {
-      if (!session?.user?.id) return;
-
-      try {
-        setLoading(true);
-        
-        // Load user info
-        const userResponse = await fetch(`/api/users/${session.user.id}`);
-        if (userResponse.ok) {
-          const userData = await userResponse.json();
-          setPersonalInfo({
-            firstName: userData.firstName || '',
-            lastName: userData.lastName || '',
-            email: userData.email || '',
-            phone: userData.phone || '',
-            avatar: userData.avatar || '',
-            acceptMarketing: userData.acceptMarketing || false
+            acceptEmailContact: user.settings?.acceptEmailContact ?? true,
+            acceptPhoneContact: user.settings?.acceptPhoneContact ?? true,
+            displayEmail: user.settings?.displayEmail ?? false,
+            displayPhone: user.settings?.displayPhone ?? false
           });
         }
 
-        // Load user settings
-        const settingsResponse = await fetch(`/api/users/${session.user.id}/settings`);
-        if (settingsResponse.ok) {
-          const settingsData = await settingsResponse.json();
-          setPrivacySettings({
-            acceptEmailContact: settingsData.acceptEmailContact ?? true,
-            acceptPhoneContact: settingsData.acceptPhoneContact ?? true,
-            displayEmail: settingsData.displayEmail ?? false,
-            displayPhone: settingsData.displayPhone ?? false
-          });
-        }
+        throw new Error('Failed to load user profile');
       } catch (error) {
         console.error('Error loading user data:', error);
         setErrors(prev => ({ ...prev, personal: 'Erreur lors du chargement des données' }));
@@ -184,11 +137,7 @@ export default function MonComptePage() {
     setMessages(prev => ({ ...prev, personal: '' }));
 
     try {
-      const response = await fetch(`/api/users/${session.user.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(personalInfo)
-      });
+      const response = await UserService.updateUserInfos(session.user.id, personalInfo);
 
       if (response.ok) {
         setMessages(prev => ({ ...prev, personal: 'Informations mises à jour avec succès' }));
@@ -216,11 +165,7 @@ export default function MonComptePage() {
     setMessages(prev => ({ ...prev, privacy: '' }));
 
     try {
-      const response = await fetch(`/api/users/${session.user.id}/settings`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(privacySettings)
-      });
+      const response = await UserService.updateUserSettings(session.user.id, privacySettings);
 
       if (response.ok) {
         setMessages(prev => ({ ...prev, privacy: 'Préférences mises à jour avec succès' }));
@@ -256,13 +201,9 @@ export default function MonComptePage() {
     setMessages(prev => ({ ...prev, security: '' }));
 
     try {
-      const response = await fetch(`/api/users/${session.user.id}/change-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          currentPassword: securityInfo.currentPassword,
-          newPassword: securityInfo.newPassword
-        })
+      const response = await UserService.updateUserPassword(session.user.id, {
+        currentPassword: securityInfo.currentPassword,
+        newPassword: securityInfo.newPassword
       });
 
       if (response.ok) {
@@ -289,11 +230,7 @@ export default function MonComptePage() {
     setMessages(prev => ({ ...prev, security: '' }));
 
     try {
-      const response = await fetch(`/api/users/${session.user.id}/change-email`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ newEmail: securityInfo.newEmail })
-      });
+      const response = await UserService.updateUserEmail(session.user.id, securityInfo.newEmail);
 
       if (response.ok) {
         setMessages(prev => ({ ...prev, security: 'Un email de confirmation a été envoyé à votre nouvelle adresse' }));
@@ -323,9 +260,7 @@ export default function MonComptePage() {
     setSaving(true);
     
     try {
-      const response = await fetch(`/api/users/${session.user.id}`, {
-        method: 'DELETE'
-      });
+      const response = await UserService.deleteUser(session.user.id);
 
       if (response.ok) {
         alert('Votre compte a été supprimé avec succès');

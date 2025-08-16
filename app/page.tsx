@@ -1,15 +1,56 @@
+'use client'
+
 import { Button } from '@heroui/react';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import HomeSearchBarHome from '@/ui/search/home-search-bar';
 import PropertyList from '@/ui/property/property-list';
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import Loading from '@/components/ui/loading';
-import { getCitiesAndNeighborhood } from '@/lib/services/location';
+import { getLocations } from '@/lib/services/location';
 import { City } from '@/types/location';
+import { PropertyService } from '@/lib/services/property';
+import { PaginatedProperty } from '@/types/property';
+import { PropertiesListSkeleton } from '@/ui/property/skeletons';
 
-export default async function Home() {
-  const locations: City[] = await getCitiesAndNeighborhood();
+export default function Home() {
+  const [locations, setLocations] = useState<City[]>([]);
+  const [isLoadingProperties, setIsLoadingProperties] = useState(true);
+
+  const [featuredProperties, setFeaturedProperties] = useState<PaginatedProperty>({
+    properties: [],
+    pagination: {
+      total: 0,
+      page: 1,
+      limit: 6,
+      pages: 0
+    }
+  });
+
+  // Track property view on component mount
+  useEffect(() => {
+      PropertyService.getFeaturedProperties(6).then(response => {
+        if (response) {
+          setFeaturedProperties(response);
+        }
+      }).catch(error => {
+        console.error('Error fetching featured properties:', error);
+      }).finally(() => {
+        setIsLoadingProperties(false);
+      });
+
+      getLocations().then(response => {
+        if (response) {
+          setLocations(response);
+        }
+      }).catch(error => {
+        console.error('Error fetching locations:', error);
+      });
+
+  }, [])
+
+  
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -36,7 +77,8 @@ export default async function Home() {
       </section>
 
       {/* Featured Properties */}
-      <PropertyList />
+      {isLoadingProperties && <PropertiesListSkeleton />}
+      {!isLoadingProperties && <PropertyList featuredProperties={featuredProperties} />}
 
       {/* CTA Section */}
       <section className="bg-blue-900 text-white py-20">
