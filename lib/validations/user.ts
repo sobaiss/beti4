@@ -19,6 +19,35 @@ export const createUserSchema = z.object({
   password: z.string().optional()
 })
 
+export const CreateUserParticulierSchema = z.object({
+  firstName: z.string().min(2, 'Le prénom est requis').optional().or(z.literal('')),
+  lastName: z.string().min(2, 'Le nom est requis').optional().or(z.literal('')),
+  email: z.string({
+    invalid_type_error: 'Entrez une adresse e-mail valide.',
+  }),
+  phone: z.string().regex(/^[6-9]{1}[0-9]{7}$/, {
+    message: 'Entrez un numéro de téléphone valide.',
+  }),
+  password: z.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/, {
+    message: 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre.',
+  }),
+  confirmPassword: z.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/, {
+    message: 'Confirmez votre mot de passe.',
+  }),
+  acceptTerms: z.boolean().refine(val => val === true, {
+    message: 'Vous devez accepter les conditions d\'utilisation.',
+  }),
+  acceptMarketing: z.boolean(),
+}).superRefine(({ confirmPassword, password }, ctx) => {
+  if (confirmPassword !== password) {
+    ctx.addIssue({
+      code: "custom",
+      message: "Les mots de passe ne correspondent pas",
+      path: ['confirmPassword']
+    });
+  }
+});
+
 export const signInSchema = z.object({
   email: z.string().email('Adresse email invalide'),
   password: z.string().min(1, 'Le mot de passe est requis'),

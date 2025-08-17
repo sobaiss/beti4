@@ -1,4 +1,4 @@
-import { UpdateUserInput, UpdateUserSettingsInput } from '@/lib/validations/user'
+import { CreateUserParticulierSchema, UpdateUserInput, UpdateUserSettingsInput } from '@/lib/validations/user'
 import { PaginatedProperty } from '@/types/property';
 import { User } from '@/types/user';
 
@@ -86,13 +86,34 @@ export class UserService {
   }
 
   // @todo change parameter data type
-  static async createUser(data: Record<string, any>) {
-    const response = await fetch(`http://localhost:3000/user`, {
+  static async createUser(data: FormData) {
+    const validatedFields = CreateUserParticulierSchema.safeParse(data);
+
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.flatten().fieldErrors,
+        message: 'Corriger les erreurs ci-dessous.',
+      };
+    }
+
+    const { firstName, lastName, email, phone, password, acceptTerms, acceptMarketing } = validatedFields.data;
+
+    const publicApiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const response = await fetch(`${publicApiUrl}/users`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        email,
+        phone,
+        password,
+        acceptTerms,
+        acceptMarketing,
+        userType: 'particulier',
+      })
     });
 
     return response;
