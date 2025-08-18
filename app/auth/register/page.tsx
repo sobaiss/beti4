@@ -48,13 +48,13 @@ export default function RegisterPage() {
               <label className="block text-base font-medium text-default-900">Je suis :</label>
               <div className="flex gap-4 items-center">
                 <Link href="/auth/register/particulier">
-                  <Button color="primary" radius="full" size="lg" endContent={<CameraIcon />}>
+                  <Button color="primary" radius="full" size="lg" startContent={<UserIcon className="w-5 h-5" />}>
                     Particulier
                   </Button>
                 </Link>
-                <Link href="/auth/register/professionnel">
-                  <Button color="secondary" radius="full" size="lg" startContent={<UserIcon />} variant="bordered">
-                    Professionnel
+                <Link href="/auth/register/agence">
+                  <Button color="secondary" radius="full" size="lg" startContent={<BuildingOfficeIcon className="w-5 h-5" />} variant="bordered">
+                    Agence Immobilière
                   </Button>
                 </Link>
               </div>
