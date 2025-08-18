@@ -184,14 +184,16 @@ export default function RegisterAgencyPage() {
   const renderStepContent = () => {
     if (currentStep === 1) {
       return (
-        <div className="space-y-6">
-          <div className="text-center mb-6">
-            <BuildingOfficeIcon className="w-16 h-16 text-primary-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-default-900 mb-2">Informations de l'Agence</h2>
-            <p className="text-default-600">Créez le profil de votre agence immobilière</p>
+        <div className="space-y-8">
+          <div className="text-center">
+            <div className="w-20 h-20 bg-gradient-to-br from-primary-100 to-primary-200 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <BuildingOfficeIcon className="w-10 h-10 text-primary-600" />
+            </div>
+            <h2 className="text-3xl font-bold text-default-900 mb-3">Informations de l'Agence</h2>
+            <p className="text-lg text-default-600 max-w-md mx-auto">Créez le profil de votre agence immobilière et rejoignez notre réseau de professionnels</p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div className="space-y-2">
               <label className="block text-sm font-medium text-default-700">Nom de l'agence *</label>
               <Input
@@ -200,6 +202,9 @@ export default function RegisterAgencyPage() {
                 onChange={(e) => handleAgencyInputChange('name', e.target.value)}
                 startContent={<BuildingOfficeIcon className="w-4 h-4 text-default-400" />}
                 isRequired
+                size="lg"
+                variant="bordered"
+                radius="lg"
                 isClearable
                 onClear={() => handleAgencyInputChange('name', '')}
                 errorMessage={errorMessages.agencyName}
@@ -214,6 +219,9 @@ export default function RegisterAgencyPage() {
                 value={agencyData.description}
                 onChange={(e) => handleAgencyInputChange('description', e.target.value)}
                 minRows={3}
+                size="lg"
+                variant="bordered"
+                radius="lg"
                 errorMessage={errorMessages.agencyDescription}
                 isInvalid={errorMessages.agencyDescription !== ''}
               />
@@ -227,6 +235,9 @@ export default function RegisterAgencyPage() {
                 onChange={(e) => handleAgencyInputChange('address', e.target.value)}
                 startContent={<MapPinIcon className="w-4 h-4 text-default-400" />}
                 isRequired
+                size="lg"
+                variant="bordered"
+                radius="lg"
                 isClearable
                 onClear={() => handleAgencyInputChange('address', '')}
                 errorMessage={errorMessages.agencyAddress}
@@ -242,6 +253,9 @@ export default function RegisterAgencyPage() {
                   value={agencyData.city}
                   onChange={(e) => handleAgencyInputChange('city', e.target.value)}
                   isRequired
+                  size="lg"
+                  variant="bordered"
+                  radius="lg"
                   isClearable
                   onClear={() => handleAgencyInputChange('city', '')}
                   errorMessage={errorMessages.agencyCity}
@@ -255,6 +269,9 @@ export default function RegisterAgencyPage() {
                   value={agencyData.postalCode}
                   onChange={(e) => handleAgencyInputChange('postalCode', e.target.value)}
                   isRequired
+                  size="lg"
+                  variant="bordered"
+                  radius="lg"
                   isClearable
                   onClear={() => handleAgencyInputChange('postalCode', '')}
                   errorMessage={errorMessages.agencyPostalCode}
@@ -273,6 +290,9 @@ export default function RegisterAgencyPage() {
                   onChange={(e) => handleAgencyInputChange('phone', e.target.value)}
                   startContent={<PhoneIcon className="w-4 h-4 text-default-400" />}
                   isRequired
+                  size="lg"
+                  variant="bordered"
+                  radius="lg"
                   isClearable
                   onClear={() => handleAgencyInputChange('phone', '')}
                   errorMessage={errorMessages.agencyPhone}
@@ -288,6 +308,9 @@ export default function RegisterAgencyPage() {
                   onChange={(e) => handleAgencyInputChange('email', e.target.value)}
                   startContent={<EnvelopeIcon className="w-4 h-4 text-default-400" />}
                   isRequired
+                  size="lg"
+                  variant="bordered"
+                  radius="lg"
                   isClearable
                   onClear={() => handleAgencyInputChange('email', '')}
                   errorMessage={errorMessages.agencyEmail}
@@ -304,6 +327,9 @@ export default function RegisterAgencyPage() {
                 value={agencyData.website}
                 onChange={(e) => handleAgencyInputChange('website', e.target.value)}
                 startContent={<GlobeAltIcon className="w-4 h-4 text-default-400" />}
+                size="lg"
+                variant="bordered"
+                radius="lg"
                 isClearable
                 onClear={() => handleAgencyInputChange('website', '')}
                 errorMessage={errorMessages.agencyWebsite}
@@ -318,6 +344,9 @@ export default function RegisterAgencyPage() {
                 placeholder="https://example.com/logo.jpg"
                 value={agencyData.logo}
                 onChange={(e) => handleAgencyInputChange('logo', e.target.value)}
+                size="lg"
+                variant="bordered"
+                radius="lg"
                 isClearable
                 onClear={() => handleAgencyInputChange('logo', '')}
               />
@@ -328,14 +357,16 @@ export default function RegisterAgencyPage() {
     }
 
     return (
-      <div className="space-y-6">
-        <div className="text-center mb-6">
-          <UserIcon className="w-16 h-16 text-primary-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-default-900 mb-2">Votre Compte Administrateur</h2>
-          <p className="text-default-600">Créez votre compte pour gérer l'agence</p>
+      <div className="space-y-8">
+        <div className="text-center">
+          <div className="w-20 h-20 bg-gradient-to-br from-secondary-100 to-secondary-200 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+            <UserIcon className="w-10 h-10 text-secondary-600" />
+          </div>
+          <h2 className="text-3xl font-bold text-default-900 mb-3">Votre Compte Administrateur</h2>
+          <p className="text-lg text-default-600 max-w-md mx-auto">Créez votre compte personnel pour gérer l'agence et ses annonces</p>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="block text-sm font-medium text-default-700">Prénom *</label>
@@ -344,6 +375,9 @@ export default function RegisterAgencyPage() {
                 value={userData.firstName}
                 onChange={(e) => handleUserInputChange('firstName', e.target.value)}
                 isRequired
+                size="lg"
+                variant="bordered"
+                radius="lg"
                 isClearable
                 onClear={() => handleUserInputChange('firstName', '')}
                 errorMessage={errorMessages.firstName}
@@ -357,6 +391,9 @@ export default function RegisterAgencyPage() {
                 value={userData.lastName}
                 onChange={(e) => handleUserInputChange('lastName', e.target.value)}
                 isRequired
+                size="lg"
+                variant="bordered"
+                radius="lg"
                 isClearable
                 onClear={() => handleUserInputChange('lastName', '')}
                 errorMessage={errorMessages.lastName}
@@ -374,6 +411,9 @@ export default function RegisterAgencyPage() {
               onChange={(e) => handleUserInputChange('email', e.target.value)}
               startContent={<EnvelopeIcon className="w-4 h-4 text-default-400" />}
               isRequired
+              size="lg"
+              variant="bordered"
+              radius="lg"
               isClearable
               onClear={() => handleUserInputChange('email', '')}
               errorMessage={errorMessages.email}
@@ -390,6 +430,9 @@ export default function RegisterAgencyPage() {
               onChange={(e) => handleUserInputChange('phone', e.target.value)}
               startContent={<PhoneIcon className="w-4 h-4 text-default-400" />}
               isRequired
+              size="lg"
+              variant="bordered"
+              radius="lg"
               isClearable
               onClear={() => handleUserInputChange('phone', '')}
               errorMessage={errorMessages.phone}
@@ -416,6 +459,9 @@ export default function RegisterAgencyPage() {
                   </button>
                 }
                 isRequired
+                size="lg"
+                variant="bordered"
+                radius="lg"
                 isClearable
                 onClear={() => handleUserInputChange('password', '')}
                 errorMessage={errorMessages.password}
@@ -441,6 +487,9 @@ export default function RegisterAgencyPage() {
                   </button>
                 }
                 isRequired
+                size="lg"
+                variant="bordered"
+                radius="lg"
                 isClearable
                 onClear={() => handleUserInputChange('confirmPassword', '')}
                 errorMessage={errorMessages.confirmPassword}
@@ -449,12 +498,13 @@ export default function RegisterAgencyPage() {
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-4 pt-4">
             <div className="flex items-start space-x-2">
               <Checkbox
                 isSelected={userData.acceptTerms}
                 onValueChange={(checked) => handleUserInputChange('acceptTerms', checked as boolean)}
                 isRequired
+                size="lg"
               >
                 J'accepte les{' '}
                 <Link href="/terms" className="text-blue-900 hover:text-blue-800">
@@ -471,6 +521,7 @@ export default function RegisterAgencyPage() {
               <Checkbox
                 isSelected={userData.acceptMarketing}
                 onValueChange={(checked) => handleUserInputChange('acceptMarketing', checked as boolean)}
+                size="lg"
               >
                 Je souhaite recevoir des communications marketing et des mises à jour
               </Checkbox>
@@ -482,10 +533,10 @@ export default function RegisterAgencyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <Header />
       
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-6">
           <Link href="/auth/register" className="inline-flex items-center text-blue-900 hover:text-blue-800 mb-4">
             <ArrowLeftIcon className="w-4 h-4 mr-2" />
@@ -493,51 +544,69 @@ export default function RegisterAgencyPage() {
           </Link>
         </div>
 
-        <Card className="border-0 shadow-lg">
-          <CardHeader className="text-center pb-6">
-            <h1 className="text-2xl font-bold text-default-900">
+        {/* Header Section */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-default-900 mb-3">
               Créer Votre Agence Immobilière
             </h1>
-            <p className="text-default-600 mt-2">
+          <p className="text-xl text-default-600 max-w-2xl mx-auto mb-8">
               Rejoignez notre plateforme en tant que professionnel
             </p>
-            
-            {/* Progress Bar */}
-            <div className="mt-6">
-              <Progress 
-                value={(currentStep / 2) * 100} 
-                className="w-full"
-                color="primary"
-                size="sm"
-              />
-              <div className="flex justify-between mt-2 text-sm text-default-600">
-                <span className={currentStep >= 1 ? 'text-primary-600 font-medium' : ''}>
-                  1. Agence
-                </span>
-                <span className={currentStep >= 2 ? 'text-primary-600 font-medium' : ''}>
-                  2. Administrateur
-                </span>
+        </div>
+
+        {/* Progress Bar - Outside Card */}
+        <div className="mb-8">
+          <div className="max-w-md mx-auto">
+            <Progress 
+              value={(currentStep / 2) * 100} 
+              className="w-full mb-4"
+              color="primary"
+              size="lg"
+              radius="full"
+            />
+            <div className="flex justify-between text-sm font-medium">
+              <div className={`flex items-center ${currentStep >= 1 ? 'text-primary-600' : 'text-default-400'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-2 ${
+                  currentStep >= 1 ? 'bg-primary-100 text-primary-600' : 'bg-default-100 text-default-400'
+                }`}>
+                  1
+                </div>
+                Agence
+              </div>
+              <div className={`flex items-center ${currentStep >= 2 ? 'text-primary-600' : 'text-default-400'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-2 ${
+                  currentStep >= 2 ? 'bg-primary-100 text-primary-600' : 'bg-default-100 text-default-400'
+                }`}>
+                  2
+                </div>
+                Administrateur
               </div>
             </div>
-          </CardHeader>
+          </div>
+        </div>
 
-          <CardBody className="space-y-6">
+        {/* Main Card */}
+        <Card className="border-0 shadow-2xl backdrop-blur-sm bg-white/95">
+          <CardBody className="p-8 lg:p-12">
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
-                <div className="p-3 text-sm text-danger-600 bg-danger-50 border border-danger-200 rounded-md">
+                <div className="p-4 text-sm text-danger-600 bg-danger-50 border border-danger-200 rounded-lg">
                   {error}
                 </div>
               )}
 
               {renderStepContent()}
 
-              <div className="flex justify-between pt-6">
+              <div className="flex justify-between pt-8">
                 {currentStep > 1 && (
                   <Button
                     type="button"
                     variant="bordered"
                     onClick={prevStep}
                     isDisabled={isLoading}
+                    size="lg"
+                    radius="full"
+                    className="px-8"
                   >
                     Précédent
                   </Button>
@@ -546,7 +615,9 @@ export default function RegisterAgencyPage() {
                 <Button 
                   type="submit" 
                   color="primary"
-                  className={currentStep === 1 ? 'w-full' : 'ml-auto'}
+                  size="lg"
+                  radius="full"
+                  className={`px-8 font-semibold ${currentStep === 1 ? 'w-full' : 'ml-auto'}`}
                   isDisabled={
                     isLoading || 
                     (currentStep === 1 && (!agencyData.name || !agencyData.email || !agencyData.phone)) ||
@@ -576,6 +647,8 @@ export default function RegisterAgencyPage() {
                 <div className="space-y-3">
                   <Button 
                     variant="bordered" 
+                    size="lg"
+                    radius="full"
                     className="w-full"
                     onClick={() => signIn('google', { callbackUrl: '/' })}
                     isDisabled={isLoading}
@@ -592,7 +665,7 @@ export default function RegisterAgencyPage() {
               </>
             )}
 
-            <div className="text-center">
+            <div className="text-center pt-6">
               <p className="text-sm text-gray-600">
                 Vous avez déjà un compte ?{' '}
                 <Link href="/auth/signin" className="text-blue-900 hover:text-blue-800 font-medium">
