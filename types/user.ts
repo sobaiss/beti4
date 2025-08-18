@@ -1,4 +1,5 @@
 import { PropertyFavorite } from "@/types/property";
+import { Agency } from "./agency";
 
 export type UserTypeEnum = 'particulier' | 'professionnel' | 'interne' | 'admin';
 export type UserStatusEnum = 'attente_validation' | 'valide' | 'verifie' | 'bloque';
@@ -18,7 +19,11 @@ export interface User {
   createdAt: Date;
   updatedAt?: Date;
   password?: string; // Ensure this is hashed in the database
-  
+
+  agencyId?: string;
+  agency?: Agency;
+  isMainContact?: boolean;
+
   // Preferencess
   acceptMarketing: boolean;
   settings?: UserSettings;
