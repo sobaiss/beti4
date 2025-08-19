@@ -1,4 +1,4 @@
-import { CreateUserParticulierSchema, UpdateUserInput, UpdateUserSettingsInput } from '@/lib/validations/user'
+import { createUserSchema, UpdateUserInput, UpdateUserSettingsInput } from '@/lib/validations/user'
 import { PaginatedProperty } from '@/types/property';
 import { User } from '@/types/user';
 
@@ -86,7 +86,7 @@ export class UserService {
   }
 
   static async createUser(data: FormData) {
-    const validatedFields = CreateUserParticulierSchema.safeParse(data);
+    const validatedFields = createUserSchema.safeParse(data);
 
     if (!validatedFields.success) {
       return {
@@ -95,25 +95,13 @@ export class UserService {
       };
     }
 
-    const { firstName, lastName, email, phone, password, acceptTerms, acceptMarketing, agencyId } = validatedFields.data;
-
     const publicApiUrl = process.env.NEXT_PUBLIC_API_URL;
     const response = await fetch(`${publicApiUrl}/users`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        firstName,
-        lastName,
-        email,
-        phone,
-        password,
-        acceptTerms,
-        acceptMarketing,
-        userType: 'particulier',
-        agencyId
-      })
+      body: JSON.stringify(validatedFields.data)
     });
 
     return response;

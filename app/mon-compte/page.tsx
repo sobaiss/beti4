@@ -30,6 +30,7 @@ import {
 } from '@heroui/react';
 import Header from '@/components/Header';
 import { UserService } from '@/lib/services/user';
+import { getUserProfile } from '@/lib/actions/user';
 
 export default function MonComptePage() {
   const { data: session, status, update } = useSession();
@@ -96,7 +97,7 @@ export default function MonComptePage() {
         setLoading(true);
         
         // Load user info
-        const user = await UserService.getProfile();
+        const user = await getUserProfile();
         if (user) {
           setPersonalInfo({
             firstName: user.firstName || '',
@@ -113,6 +114,8 @@ export default function MonComptePage() {
             displayEmail: user.settings?.displayEmail ?? false,
             displayPhone: user.settings?.displayPhone ?? false
           });
+
+          return;
         }
 
         throw new Error('Failed to load user profile');

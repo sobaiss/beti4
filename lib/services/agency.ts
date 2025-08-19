@@ -1,10 +1,10 @@
-import { CreateAgencySchema } from "../validations/agency";
-import { CreateUserParticulierSchema } from "../validations/user";
+import { CreateAgencyInput, CreateAgencySchema } from "../validations/agency";
+import { CreateUserInput, createUserSchema } from "../validations/user";
 
-export async function createAgency(data: {agency: FormData, user: FormData}) {
+export async function createAgency(data: {agency: CreateAgencyInput, user: CreateUserInput}) {
   console.log('Creating agency with data:', data);
   const validatedAgencyFields = CreateAgencySchema.safeParse(data.agency);
-  const validatedUserFields = CreateUserParticulierSchema.safeParse(data.user);
+  const validatedUserFields = createUserSchema.safeParse(data.user);
 
   console.log('Validated agency fields:', validatedAgencyFields.error);
   console.log('Validated user fields:', validatedUserFields.error);
@@ -18,8 +18,6 @@ export async function createAgency(data: {agency: FormData, user: FormData}) {
       message: 'Corriger les erreurs ci-dessous.',
     };
   }
-
-  //const { name, description, email, phone, address, city, postalCode, website } = validatedAgencyFields.data;
 
   const publicApiUrl = process.env.NEXT_PUBLIC_API_URL;
 

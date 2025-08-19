@@ -1,27 +1,6 @@
-import { user } from '@heroui/theme';
-import { use } from 'react';
 import { z } from 'zod'
 
 export const createUserSchema = z.object({
-  email: z.string().email('Adresse email invalide'),
-  firstName: z.string().min(1, 'Le prénom est requis').max(50, 'Le prénom ne peut pas dépasser 50 caractères'),
-  lastName: z.string().min(1, 'Le nom est requis').max(50, 'Le nom ne peut pas dépasser 50 caractères'),
-  phone: z.string().max(20, 'Le numéro de téléphone ne peut pas dépasser 20 caractères').optional().default(''),
-  userType: z.enum(['particulier', 'professionnel']).default('particulier'),
-  avatar: z.string().url('URL d\'avatar invalide').optional(),
-  status: z.enum(['attente_validation', 'valide', 'verifie', 'bloque']).default('attente_validation'),
-  
-  // Agency
-  agencyId: z.string().optional(),
-  
-  // Preferences
-  acceptMarketing: z.boolean().default(false),
-  
-  // Password is optional for OAuth users
-  password: z.string().optional()
-})
-
-export const CreateUserParticulierSchema = z.object({
   firstName: z.string().min(2, 'Le prénom est requis').optional().or(z.literal('')),
   lastName: z.string().min(2, 'Le nom est requis').optional().or(z.literal('')),
   email: z.string().email('Adresse e-mail invalide'),
