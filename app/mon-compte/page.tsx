@@ -421,7 +421,7 @@ export default function MonComptePage() {
                           />
                         </div>
                       </div>
-                    </div>
+                    </CardBody>
                   </Card>
 
                   {/* Name Fields */}
@@ -586,7 +586,7 @@ export default function MonComptePage() {
                           <span className="text-default-700">Accepter d'être contacté par téléphone</span>
                         </Checkbox>
                       </div>
-                    </div>
+                    </CardBody>
                   </Card>
 
                   <Card className="bg-gradient-to-r from-secondary-50 to-secondary-100 border border-secondary-200">
@@ -618,7 +618,7 @@ export default function MonComptePage() {
                           <span className="text-default-700">Afficher mon téléphone sur mes annonces</span>
                         </Checkbox>
                       </div>
-                    </div>
+                    </CardBody>
                   </Card>
 
                   <Button 
