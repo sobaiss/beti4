@@ -51,6 +51,11 @@ export default function MonComptePage() {
     acceptMarketing: false
   });
 
+  // Image upload states
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
+  const [uploadingImage, setUploadingImage] = useState(false);
+
   const [privacySettings, setPrivacySettings] = useState({
     acceptEmailContact: true,
     acceptPhoneContact: true,
@@ -134,6 +139,89 @@ export default function MonComptePage() {
 
     loadUserData();
   }, [session?.user?.id]);
+
+  // Handle image file selection
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setErrors(prev => ({ ...prev, personal: 'Veuillez sélectionner un fichier image valide' }));
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setErrors(prev => ({ ...prev, personal: 'La taille de l\'image ne peut pas dépasser 5MB' }));
+      return;
+    }
+
+    setImageFile(file);
+    
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result as string;
+      setImagePreview(result);
+    };
+    reader.readAsDataURL(file);
+
+    // Clear any previous errors
+    setErrors(prev => ({ ...prev, personal: '' }));
+  };
+
+  // Convert image to base64 and upload
+  const handleImageUpload = async () => {
+    if (!imageFile || !session?.user?.id) return;
+
+    setUploadingImage(true);
+    setErrors(prev => ({ ...prev, personal: '' }));
+    setMessages(prev => ({ ...prev, personal: '' }));
+
+    try {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const base64String = e.target?.result as string;
+        
+        try {
+          const response = await UserService.updateUserInfos(session.user.id, {
+            ...personalInfo,
+            avatar: base64String
+          });
+
+          if (response.ok) {
+            setPersonalInfo(prev => ({ ...prev, avatar: base64String }));
+            setMessages(prev => ({ ...prev, personal: 'Photo de profil mise à jour avec succès' }));
+            setImageFile(null);
+            setImagePreview('');
+            // Update session
+            await update();
+          } else {
+            const errorData = await response.json();
+            setErrors(prev => ({ ...prev, personal: errorData.error || 'Erreur lors de la mise à jour de la photo' }));
+          }
+        } catch (error) {
+          console.error('Error uploading image:', error);
+          setErrors(prev => ({ ...prev, personal: 'Erreur lors de l\'upload de l\'image' }));
+        } finally {
+          setUploadingImage(false);
+        }
+      };
+      
+      reader.readAsDataURL(imageFile);
+    } catch (error) {
+      console.error('Error processing image:', error);
+      setErrors(prev => ({ ...prev, personal: 'Erreur lors du traitement de l\'image' }));
+      setUploadingImage(false);
+    }
+  };
+
+  // Remove uploaded image
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreview('');
+  };
 
   // Handle personal info update
   const handlePersonalInfoSubmit = async (e: React.FormEvent) => {
@@ -388,37 +476,89 @@ export default function MonComptePage() {
                   {/* Avatar Section */}
                   <Card className="bg-gradient-to-r from-primary-50 to-secondary-50 border border-primary-200">
                     <CardBody className="p-6">
-                      <div className="flex items-center space-x-6">
+                      <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-6">
                         <div className="relative">
                           <Avatar
-                            src={personalInfo.avatar}
+                            src={imagePreview || personalInfo.avatar}
                             name={`${personalInfo.firstName?.[0]}${personalInfo.lastName?.[0]}`}
                             className="w-24 h-24 text-2xl"
                             isBordered
                             color="primary"
                           />
-                          <Button
-                            type="button"
-                            size="sm"
-                            color="primary"
-                            className="absolute -bottom-2 -right-2 rounded-full min-w-10 h-10"
-                            isIconOnly
-                          >
-                            <CameraIcon className="w-4 h-4" />
-                          </Button>
+                          <label htmlFor="avatar-upload" className="absolute -bottom-2 -right-2 cursor-pointer">
+                            <div className="w-10 h-10 bg-primary-500 hover:bg-primary-600 rounded-full flex items-center justify-center transition-colors shadow-lg">
+                              <CameraIcon className="w-4 h-4 text-white" />
+                            </div>
+                          </label>
+                          <input
+                            id="avatar-upload"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageSelect}
+                            className="hidden"
+                          />
                         </div>
                         <div className="flex-1">
                           <h4 className="text-lg font-semibold text-default-900 mb-2">Photo de profil</h4>
-                          <Input
-                            type="url"
-                            placeholder="https://example.com/avatar.jpg"
-                            value={personalInfo.avatar}
-                            onChange={(e) => setPersonalInfo(prev => ({ ...prev, avatar: e.target.value }))}
-                            size="lg"
-                            variant="bordered"
-                            radius="lg"
-                            startContent={<CameraIcon className="w-4 h-4 text-default-400" />}
-                          />
+                          <p className="text-sm text-default-600 mb-4">
+                            Téléchargez une photo de profil (JPG, PNG, max 5MB)
+                          </p>
+                          
+                          {imageFile && (
+                            <div className="flex items-center gap-3 mb-4 p-3 bg-primary-50 rounded-lg border border-primary-200">
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-primary-900">{imageFile.name}</p>
+                                <p className="text-xs text-primary-600">
+                                  {(imageFile.size / 1024 / 1024).toFixed(2)} MB
+                                </p>
+                              </div>
+                              <Button
+                                size="sm"
+                                color="primary"
+                                onClick={handleImageUpload}
+                                isLoading={uploadingImage}
+                                isDisabled={uploadingImage}
+                              >
+                                {uploadingImage ? 'Upload...' : 'Télécharger'}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="light"
+                                color="danger"
+                                onClick={handleRemoveImage}
+                                isDisabled={uploadingImage}
+                                isIconOnly
+                              >
+                                ×
+                              </Button>
+                            </div>
+                          )}
+                          
+                          <div className="flex gap-2">
+                            <label htmlFor="avatar-upload">
+                              <Button
+                                as="span"
+                                variant="bordered"
+                                size="sm"
+                                startContent={<CameraIcon className="w-4 h-4" />}
+                                className="cursor-pointer"
+                              >
+                                Choisir une photo
+                              </Button>
+                            </label>
+                            
+                            {personalInfo.avatar && (
+                              <Button
+                                size="sm"
+                                variant="light"
+                                color="danger"
+                                onClick={() => setPersonalInfo(prev => ({ ...prev, avatar: '' }))}
+                                startContent={<TrashIcon className="w-4 h-4" />}
+                              >
+                                Supprimer
+                              </Button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </CardBody>
