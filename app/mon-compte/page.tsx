@@ -7,19 +7,18 @@ import {
   UserIcon, 
   EnvelopeIcon, 
   PhoneIcon, 
-  MapPinIcon, 
   CameraIcon, 
   EyeIcon,
   EyeSlashIcon,
   ShieldCheckIcon,
   TrashIcon,
   ExclamationTriangleIcon,
-  CheckCircleIcon
+  CheckCircleIcon,
+  LockClosedIcon
 } from '@heroicons/react/24/outline';
 import { 
   Button, 
   Input, 
-  Textarea, 
   Card, 
   CardBody, 
   CardHeader, 
@@ -500,8 +499,12 @@ export default function MonComptePage() {
                         isSelected={privacySettings.acceptPhoneContact}
                         onValueChange={(checked) => 
                           setPrivacySettings(prev => ({ ...prev, acceptPhoneContact: checked as boolean }))
-                  <Divider />
                         }
+                      >
+                        Accepter d'être contacté par téléphone
+                      </Checkbox>
+                    </div>
+                  </div>
                   <div className="space-y-4">
                     <h4 className="text-base font-medium text-default-900">Visibilité des informations</h4>
                     <div className="space-y-3">
@@ -523,7 +526,7 @@ export default function MonComptePage() {
                       </Checkbox>
                     </div>
                   </div>
-                      >
+                  <Divider />
                   <Button 
                     type="submit" 
                     isDisabled={saving} 
@@ -569,7 +572,6 @@ export default function MonComptePage() {
                     </div>
                   </div>
                 )}
-                      </Checkbox>
                 {/* Change Password Section */}
                 <Card className="border">
                   <CardHeader>
@@ -639,7 +641,6 @@ export default function MonComptePage() {
                     </form>
                   </CardBody>
                 </Card>
-                    </div>
                 {/* Change Email Section */}
                 <Card className="border">
                   <CardHeader>
@@ -667,7 +668,6 @@ export default function MonComptePage() {
                     </div>
                   </CardBody>
                 </Card>
-                  </div>
                 {/* Delete Account Section */}
                 <Card className="border border-danger-200">
                   <CardHeader>
