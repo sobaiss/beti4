@@ -1,3 +1,5 @@
+import { user } from '@heroui/theme';
+import { use } from 'react';
 import { z } from 'zod'
 
 export const createUserSchema = z.object({
@@ -22,9 +24,7 @@ export const createUserSchema = z.object({
 export const CreateUserParticulierSchema = z.object({
   firstName: z.string().min(2, 'Le prénom est requis').optional().or(z.literal('')),
   lastName: z.string().min(2, 'Le nom est requis').optional().or(z.literal('')),
-  email: z.string({
-    invalid_type_error: 'Entrez une adresse e-mail valide.',
-  }),
+  email: z.string().email('Adresse e-mail invalide'),
   phone: z.string().regex(/^[6-9]{1}[0-9]{7}$/, {
     message: 'Entrez un numéro de téléphone valide.',
   }),
@@ -38,6 +38,8 @@ export const CreateUserParticulierSchema = z.object({
     message: 'Vous devez accepter les conditions d\'utilisation.',
   }),
   acceptMarketing: z.boolean(),
+  agencyId: z.string().optional(),
+  userType: z.enum(['particulier', 'professionnel', 'interne', 'admin']).default('particulier'),
 }).superRefine(({ confirmPassword, password }, ctx) => {
   if (confirmPassword !== password) {
     ctx.addIssue({

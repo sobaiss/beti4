@@ -50,7 +50,8 @@ export default function RegisterPage() {
     confirmPassword: '',
     agentLicense: '',
     acceptTerms: false,
-    acceptMarketing: false
+    acceptMarketing: false,
+    userType: 'particulier'
   });
 
   const handleInputChange = (field: string, value: string | boolean) => {
@@ -69,7 +70,6 @@ export default function RegisterPage() {
     try {
       const response = await UserService.createUser({
           ...formData,
-          userType: 'particulier',
       });
 
       if ('errors' in response) {
@@ -130,16 +130,17 @@ export default function RegisterPage() {
           </Link>
         </div>
 
-        <Card className="border-0 shadow-lg">
-          <CardHeader className="text-center pb-6">
-            <h1 className="text-2xl font-bold text-default-900">
+        {/* Header Section */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-default-900 mb-3">
               Créer Votre Compte Beti
             </h1>
-            <p className="text-default-600 mt-2">
+          <p className="text-xl text-default-600 max-w-2xl mx-auto mb-8">
               Rejoignez des milliers d'utilisateurs qui trouvent leur bien idéal
             </p>
-          </CardHeader>
+        </div>
 
+        <Card className="border-0 shadow-lg">
           <CardBody className="space-y-6">
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
@@ -177,7 +178,7 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2"> 
-                <label className="block text-sm font-medium text-default-700">Adresse Email</label>
+                <label className="block text-sm font-medium text-default-700">Adresse Email *</label>
                 <Input
                   type="email"
                   placeholder="Entrez votre email"
@@ -194,7 +195,7 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2"> 
-                <label className="block text-sm font-medium text-default-700">Numéro de Téléphone</label>
+                <label className="block text-sm font-medium text-default-700">Numéro de Téléphone *</label>
                 <Input
                   type="tel"
                   placeholder="Entrez votre numéro de téléphone"
@@ -212,7 +213,7 @@ export default function RegisterPage() {
               {/* Password Fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-default-700">Mot de Passe</label>
+                  <label className="block text-sm font-medium text-default-700">Mot de Passe *</label>
                   <Input
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Créez un mot de passe"
@@ -229,7 +230,7 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-default-700">Confirmer le Mot de Passe</label>
+                  <label className="block text-sm font-medium text-default-700">Confirmer le Mot de Passe *</label>
                   <Input
                     type={showConfirmPassword ? 'text' : 'password'}
                     placeholder="Confirmez votre mot de passe"

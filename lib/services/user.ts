@@ -85,7 +85,6 @@ export class UserService {
     return response;
   }
 
-  // @todo change parameter data type
   static async createUser(data: FormData) {
     const validatedFields = CreateUserParticulierSchema.safeParse(data);
 
@@ -96,7 +95,7 @@ export class UserService {
       };
     }
 
-    const { firstName, lastName, email, phone, password, acceptTerms, acceptMarketing } = validatedFields.data;
+    const { firstName, lastName, email, phone, password, acceptTerms, acceptMarketing, agencyId } = validatedFields.data;
 
     const publicApiUrl = process.env.NEXT_PUBLIC_API_URL;
     const response = await fetch(`${publicApiUrl}/users`, {
@@ -113,6 +112,7 @@ export class UserService {
         acceptTerms,
         acceptMarketing,
         userType: 'particulier',
+        agencyId
       })
     });
 

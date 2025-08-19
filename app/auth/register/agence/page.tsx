@@ -15,21 +15,20 @@ import {
   GlobeAltIcon,
   MapPinIcon,
   UserIcon,
-  CheckIcon
 } from '@heroicons/react/24/outline';
 import { 
   Button, 
   Input, 
   Card,
   CardBody,
-  CardHeader,
   Checkbox, 
   Divider,
   Textarea,
   Progress
 } from '@heroui/react';
 import Header from '@/components/Header';
-import { UserService } from '@/lib/services/user';
+import { createAgency } from '@/lib/services/agency';
+import { CreateAgencySchema } from '@/lib/validations/agency';
 
 export default function RegisterAgencyPage() {
   const emptyErrorMessages = {
@@ -68,7 +67,6 @@ export default function RegisterAgencyPage() {
     phone: '',
     email: '',
     website: '',
-    logo: ''
   });
 
   const [userData, setUserData] = useState({
@@ -79,7 +77,9 @@ export default function RegisterAgencyPage() {
     password: '',
     confirmPassword: '',
     acceptTerms: false,
-    acceptMarketing: false
+    acceptMarketing: false,
+    userType: 'professionnel',
+    agencyId: ''
   });
 
   const handleAgencyInputChange = (field: string, value: string) => {
@@ -95,11 +95,30 @@ export default function RegisterAgencyPage() {
   const nextStep = () => {
     // Validate agency data before moving to step 2
     if (currentStep === 1) {
-      if (!agencyData.name || !agencyData.email || !agencyData.phone) {
-        setError('Veuillez remplir tous les champs obligatoires de l\'agence');
+      const validatedFields = CreateAgencySchema.safeParse(agencyData);
+      console.log('Agency validation result:', validatedFields.success);
+    
+      if (!validatedFields.success) {
+        console.log('Agency validation errors:', validatedFields.error.flatten().fieldErrors);
+        setErrorMessages({
+          ...errorMessages,
+          agencyName: validatedFields.error.flatten().fieldErrors.name?.[0] || '',
+          agencyDescription: validatedFields.error.flatten().fieldErrors.description?.[0] || '',
+          agencyEmail: validatedFields.error.flatten().fieldErrors.email?.[0] || '',
+          agencyPhone: validatedFields.error.flatten().fieldErrors.phone?.[0] || '',
+          agencyAddress: validatedFields.error.flatten().fieldErrors.address?.[0] || '',
+          agencyCity: validatedFields.error.flatten().fieldErrors.city?.[0] || '',
+          agencyPostalCode: validatedFields.error.flatten().fieldErrors.postalCode?.[0] || '',
+          agencyWebsite: validatedFields.error.flatten().fieldErrors.website?.[0] || '',
+        });
+
+        setError('Veuillez corriger les erreurs ci-dessous.');
+
         return;
       }
     }
+
+    console.log('Moving to step 2 with agency data:', agencyData);
     setCurrentStep(2);
     setError('');
   };
@@ -123,49 +142,31 @@ export default function RegisterAgencyPage() {
 
     try {
       // First create the agency
-      const agencyResponse = await fetch('/api/agencies', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(agencyData)
-      });
+      const agencyResponse = await createAgency({agency: agencyData, user: userData});
 
-      if (!agencyResponse.ok) {
-        const agencyError = await agencyResponse.json();
-        setError(agencyError.message || 'Erreur lors de la création de l\'agence');
-        return;
-      }
+      if ('errors' in agencyResponse) {
 
-      const agency = await agencyResponse.json();
-
-      // Then create the user associated with the agency
-      const userResponse = await UserService.createUser({
-        ...userData,
-        userType: 'professionnel',
-        agencyId: agency.id,
-      });
-
-      if ('errors' in userResponse) {
+        console.log('Agency creation errors:', agencyResponse.errors);
         const errors = {
-          ...emptyErrorMessages,
-          firstName: userResponse.errors.firstName?.[0] || '',
-          lastName: userResponse.errors.lastName?.[0] || '',
-          email: userResponse.errors.email?.[0] || '',
-          phone: userResponse.errors.phone?.[0] || '',
-          password: userResponse.errors.password?.[0] || '',
-          confirmPassword: userResponse.errors.confirmPassword?.[0] || '',
-        };
+          ...errorMessages,
+          agencyName: agencyResponse.errors.name?.[0] || '',
+          agencyDescription: agencyResponse.errors.description?.[0] || '',
+          agencyEmail: agencyResponse.errors.email?.[0] || '',
+          agencyPhone: agencyResponse.errors.phone?.[0] || '',
+          agencyAddress: agencyResponse.errors.address?.[0] || '',
+          agencyCity: agencyResponse.errors.city?.[0] || '',
+          agencyPostalCode: agencyResponse.errors.postalCode?.[0] || '',
+          agencyWebsite: agencyResponse.errors.website?.[0] || '',
+          firstName: agencyResponse.errors.firstName?.[0] || '',
+          lastName: agencyResponse.errors.lastName?.[0] || '',
+          email: agencyResponse.errors.email?.[0] || '',
+          phone: agencyResponse.errors.phone?.[0] || '',
+          password: agencyResponse.errors.password?.[0] || '',
+          confirmPassword: agencyResponse.errors.confirmPassword?.[0] || '',
+        }
 
         setErrorMessages(errors);
-        setError(userResponse.message);
-        return;
-      }
-
-      const userResult = await userResponse.json();
-
-      if (!userResponse.ok) {
-        setError(userResult.message || 'Erreur lors de la création du compte utilisateur');
+        setError(agencyResponse.message);
         return;
       }
 
@@ -336,21 +337,6 @@ export default function RegisterAgencyPage() {
                 isInvalid={errorMessages.agencyWebsite !== ''}
               />
             </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-default-700">Logo de l'agence</label>
-              <Input
-                type="url"
-                placeholder="https://example.com/logo.jpg"
-                value={agencyData.logo}
-                onChange={(e) => handleAgencyInputChange('logo', e.target.value)}
-                size="lg"
-                variant="bordered"
-                radius="lg"
-                isClearable
-                onClear={() => handleAgencyInputChange('logo', '')}
-              />
-            </div>
           </div>
         </div>
       );
@@ -433,8 +419,8 @@ export default function RegisterAgencyPage() {
               size="lg"
               variant="bordered"
               radius="lg"
-              isClearable
-              onClear={() => handleUserInputChange('phone', '')}
+              //isClearable
+              //onClear={() => handleUserInputChange('phone', '')}
               errorMessage={errorMessages.phone}
               isInvalid={errorMessages.phone !== ''}
             />
@@ -462,8 +448,8 @@ export default function RegisterAgencyPage() {
                 size="lg"
                 variant="bordered"
                 radius="lg"
-                isClearable
-                onClear={() => handleUserInputChange('password', '')}
+                //isClearable
+                //onClear={() => handleUserInputChange('password', '')}
                 errorMessage={errorMessages.password}
                 isInvalid={errorMessages.password !== ''}
               />
@@ -634,36 +620,6 @@ export default function RegisterAgencyPage() {
                 </Button>
               </div>
             </form>
-
-            {currentStep === 2 && (
-              <>
-                <div className="relative">
-                  <Divider />
-                  <div className="absolute inset-0 flex items-center justify-center text-default-500">
-                    <span className="bg-background px-2 text-sm">ou</span>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <Button 
-                    variant="bordered" 
-                    size="lg"
-                    radius="full"
-                    className="w-full"
-                    onClick={() => signIn('google', { callbackUrl: '/' })}
-                    isDisabled={isLoading}
-                  >
-                    <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
-                      <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                      <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                      <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                      <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
-                    Continuer avec Google
-                  </Button>
-                </div>
-              </>
-            )}
 
             <div className="text-center pt-6">
               <p className="text-sm text-gray-600">

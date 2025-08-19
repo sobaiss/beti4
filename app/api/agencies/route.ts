@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAgencySchema } from '@/lib/validations/agency'
+import { CreateAgencySchema } from '@/lib/validations/agency'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
     // Validate agency data
-    const validatedData = createAgencySchema.parse({
+    const validatedData = CreateAgencySchema.parse({
       ...body,
       email: body.email?.toLowerCase()
     })
