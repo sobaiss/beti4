@@ -314,32 +314,12 @@ export default function MonComptePage() {
         </div>
 
         <Tabs aria-label="Account settings" className="space-y-6">
-          <div className="flex space-x-1 border-b">
-            <Tab key="personal" title={
-              <div className="flex items-center gap-2">
-                <UserIcon className="w-4 h-4" />
-                <span>Informations personnelles</span>
-              </div>
-            }>
-            </Tab>
-            <Tab key="privacy" title={
-              <div className="flex items-center gap-2">
-                <EyeIcon className="w-4 h-4" />
-                <span>Confidentialité</span>
-              </div>
-            }>
-            </Tab>
-            <Tab key="security" title={
-              <div className="flex items-center gap-2">
-                <ShieldCheckIcon className="w-4 h-4" />
-                <span>Connexion et sécurité</span>
-              </div>
-            }>
-            </Tab>
-          </div>
-
-          {/* Personal Information Section */}
-          <div key="personal">
+          <Tab key="personal" title={
+            <div className="flex items-center gap-2">
+              <UserIcon className="w-4 h-4" />
+              <span>Informations personnelles</span>
+            </div>
+          }>
             <Card>
               <CardHeader className="text-foreground">
                 <div className="flex items-center gap-2">
@@ -470,7 +450,253 @@ export default function MonComptePage() {
                 </form>
               </CardBody>
             </Card>
-          </div>
+          </Tab>
+          
+          <Tab key="privacy" title={
+            <div className="flex items-center gap-2">
+              <EyeIcon className="w-4 h-4" />
+              <span>Confidentialité</span>
+            </div>
+          }>
+            <Card>
+              <CardHeader className="text-foreground">
+                <div className="flex items-center gap-2">
+                  <EyeIcon className="w-5 h-5" />
+                  <h3 className="text-lg font-semibold">Préférences de confidentialité</h3>
+                </div>
+              </CardHeader>
+              <CardBody>
+                {messages.privacy && (
+                  <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="flex items-center">
+                      <CheckCircleIcon className="h-4 w-4 text-green-600 mr-2" />
+                      <span className="text-green-800">{messages.privacy}</span>
+                    </div>
+                  </div>
+                )}
+                
+                {errors.privacy && (
+                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="flex items-center">
+                      <ExclamationTriangleIcon className="h-4 w-4 text-red-600 mr-2" />
+                      <span className="text-red-800">{errors.privacy}</span>
+                    </div>
+                  </div>
+                )}
+
+                <form onSubmit={handlePrivacySettingsSubmit} className="space-y-6">
+                  <div className="space-y-4">
+                    <h4 className="text-base font-medium text-default-900">Préférences de contact</h4>
+                    <div className="space-y-3">
+                      <Checkbox
+                        isSelected={privacySettings.acceptEmailContact}
+                        onValueChange={(checked) => 
+                          setPrivacySettings(prev => ({ ...prev, acceptEmailContact: checked as boolean }))
+                        }
+                      >
+                        Accepter d'être contacté par email
+                      </Checkbox>
+                      <Checkbox
+                        isSelected={privacySettings.acceptPhoneContact}
+                        onValueChange={(checked) => 
+                          setPrivacySettings(prev => ({ ...prev, acceptPhoneContact: checked as boolean }))
+                  <Divider />
+                        }
+                  <div className="space-y-4">
+                    <h4 className="text-base font-medium text-default-900">Visibilité des informations</h4>
+                    <div className="space-y-3">
+                      <Checkbox
+                        isSelected={privacySettings.displayEmail}
+                        onValueChange={(checked) => 
+                          setPrivacySettings(prev => ({ ...prev, displayEmail: checked as boolean }))
+                        }
+                      >
+                        Afficher mon email sur mes annonces
+                      </Checkbox>
+                      <Checkbox
+                        isSelected={privacySettings.displayPhone}
+                        onValueChange={(checked) => 
+                          setPrivacySettings(prev => ({ ...prev, displayPhone: checked as boolean }))
+                        }
+                      >
+                        Afficher mon téléphone sur mes annonces
+                      </Checkbox>
+                    </div>
+                  </div>
+                      >
+                  <Button 
+                    type="submit" 
+                    isDisabled={saving} 
+                    color="primary"
+                    startContent={!saving && <CheckCircleIcon className="w-4 h-4" />}
+                    isLoading={saving}
+                  >
+                    {saving ? 'Enregistrement...' : 'Enregistrer les préférences'}
+                  </Button>
+                </form>
+              </CardBody>
+            </Card>
+          </Tab>
+                        Accepter d'être contacté par téléphone
+          <Tab key="security" title={
+            <div className="flex items-center gap-2">
+              <ShieldCheckIcon className="w-4 h-4" />
+              <span>Connexion et sécurité</span>
+            </div>
+          }>
+            <Card>
+              <CardHeader className="text-foreground">
+                <div className="flex items-center gap-2">
+                  <ShieldCheckIcon className="w-5 h-5" />
+                  <h3 className="text-lg font-semibold">Connexion et sécurité</h3>
+                </div>
+              </CardHeader>
+              <CardBody className="space-y-8">
+                {messages.security && (
+                  <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="flex items-center">
+                      <CheckCircleIcon className="h-4 w-4 text-green-600 mr-2" />
+                      <span className="text-green-800">{messages.security}</span>
+                    </div>
+                  </div>
+                )}
+                
+                {errors.security && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="flex items-center">
+                      <ExclamationTriangleIcon className="h-4 w-4 text-red-600 mr-2" />
+                      <span className="text-red-800">{errors.security}</span>
+                    </div>
+                  </div>
+                )}
+                      </Checkbox>
+                {/* Change Password Section */}
+                <Card className="border">
+                  <CardHeader>
+                    <h4 className="text-base font-medium text-default-900">Changer le mot de passe</h4>
+                  </CardHeader>
+                  <CardBody>
+                    <form onSubmit={handlePasswordChange} className="space-y-4">
+                      <Input
+                        type={showPasswords.current ? 'text' : 'password'}
+                        label="Mot de passe actuel"
+                        value={securityInfo.currentPassword}
+                        onChange={(e) => setSecurityInfo(prev => ({ ...prev, currentPassword: e.target.value }))}
+                        startContent={<LockClosedIcon className="w-4 h-4 text-default-400" />}
+                        endContent={
+                          <button
+                            type="button"
+                            onClick={() => setShowPasswords(prev => ({ ...prev, current: !prev.current }))}
+                            className="text-default-400 hover:text-default-600"
+                          >
+                            {showPasswords.current ? <EyeSlashIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                          </button>
+                        }
+                      />
+                      
+                      <Input
+                        type={showPasswords.new ? 'text' : 'password'}
+                        label="Nouveau mot de passe"
+                        value={securityInfo.newPassword}
+                        onChange={(e) => setSecurityInfo(prev => ({ ...prev, newPassword: e.target.value }))}
+                        startContent={<LockClosedIcon className="w-4 h-4 text-default-400" />}
+                        endContent={
+                          <button
+                            type="button"
+                            onClick={() => setShowPasswords(prev => ({ ...prev, new: !prev.new }))}
+                            className="text-default-400 hover:text-default-600"
+                          >
+                            {showPasswords.new ? <EyeSlashIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                          </button>
+                        }
+                      />
+                      
+                      <Input
+                        type={showPasswords.confirm ? 'text' : 'password'}
+                        label="Confirmer le nouveau mot de passe"
+                        value={securityInfo.confirmPassword}
+                        onChange={(e) => setSecurityInfo(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                        startContent={<LockClosedIcon className="w-4 h-4 text-default-400" />}
+                        endContent={
+                          <button
+                            type="button"
+                            onClick={() => setShowPasswords(prev => ({ ...prev, confirm: !prev.confirm }))}
+                            className="text-default-400 hover:text-default-600"
+                          >
+                            {showPasswords.confirm ? <EyeSlashIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                          </button>
+                        }
+                      />
+                      
+                      <Button 
+                        type="submit" 
+                        color="primary"
+                        isDisabled={saving || !securityInfo.currentPassword || !securityInfo.newPassword || !securityInfo.confirmPassword}
+                        isLoading={saving}
+                      >
+                        {saving ? 'Modification...' : 'Changer le mot de passe'}
+                      </Button>
+                    </form>
+                  </CardBody>
+                </Card>
+                    </div>
+                {/* Change Email Section */}
+                <Card className="border">
+                  <CardHeader>
+                    <h4 className="text-base font-medium text-default-900">Changer l'adresse email</h4>
+                  </CardHeader>
+                  <CardBody>
+                    <div className="space-y-4">
+                      <Input
+                        type="email"
+                        label="Nouvelle adresse email"
+                        value={securityInfo.newEmail}
+                        onChange={(e) => setSecurityInfo(prev => ({ ...prev, newEmail: e.target.value }))}
+                        startContent={<EnvelopeIcon className="w-4 h-4 text-default-400" />}
+                      />
+                      
+                      <Button 
+                        onClick={handleEmailChange}
+                        color="primary"
+                        variant="bordered"
+                        isDisabled={saving || !securityInfo.newEmail}
+                        isLoading={saving}
+                      >
+                        {saving ? 'Envoi...' : 'Envoyer email de confirmation'}
+                      </Button>
+                    </div>
+                  </CardBody>
+                </Card>
+                  </div>
+                {/* Delete Account Section */}
+                <Card className="border border-danger-200">
+                  <CardHeader>
+                    <div className="flex items-center gap-2">
+                      <ExclamationTriangleIcon className="w-5 h-5 text-danger-500" />
+                      <h4 className="text-base font-medium text-danger-700">Zone dangereuse</h4>
+                    </div>
+                  </CardHeader>
+                  <CardBody>
+                    <div className="space-y-4">
+                      <p className="text-sm text-default-600">
+                        La suppression de votre compte est irréversible. Toutes vos données, y compris vos annonces, seront définitivement supprimées.
+                      </p>
+                      
+                      <Button 
+                        onClick={handleDeleteAccount}
+                        color="danger"
+                        variant="bordered"
+                        startContent={<TrashIcon className="w-4 h-4" />}
+                        isDisabled={saving}
+                      >
+                        Supprimer mon compte
+                      </Button>
+                    </div>
+                  </CardBody>
+                </Card>
+              </CardBody>
+            </Card>
+          </Tab>
         </Tabs>
       </div>
     </div>
