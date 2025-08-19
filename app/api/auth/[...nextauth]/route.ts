@@ -49,6 +49,7 @@ const handler = NextAuth({
           cookieStore.set('access_token', accessToken)
           cookieStore.set('user_id', user.id)
 
+          console.log('------ authorize', { user })
           return {
             id: user.id,
             email: user.email,
@@ -77,6 +78,8 @@ const handler = NextAuth({
   ],
   callbacks: {
     async jwt({ token, user }) {
+      console.log('------ jwt', token)
+      console.log('------ jwt', user)
       if (user) {
         token.id = user.id
         token.firstName = user.firstName
@@ -97,6 +100,8 @@ const handler = NextAuth({
       return token
     },
     async session({ session, token }) {
+      console.log('------ session', session)
+      console.log('------ session', token)
       if (token) {
         session.user.id = token.id as string
         session.user.firstName = token.firstName as string

@@ -15,8 +15,6 @@ import {
   ExclamationTriangleIcon,
   CheckCircleIcon,
   LockClosedIcon,
-  Cog6ToothIcon,
-  HeartIcon,
   BellIcon
 } from '@heroicons/react/24/outline';
 import { 
@@ -25,17 +23,16 @@ import {
   Card, 
   CardBody, 
   CardHeader, 
-  Checkbox, 
-  Divider, 
+  Checkbox,
   Tabs, 
   Tab,
   Avatar,
   Chip,
-  Progress
 } from '@heroui/react';
 import Header from '@/components/Header';
 import { UserService } from '@/lib/services/user';
-import { getUserProfile } from '@/lib/actions/user';
+import { deleteUserAvatar, getUserProfile, updateUserAvatar } from '@/lib/actions/user';
+import { convertFileToBase64 } from '@/lib/files/files';
 
 export default function MonComptePage() {
   const { data: session, status, update } = useSession();
@@ -180,36 +177,23 @@ export default function MonComptePage() {
     setMessages(prev => ({ ...prev, personal: '' }));
 
     try {
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const base64String = e.target?.result as string;
-        
-        try {
-          const response = await UserService.updateUserInfos(session.user.id, {
-            ...personalInfo,
-            avatar: base64String
-          });
+      const base64File: string = await convertFileToBase64(imageFile);
 
-          if (response.ok) {
-            setPersonalInfo(prev => ({ ...prev, avatar: base64String }));
-            setMessages(prev => ({ ...prev, personal: 'Photo de profil mise à jour avec succès' }));
-            setImageFile(null);
-            setImagePreview('');
-            // Update session
-            await update();
-          } else {
-            const errorData = await response.json();
-            setErrors(prev => ({ ...prev, personal: errorData.error || 'Erreur lors de la mise à jour de la photo' }));
-          }
-        } catch (error) {
-          console.error('Error uploading image:', error);
-          setErrors(prev => ({ ...prev, personal: 'Erreur lors de l\'upload de l\'image' }));
-        } finally {
-          setUploadingImage(false);
-        }
-      };
-      
-      reader.readAsDataURL(imageFile);
+      try {
+        const userData = await updateUserAvatar(session.user.id, base64File);
+
+        setPersonalInfo(prev => ({ ...prev, avatar: userData.avatar || '' }));
+        setMessages(prev => ({ ...prev, personal: 'Photo de profil mise à jour avec succès' }));
+        setImageFile(null);
+        setImagePreview('');
+        // Update session
+        await update();
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        setErrors(prev => ({ ...prev, personal: 'Erreur lors de l\'upload de l\'image' }));
+      } finally {
+        setUploadingImage(false);
+      }
     } catch (error) {
       console.error('Error processing image:', error);
       setErrors(prev => ({ ...prev, personal: 'Erreur lors du traitement de l\'image' }));
@@ -217,8 +201,31 @@ export default function MonComptePage() {
     }
   };
 
+  const handleImageDelete = async() => {
+    if (!session?.user?.id) return;
+    setUploadingImage(true);
+    setErrors(prev => ({ ...prev, personal: '' }));
+    setMessages(prev => ({ ...prev, personal: '' }));
+
+    try {
+      const userData = await deleteUserAvatar(session.user.id);
+
+      setPersonalInfo(prev => ({ ...prev, ...userData }));
+      setMessages(prev => ({ ...prev, personal: 'Photo de profil supprimée avec succès' }));
+      setImageFile(null);
+      setImagePreview('');
+      // Update session
+      await update();
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      setErrors(prev => ({ ...prev, personal: 'Erreur lors de l\'upload de l\'image' }));
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   // Remove uploaded image
-  const handleRemoveImage = () => {
+  const handleRemoveSelectedImage = () => {
     setImageFile(null);
     setImagePreview('');
   };
@@ -525,7 +532,7 @@ export default function MonComptePage() {
                                 size="sm"
                                 variant="light"
                                 color="danger"
-                                onClick={handleRemoveImage}
+                                onClick={handleRemoveSelectedImage}
                                 isDisabled={uploadingImage}
                                 isIconOnly
                               >
@@ -552,7 +559,7 @@ export default function MonComptePage() {
                                 size="sm"
                                 variant="light"
                                 color="danger"
-                                onClick={() => setPersonalInfo(prev => ({ ...prev, avatar: '' }))}
+                                onClick={handleImageDelete}
                                 startContent={<TrashIcon className="w-4 h-4" />}
                               >
                                 Supprimer
