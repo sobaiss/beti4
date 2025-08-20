@@ -105,6 +105,15 @@ export default function DeposerUneAnnonceView() {
       router.push('/auth/signin?callbackUrl=/deposer-une-annonce');
       return;
     }
+    if (formData.useUserContact) {
+      setFormData(prev => ({
+        ...prev,
+        contactFirstName: session.user.firstName || '',
+        contactLastName: session.user.lastName || '',
+        contactEmail: session.user.email || '',
+        contactPhone: session.user.phone || ''
+      }));
+    }
   }, [session, status, router]);
 
     // Track property view on component mount
@@ -539,7 +548,9 @@ export default function DeposerUneAnnonceView() {
                 <Input
                   id="contactFirstName"
                   label="Prénom"
+                  labelPlacement="outside"
                   placeholder="Prénom"
+                  radius="full"
                   value={formData.contactFirstName}
                   onChange={(e) => handleInputChange('contactFirstName', e.target.value)}
                   isDisabled={formData.useUserContact}
@@ -550,7 +561,10 @@ export default function DeposerUneAnnonceView() {
                 <Input
                   id="contactLastName"
                   label="Nom"
+                  labelPlacement="outside"
                   placeholder="Nom"
+                  radius="full"
+                  size="lg"
                   value={formData.contactLastName}
                   onChange={(e) => handleInputChange('contactLastName', e.target.value)}
                   isDisabled={formData.useUserContact}
@@ -561,8 +575,11 @@ export default function DeposerUneAnnonceView() {
                 <Input
                   id="contactEmail"
                   label="Adresse email"
+                  labelPlacement="outside"
+                  radius="full"
+                  size="lg"
                   type="email"
-                  placeholder="jean.dupont@email.com"
+                  placeholder="Email"
                   value={formData.contactEmail}
                   onChange={(e) => handleInputChange('contactEmail', e.target.value)}
                   isDisabled={formData.useUserContact}
@@ -573,8 +590,11 @@ export default function DeposerUneAnnonceView() {
                 <Input
                   id="contactPhone"
                   label="Numéro de téléphone"
+                  labelPlacement="outside"
+                  radius="full"
+                  size="lg"
                   type="tel"
-                  placeholder="06 12 34 56 78"
+                  placeholder="66000000"
                   value={formData.contactPhone}
                   onChange={(e) => handleInputChange('contactPhone', e.target.value)}
                   isDisabled={formData.useUserContact}
