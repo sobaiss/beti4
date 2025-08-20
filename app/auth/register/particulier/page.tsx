@@ -5,8 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { 
-  EyeIcon, 
-  EyeSlashIcon, 
   EnvelopeIcon, 
   LockClosedIcon, 
   PhoneIcon, 
@@ -17,7 +15,6 @@ import {
   Input, 
   Card,
   CardBody,
-  CardHeader,
   Checkbox, 
   Divider,
 } from '@heroui/react';

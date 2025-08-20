@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { 
   UserIcon, 
@@ -31,13 +31,27 @@ import {
 } from '@heroui/react';
 import Header from '@/components/Header';
 import { UserService } from '@/lib/services/user';
-import { deleteUserAvatar, getUserProfile, updateUserAvatar } from '@/lib/actions/user';
+import { changeAccountRequest, changePassword, deleteUser, deleteUserAvatar, getUserProfile, updateUserAvatar, updateUserInfos, updateUserSettings } from '@/lib/actions/user';
 import { convertFileToBase64 } from '@/lib/files/files';
 
 export default function MonComptePage() {
   const { data: session, status, update } = useSession();
   const router = useRouter();
-  
+
+  const emptyErrorMessages = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
+    currentPassword: '',
+    newEmail: ''
+  };
+
+  const [selectedTab, setSelectedTab] = useState('personal');
+  const [errorMessages, setErrorMessages] = useState(emptyErrorMessages);
+
   // Form states
   const [personalInfo, setPersonalInfo] = useState({
     firstName: '',
@@ -62,7 +76,7 @@ export default function MonComptePage() {
 
   const [securityInfo, setSecurityInfo] = useState({
     currentPassword: '',
-    newPassword: '',
+    password: '',
     confirmPassword: '',
     newEmail: ''
   });
@@ -136,6 +150,16 @@ export default function MonComptePage() {
 
     loadUserData();
   }, [session?.user?.id]);
+
+  const handleInputPersonalInfoChange = (field: string, value: string | boolean) => {
+    setPersonalInfo(prev => ({ ...prev, [field]: value }));
+    setErrorMessages(emptyErrorMessages);
+  };
+
+  const handleInputSecurityChange = (field: string, value: string | boolean) => {
+    setSecurityInfo(prev => ({ ...prev, [field]: value }));
+    setErrorMessages(emptyErrorMessages);
+  };
 
   // Handle image file selection
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -240,19 +264,31 @@ export default function MonComptePage() {
     setMessages(prev => ({ ...prev, personal: '' }));
 
     try {
-      const response = await UserService.updateUserInfos(session.user.id, personalInfo);
+      const response = await updateUserInfos(session.user.id, {
+        phone: personalInfo.phone,
+        lastName: personalInfo.lastName,
+        firstName: personalInfo.firstName
+      });
 
-      if (response.ok) {
-        setMessages(prev => ({ ...prev, personal: 'Informations mises à jour avec succès' }));
-        // Update session
-        await update();
-      } else {
-        const errorData = await response.json();
-        setErrors(prev => ({ ...prev, personal: errorData.error || 'Erreur lors de la mise à jour' }));
+      if ('errors' in response) {
+        const errors = {
+          firstName: response.errors.firstName?.[0] || '',
+          lastName: response.errors.lastName?.[0] || '',
+          phone: response.errors.phone?.[0] || '',
+        }
+
+        setErrorMessages((prev) => ({ ...prev, ...errors }));
+        setErrors(prev => ({ ...prev, personal: response.message }));
+        return;
       }
+
+      setPersonalInfo(prev => ({ ...prev, ...response }));
+      setMessages(prev => ({ ...prev, personal: 'Informations mises à jour avec succès' }));
+      // Update session
+      await update();
     } catch (error) {
       console.error('Error updating personal info:', error);
-      setErrors(prev => ({ ...prev, personal: 'Erreur lors de la mise à jour' }));
+      setErrors(prev => ({ ...prev, personal: 'Erreur lors de la mise à jour des informations personnelles' }));
     } finally {
       setSaving(false);
     }
@@ -268,17 +304,21 @@ export default function MonComptePage() {
     setMessages(prev => ({ ...prev, privacy: '' }));
 
     try {
-      const response = await UserService.updateUserSettings(session.user.id, privacySettings);
+      const response = await updateUserSettings(session.user.id, privacySettings);
 
-      if (response.ok) {
-        setMessages(prev => ({ ...prev, privacy: 'Préférences mises à jour avec succès' }));
-      } else {
-        const errorData = await response.json();
-        setErrors(prev => ({ ...prev, privacy: errorData.error || 'Erreur lors de la mise à jour' }));
+      if ('errors' in response) {
+        //setErrorMessages((prev) => ({ ...prev, ...errors }));
+        setErrors(prev => ({ ...prev, privacy: response.message }));
+        return;
       }
+
+      setMessages(prev => ({ ...prev, privacy: 'Préférences de confidentialité mises à jour avec succès' }));
+      setPrivacySettings(prev => ({ ...prev, ...response.settings }));
+      // Update session
+      await update();
     } catch (error) {
       console.error('Error updating privacy settings:', error);
-      setErrors(prev => ({ ...prev, privacy: 'Erreur lors de la mise à jour' }));
+      setErrors(prev => ({ ...prev, privacy: 'Erreur lors de la mise à jour des Préférences de confidentialité' }));
     } finally {
       setSaving(false);
     }
@@ -289,33 +329,32 @@ export default function MonComptePage() {
     e.preventDefault();
     if (!session?.user?.id) return;
 
-    if (securityInfo.newPassword !== securityInfo.confirmPassword) {
-      setErrors(prev => ({ ...prev, security: 'Les nouveaux mots de passe ne correspondent pas' }));
-      return;
-    }
-
-    if (securityInfo.newPassword.length < 6) {
-      setErrors(prev => ({ ...prev, security: 'Le nouveau mot de passe doit contenir au moins 6 caractères' }));
-      return;
-    }
+    // if (securityInfo.password !== securityInfo.confirmPassword) {
+    //   setErrors(prev => ({ ...prev, security: 'Les nouveaux mots de passe ne correspondent pas' }));
+    //   return;
+    // }
 
     setSaving(true);
     setErrors(prev => ({ ...prev, security: '' }));
     setMessages(prev => ({ ...prev, security: '' }));
 
     try {
-      const response = await UserService.updateUserPassword(session.user.id, {
+      const response = await changePassword(session.user.id, {
         currentPassword: securityInfo.currentPassword,
-        newPassword: securityInfo.newPassword
+        password: securityInfo.password,
+        confirmPassword: securityInfo.confirmPassword
       });
 
-      if (response.ok) {
-        setMessages(prev => ({ ...prev, security: 'Mot de passe modifié avec succès' }));
-        setSecurityInfo(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }));
-      } else {
-        const errorData = await response.json();
-        setErrors(prev => ({ ...prev, security: errorData.error || 'Erreur lors du changement de mot de passe' }));
+      if ('errors' in response) {
+        console.log('---- Errors:', response.errors);
+        setErrorMessages((prev) => ({ ...prev, ...response.errors }));
+        setErrors(prev => ({ ...prev, security: response.message ?? '' }));
+        return;
       }
+
+      setMessages(prev => ({ ...prev, security: 'Mot de passe modifié avec succès' }));
+      setSecurityInfo(prev => ({ ...prev, currentPassword: '', password: '', confirmPassword: '' }));
+      await signOut({ callbackUrl: '/' });
     } catch (error) {
       console.error('Error changing password:', error);
       setErrors(prev => ({ ...prev, security: 'Erreur lors du changement de mot de passe' }));
@@ -333,15 +372,15 @@ export default function MonComptePage() {
     setMessages(prev => ({ ...prev, security: '' }));
 
     try {
-      const response = await UserService.updateUserEmail(session.user.id, securityInfo.newEmail);
+      const response = await changeAccountRequest(session.user.id, securityInfo.newEmail);
 
-      if (response.ok) {
-        setMessages(prev => ({ ...prev, security: 'Un email de confirmation a été envoyé à votre nouvelle adresse' }));
-        setSecurityInfo(prev => ({ ...prev, newEmail: '' }));
-      } else {
-        const errorData = await response.json();
-        setErrors(prev => ({ ...prev, security: errorData.error || 'Erreur lors du changement d\'email' }));
+      if ('errors' in response) {
+        setErrorMessages((prev) => ({ ...prev, ...response.errors }));
+        setErrors(prev => ({ ...prev, security: response.message ?? '' }));
+        return;
       }
+
+      setMessages(prev => ({ ...prev, security: 'Votre demande de changement d\'email a été envoyée avec succès' }));
     } catch (error) {
       console.error('Error changing email:', error);
       setErrors(prev => ({ ...prev, security: 'Erreur lors du changement d\'email' }));
@@ -363,17 +402,18 @@ export default function MonComptePage() {
     setSaving(true);
     
     try {
-      const response = await UserService.deleteUser(session.user.id);
+      const response = await deleteUser(session.user.id);
 
-      if (response.ok) {
-        alert('Votre compte a été supprimé avec succès');
-        router.push('/');
-      } else {
-        const errorData = await response.json();
-        setErrors(prev => ({ ...prev, security: errorData.error || 'Erreur lors de la suppression du compte' }));
+      if ('errors' in response) {
+        //setErrorMessages((prev) => ({ ...prev, ...errors }));
+        setErrors(prev => ({ ...prev, security: response.message ?? 'Erreur lors de la suppression du compte' }));
+        return;
       }
+
+      setMessages(prev => ({ ...prev, security: 'Votre compte a été supprimé avec succès' }));
+      await signOut({ callbackUrl: '/' });
     } catch (error) {
-      console.error('Error deleting account:', error);
+      console.error('Erreur lors de la suppression du compte:', error);
       setErrors(prev => ({ ...prev, security: 'Erreur lors de la suppression du compte' }));
     } finally {
       setSaving(false);
@@ -441,13 +481,17 @@ export default function MonComptePage() {
           variant="underlined"
           color="primary"
           size="lg"
+          fullWidth
+          selectedKey={selectedTab}
+          onSelectionChange={(key) => setSelectedTab(String(key))}
         >
           <Tab key="personal" title={
             <div className="flex items-center gap-3 px-4 py-2">
               <UserIcon className="w-5 h-5" />
               <span className="font-medium">Profil</span>
             </div>
-          }>
+          }
+          >
             <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
               <CardHeader className="text-foreground pb-6">
                 <div className="flex items-center gap-3">
@@ -561,6 +605,8 @@ export default function MonComptePage() {
                                 color="danger"
                                 onClick={handleImageDelete}
                                 startContent={<TrashIcon className="w-4 h-4" />}
+                                isDisabled={uploadingImage}
+                                isLoading={uploadingImage}
                               >
                                 Supprimer
                               </Button>
@@ -574,27 +620,29 @@ export default function MonComptePage() {
                   {/* Name Fields */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-default-700 mb-2">Prénom *</label>
+                      <label className="block text-sm font-semibold text-default-700 mb-2">Prénom</label>
                       <Input
                         value={personalInfo.firstName}
-                        onChange={(e) => setPersonalInfo(prev => ({ ...prev, firstName: e.target.value }))}
+                        onChange={(e) => handleInputPersonalInfoChange('firstName', e.target.value)}
                         size="lg"
                         variant="bordered"
                         radius="lg"
-                        isRequired
                         startContent={<UserIcon className="w-4 h-4 text-default-400" />}
+                        errorMessage={errorMessages.firstName}
+                        isInvalid={errorMessages.firstName !== ''}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-default-700 mb-2">Nom *</label>
+                      <label className="block text-sm font-semibold text-default-700 mb-2">Nom</label>
                       <Input
                         value={personalInfo.lastName}
-                        onChange={(e) => setPersonalInfo(prev => ({ ...prev, lastName: e.target.value }))}
+                        onChange={(e) => handleInputPersonalInfoChange('lastName', e.target.value)}
                         size="lg"
                         variant="bordered"
                         radius="lg"
-                        isRequired
                         startContent={<UserIcon className="w-4 h-4 text-default-400" />}
+                        errorMessage={errorMessages.lastName}
+                        isInvalid={errorMessages.lastName !== ''}
                       />
                     </div>
                   </div>
@@ -606,24 +654,26 @@ export default function MonComptePage() {
                       <Input
                         type="email"
                         value={personalInfo.email}
-                        onChange={(e) => setPersonalInfo(prev => ({ ...prev, email: e.target.value }))}
                         startContent={<EnvelopeIcon className="w-4 h-4 text-default-400" />}
                         size="lg"
                         variant="bordered"
                         radius="lg"
-                        isRequired
+                        isReadOnly
+                        isDisabled
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-default-700 mb-2">Téléphone</label>
+                      <label className="block text-sm font-semibold text-default-700 mb-2">Téléphone *</label>
                       <Input
                         type="tel"
                         value={personalInfo.phone}
-                        onChange={(e) => setPersonalInfo(prev => ({ ...prev, phone: e.target.value }))}
+                        onChange={(e) => handleInputPersonalInfoChange('phone', e.target.value)}
                         startContent={<PhoneIcon className="w-4 h-4 text-default-400" />}
                         size="lg"
                         variant="bordered"
                         radius="lg"
+                        errorMessage={errorMessages.phone}
+                        isInvalid={errorMessages.phone !== ''}
                       />
                     </div>
                   </div>
@@ -637,9 +687,7 @@ export default function MonComptePage() {
                           <h4 className="text-lg font-semibold text-default-900 mb-2">Préférences de communication</h4>
                           <Checkbox
                             isSelected={personalInfo.acceptMarketing}
-                            onValueChange={(checked) => 
-                              setPersonalInfo(prev => ({ ...prev, acceptMarketing: checked as boolean }))
-                            }
+                            onValueChange={(checked) => handleInputPersonalInfoChange('acceptMarketing', checked as boolean)}
                             size="lg"
                           >
                             <span className="text-default-700">J'accepte de recevoir des communications marketing et des mises à jour</span>
@@ -650,7 +698,7 @@ export default function MonComptePage() {
                   </Card>
 
                   <Button 
-                    type="submit" 
+                    type="submit"
                     isDisabled={saving} 
                     color="primary"
                     size="lg"
@@ -839,7 +887,7 @@ export default function MonComptePage() {
                         type={showPasswords.current ? 'text' : 'password'}
                         label="Mot de passe actuel"
                         value={securityInfo.currentPassword}
-                        onChange={(e) => setSecurityInfo(prev => ({ ...prev, currentPassword: e.target.value }))}
+                        onChange={(e) => handleInputSecurityChange('currentPassword', e.target.value)}
                         startContent={<LockClosedIcon className="w-4 h-4 text-default-400" />}
                         size="lg"
                         variant="bordered"
@@ -853,13 +901,15 @@ export default function MonComptePage() {
                             {showPasswords.current ? <EyeSlashIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
                           </button>
                         }
+                        errorMessage={errorMessages.currentPassword}
+                        isInvalid={errorMessages.currentPassword !== ''}
                       />
                       
                       <Input
                         type={showPasswords.new ? 'text' : 'password'}
                         label="Nouveau mot de passe"
-                        value={securityInfo.newPassword}
-                        onChange={(e) => setSecurityInfo(prev => ({ ...prev, newPassword: e.target.value }))}
+                        value={securityInfo.password}
+                        onChange={(e) => handleInputSecurityChange('password', e.target.value)}
                         startContent={<LockClosedIcon className="w-4 h-4 text-default-400" />}
                         size="lg"
                         variant="bordered"
@@ -873,13 +923,15 @@ export default function MonComptePage() {
                             {showPasswords.new ? <EyeSlashIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
                           </button>
                         }
+                        errorMessage={errorMessages.password}
+                        isInvalid={errorMessages.password !== ''}
                       />
                       
                       <Input
                         type={showPasswords.confirm ? 'text' : 'password'}
                         label="Confirmer le nouveau mot de passe"
                         value={securityInfo.confirmPassword}
-                        onChange={(e) => setSecurityInfo(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                        onChange={(e) => handleInputSecurityChange('confirmPassword', e.target.value)}
                         startContent={<LockClosedIcon className="w-4 h-4 text-default-400" />}
                         size="lg"
                         variant="bordered"
@@ -893,6 +945,8 @@ export default function MonComptePage() {
                             {showPasswords.confirm ? <EyeSlashIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
                           </button>
                         }
+                        errorMessage={errorMessages.confirmPassword}
+                        isInvalid={errorMessages.confirmPassword !== ''}
                       />
                       
                       <Button 
@@ -901,7 +955,7 @@ export default function MonComptePage() {
                         size="lg"
                         radius="full"
                         className="w-full font-semibold"
-                        isDisabled={saving || !securityInfo.currentPassword || !securityInfo.newPassword || !securityInfo.confirmPassword}
+                        isDisabled={saving || !securityInfo.currentPassword || !securityInfo.password || !securityInfo.confirmPassword}
                         isLoading={saving}
                       >
                         {saving ? 'Modification...' : 'Changer le mot de passe'}
@@ -927,11 +981,13 @@ export default function MonComptePage() {
                         type="email"
                         label="Nouvelle adresse email"
                         value={securityInfo.newEmail}
-                        onChange={(e) => setSecurityInfo(prev => ({ ...prev, newEmail: e.target.value }))}
+                        onChange={(e) => handleInputSecurityChange('newEmail', e.target.value)}
                         startContent={<EnvelopeIcon className="w-4 h-4 text-default-400" />}
                         size="lg"
                         variant="bordered"
                         radius="lg"
+                        errorMessage={errorMessages.newEmail}
+                        isInvalid={errorMessages.newEmail !== ''}
                       />
                       
                       <Button 
@@ -985,6 +1041,7 @@ export default function MonComptePage() {
                         className="w-full font-semibold"
                         startContent={<TrashIcon className="w-4 h-4" />}
                         isDisabled={saving}
+                        isLoading={saving}
                       >
                         Supprimer mon compte
                       </Button>

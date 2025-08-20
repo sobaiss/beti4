@@ -67,6 +67,27 @@ export const assignRightSchema = z.object({
   rightIds: z.array(z.string()).min(1, 'Au moins un droit doit être sélectionné')
 })
 
+export const changeUserPasswordSchema = z.object({
+  currentPassword: z.string().min(1, 'L’ancien mot de passe est requis'),
+  password: z
+    .string()
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/, {
+      message:
+        'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre.',
+    }),
+  confirmPassword: z.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/, {
+    message: 'Confirmez votre mot de passe.',
+  }),
+}).superRefine(({ confirmPassword, password }, ctx) => {
+  if (confirmPassword !== password) {
+    ctx.addIssue({
+      code: "custom",
+      message: "Les mots de passe ne correspondent pas",
+      path: ['confirmPassword']
+    });
+  }
+});
+
 export type CreateUserInput = z.infer<typeof createUserSchema>
 export type UpdateUserInput = z.infer<typeof updateUserSchema>
 export type UserSettingsInput = z.infer<typeof userSettingsSchema>
@@ -76,3 +97,4 @@ export type SavedSearchInput = z.infer<typeof savedSearchSchema>
 export type CreateRightInput = z.infer<typeof createRightSchema>
 export type UpdateRightInput = z.infer<typeof updateRightSchema>
 export type AssignRightInput = z.infer<typeof assignRightSchema>
+export type ChangeUserPasswordInput = z.infer<typeof changeUserPasswordSchema>
