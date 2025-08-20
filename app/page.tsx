@@ -7,9 +7,9 @@ import HomeSearchBarHome from '@/ui/search/home-search-bar';
 import PropertyList from '@/ui/property/property-list';
 import { Suspense, useEffect, useState } from 'react';
 import Loading from '@/components/ui/loading';
-import { getLocations } from '@/lib/services/location';
+import { getLocations } from '@/lib/actions/location';
 import { City } from '@/types/location';
-import { PropertyService } from '@/lib/services/property';
+import { getFeaturedProperties } from '@/lib/actions/property';
 import { PaginatedProperty } from '@/types/property';
 import { PropertiesListSkeleton } from '@/ui/property/skeletons';
 
@@ -29,7 +29,7 @@ export default function Home() {
 
   // Track property view on component mount
   useEffect(() => {
-      PropertyService.getFeaturedProperties(6).then(response => {
+      getFeaturedProperties(6).then(response => {
         if (response) {
           setFeaturedProperties(response);
         }

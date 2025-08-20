@@ -27,7 +27,7 @@ import {
   Progress
 } from '@heroui/react';
 import Header from '@/components/Header';
-import { createAgency } from '@/lib/services/agency';
+import { createAgency } from '@/lib/actions/agency';
 import { CreateAgencySchema } from '@/lib/validations/agency';
 
 export default function RegisterAgencyPage() {

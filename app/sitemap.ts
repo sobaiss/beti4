@@ -1,12 +1,12 @@
 import { MetadataRoute } from 'next'
-import { PropertyService } from '@/lib/services/property'
+import { getProperties } from '@/lib/actions/property'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://beti.com'
   
   // Get all properties for sitemap
-  const { properties } = await PropertyService.getProperties({}, { field: 'createdAt', direction: 'desc' }, 1, 1000)
-  
+  const { properties } = await getProperties({}/* , { field: 'createdAt', direction: 'desc' } */, 1, 1000)
+
   // Static pages
   const staticPages = [
     {

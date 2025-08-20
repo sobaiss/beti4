@@ -2,24 +2,39 @@
 
 import { User } from "@/types/user";
 import { cookies } from 'next/headers'
-import { ChangeUserPasswordInput, changeUserPasswordSchema, UpdateUserInput, updateUserSchema, UpdateUserSettingsInput } from "../validations/user";
+import { ChangeUserPasswordInput, changeUserPasswordSchema, createUserSchema, UpdateUserInput, updateUserSchema, UpdateUserSettingsInput } from "../validations/user";
 
-async function fetchHeaderOptions(accessToken?: string) {
+function apiUrl(): string {
+  const url = process.env.NEXT_PUBLIC_API_URL;
+  if (!url) {
+    throw new Error('NEXT_PUBLIC_API_URL is not defined');
+  }
+  return url;
+}
+
+async function fetchHeaderOptions() {
+  const cookieStore = await cookies()
+  const accessToken = cookieStore.get('access_token')
   return {
     'Content-Type': 'application/json',
-    ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {})
+    ...(accessToken ? { Authorization: `Bearer ${accessToken.value}` } : {})
   }
 }
 
+export async function login(email: string, password: string) {
+    return await fetch(`${apiUrl()}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username: email, password })
+    });
+}
 
 export async function getUserProfile(): Promise<User | null> {
-    const cookieStore = await cookies()
-    const accessToken = cookieStore.get('access_token')
-
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL
-    const response = await fetch(`${apiUrl}/users/profile`, {
+    const response = await fetch(`${apiUrl()}/users/profile`, {
       method: 'GET',
-      headers: await fetchHeaderOptions(accessToken?.value)
+      headers: await fetchHeaderOptions()
     });
 
     if (!response.ok) {
@@ -30,13 +45,41 @@ export async function getUserProfile(): Promise<User | null> {
     return await response.json() as User;
   }
 
-  export async function updateUserAvatar(id: string, avatar: string) {
-    const cookieStore = await cookies()
-    const accessToken = cookieStore.get('access_token')
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL
-    const response = await fetch(`${apiUrl}/users/avatar/${id}`, {
+export async function createUser(data: FormData) {
+    const validatedFields = createUserSchema.safeParse(data);
+
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.flatten().fieldErrors,
+        message: 'Corriger les erreurs ci-dessous.',
+      };
+    }
+
+    const response = await fetch(`${apiUrl()}/users`, {
       method: 'POST',
-      headers: await fetchHeaderOptions(accessToken?.value),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(validatedFields.data)
+    });
+
+    console.log('Create user response:', response);
+    const responseData = await response.json();
+
+    if (!response.ok) {
+        return {
+            errors: responseData.errors || {},
+            message: 'Erreur lors de la mise à jour des informations utilisateur.',
+        }
+    }
+
+    return responseData;
+  }
+
+  export async function updateUserAvatar(id: string, avatar: string) {
+    const response = await fetch(`${apiUrl()}/users/avatar/${id}`, {
+      method: 'POST',
+      headers: await fetchHeaderOptions(),
       body: JSON.stringify({ avatar })
     });
 
@@ -48,12 +91,9 @@ export async function getUserProfile(): Promise<User | null> {
   }
 
 export async function deleteUserAvatar(id: string) {
-    const cookieStore = await cookies()
-    const accessToken = cookieStore.get('access_token')
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL
-    const response = await fetch(`${apiUrl}/users/avatar/${id}`, {
+    const response = await fetch(`${apiUrl()}/users/avatar/${id}`, {
         method: 'DELETE',
-        headers: await fetchHeaderOptions(accessToken?.value)
+        headers: await fetchHeaderOptions()
     });
 
     if (!response.ok) {
@@ -73,16 +113,9 @@ export async function updateUserInfos(id: string, data: UpdateUserInput) {
     };
     }
 
-    const cookieStore = await cookies()
-    const accessToken = cookieStore.get('access_token')
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL
-
-    const response = await fetch(`${apiUrl}/users/${id}`, {
+    const response = await fetch(`${apiUrl()}/users/${id}`, {
     method: 'PATCH',
-    headers: {
-        'Content-Type': 'application/json',
-        ...(accessToken ? { Authorization: `Bearer ${accessToken.value}` } : {})
-    },
+    headers: await fetchHeaderOptions(),
         body: JSON.stringify(validatedFields.data)
     });
 
@@ -95,20 +128,13 @@ export async function updateUserInfos(id: string, data: UpdateUserInput) {
         }
     }
 
-    return await response.json();
+    return responseData;
 }
 
 export async function updateUserSettings(id: string, data: UpdateUserSettingsInput) {
-    const cookieStore = await cookies()
-    const accessToken = cookieStore.get('access_token')
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL
-
-    const response = await fetch(`${apiUrl}/users/settings/${id}`, {
+    const response = await fetch(`${apiUrl()}/users/settings/${id}`, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(accessToken ? { Authorization: `Bearer ${accessToken.value}` } : {})
-      },
+      headers: await fetchHeaderOptions(),
       body: JSON.stringify(data)
     });
 
@@ -124,12 +150,9 @@ export async function updateUserSettings(id: string, data: UpdateUserSettingsInp
   }
 
 export async function deleteUser(id: string) {
-    const cookieStore = await cookies()
-    const accessToken = cookieStore.get('access_token')
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL
-    const response = await fetch(`${apiUrl}/users/${id}`, {
+    const response = await fetch(`${apiUrl()}/users/${id}`, {
       method: 'DELETE',
-      headers: await fetchHeaderOptions(accessToken?.value)
+      headers: await fetchHeaderOptions()
     });
 
     if (!response.ok) {
@@ -145,12 +168,9 @@ export async function deleteUser(id: string) {
   }
 
 export async function changeAccountRequest(id: string, newEmail: string) {
-    const cookieStore = await cookies()
-    const accessToken = cookieStore.get('access_token')
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL
-    const response = await fetch(`${apiUrl}/users/change-account-request/${id}`, {
+    const response = await fetch(`${apiUrl()}/users/change-account-request/${id}`, {
       method: 'POST',
-      headers: await fetchHeaderOptions(accessToken?.value),
+      headers: await fetchHeaderOptions(),
       body: JSON.stringify({ newEmail })
     });
 
@@ -175,12 +195,9 @@ export async function changePassword(id: string, data: ChangeUserPasswordInput) 
         };
     }
 
-    const cookieStore = await cookies()
-    const accessToken = cookieStore.get('access_token')
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL
-    const response = await fetch(`${apiUrl}/users/change-password/${id}`, {
+    const response = await fetch(`${apiUrl()}/users/change-password/${id}`, {
       method: 'PATCH',
-      headers: await fetchHeaderOptions(accessToken?.value),
+      headers: await fetchHeaderOptions(),
       body: JSON.stringify({ password: data.password, oldPassword: data.currentPassword })
     });
 

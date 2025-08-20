@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server'
-import { PropertyService } from '@/lib/services/property'
-import { generateSEOFilename } from '@/lib/utils/image-optimization'
+import { getProperties } from '@/lib/actions/property'
 
 export async function GET() {
   const baseUrl = 'https://beti.com'
   
   // Get all properties with images
-  const { properties } = await PropertyService.getProperties({}, { field: 'createdAt', direction: 'desc' }, 1, 1000)
+  const { properties } = await getProperties({}/* , { field: 'createdAt', direction: 'desc' } */, 1, 1000)
   
   // Generate image sitemap XML
   const imageEntries = properties.flatMap((property) => {

@@ -19,7 +19,7 @@ import {
   Divider,
 } from '@heroui/react';
 import Header from '@/components/Header';
-import { UserService } from '@/lib/services/user';
+import { createUser } from '@/lib/actions/user';
 
 export default function RegisterPage() {
   const emptyErrorMessages = {
@@ -65,7 +65,7 @@ export default function RegisterPage() {
     setErrorMessages(emptyErrorMessages);
 
     try {
-      const response = await UserService.createUser({
+      const response = await createUser({
           ...formData,
       });
 
@@ -80,14 +80,7 @@ export default function RegisterPage() {
         }
 
         setErrorMessages(errors);
-        setError(response.message);
-        return;
-      }
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.message || 'Erreur lors de la création du compte');
+        setError(response.message ?? 'Erreur lors de la création du compte');
         return;
       }
 

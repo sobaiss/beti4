@@ -30,7 +30,6 @@ import {
   Chip,
 } from '@heroui/react';
 import Header from '@/components/Header';
-import { UserService } from '@/lib/services/user';
 import { changeAccountRequest, changePassword, deleteUser, deleteUserAvatar, getUserProfile, updateUserAvatar, updateUserInfos, updateUserSettings } from '@/lib/actions/user';
 import { convertFileToBase64 } from '@/lib/files/files';
 
@@ -211,7 +210,7 @@ export default function MonComptePage() {
         setImageFile(null);
         setImagePreview('');
         // Update session
-        await update();
+        await update({user: userData});
       } catch (error) {
         console.error('Error uploading image:', error);
         setErrors(prev => ({ ...prev, personal: 'Erreur lors de l\'upload de l\'image' }));
@@ -239,7 +238,7 @@ export default function MonComptePage() {
       setImageFile(null);
       setImagePreview('');
       // Update session
-      await update();
+      await update({user: userData});
     } catch (error) {
       console.error('Error uploading image:', error);
       setErrors(prev => ({ ...prev, personal: 'Erreur lors de l\'upload de l\'image' }));
@@ -285,7 +284,7 @@ export default function MonComptePage() {
       setPersonalInfo(prev => ({ ...prev, ...response }));
       setMessages(prev => ({ ...prev, personal: 'Informations mises à jour avec succès' }));
       // Update session
-      await update();
+      await update({user: response});
     } catch (error) {
       console.error('Error updating personal info:', error);
       setErrors(prev => ({ ...prev, personal: 'Erreur lors de la mise à jour des informations personnelles' }));
@@ -315,7 +314,7 @@ export default function MonComptePage() {
       setMessages(prev => ({ ...prev, privacy: 'Préférences de confidentialité mises à jour avec succès' }));
       setPrivacySettings(prev => ({ ...prev, ...response.settings }));
       // Update session
-      await update();
+      await update({user: response});
     } catch (error) {
       console.error('Error updating privacy settings:', error);
       setErrors(prev => ({ ...prev, privacy: 'Erreur lors de la mise à jour des Préférences de confidentialité' }));
@@ -329,11 +328,6 @@ export default function MonComptePage() {
     e.preventDefault();
     if (!session?.user?.id) return;
 
-    // if (securityInfo.password !== securityInfo.confirmPassword) {
-    //   setErrors(prev => ({ ...prev, security: 'Les nouveaux mots de passe ne correspondent pas' }));
-    //   return;
-    // }
-
     setSaving(true);
     setErrors(prev => ({ ...prev, security: '' }));
     setMessages(prev => ({ ...prev, security: '' }));
@@ -346,7 +340,6 @@ export default function MonComptePage() {
       });
 
       if ('errors' in response) {
-        console.log('---- Errors:', response.errors);
         setErrorMessages((prev) => ({ ...prev, ...response.errors }));
         setErrors(prev => ({ ...prev, security: response.message ?? '' }));
         return;

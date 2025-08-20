@@ -32,7 +32,7 @@ import {
 import Header from '@/components/Header';
 import PropertyCard from '@/components/PropertyCard';
 import { Property } from '@/types/property';
-import { PropertyService } from '@/lib/services/property';
+import { getProperties } from '@/lib/actions/property';
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
@@ -71,7 +71,7 @@ export default function SearchPage() {
           // bedrooms: bedrooms
         }
 
-        const response = await PropertyService.getProperties(filters);
+        const response = await getProperties(filters);
 
         setProperties(response?.properties || []);
         setTotalProperties(response?.pagination.total || 0);

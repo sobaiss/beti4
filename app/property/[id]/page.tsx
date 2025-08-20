@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import Header from '@/components/Header';
 import PropertyDetailsView from '@/ui/property/property-details';
-import { PropertyService } from '@/lib/services/property';
+import { getPropertyById, incrementViewCount } from '@/lib/actions/property';
 
 
 // export async function generateStaticParams() {
@@ -15,10 +15,10 @@ export default async function PropertyDetailPage(props: { params: Promise<{ id: 
   
   let property;
   try {
-    property = await PropertyService.getPropertyByIdFromServer(id);
+    property = await getPropertyById(id);
     if (property) {
       // Track property view on component mount
-      PropertyService.incrementViewCount(property.id).catch(error => {
+      incrementViewCount(property.id).catch(error => {
         console.error('Error tracking property view:', error);
       });
     }

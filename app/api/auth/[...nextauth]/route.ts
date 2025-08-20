@@ -1,8 +1,8 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { z } from 'zod'
-import { UserService } from '@/lib/services/user'
 import { cookies } from 'next/headers'
+import { getUserProfile, login } from '@/lib/actions/user'
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -28,7 +28,7 @@ const handler = NextAuth({
         try {
           const { email, password } = loginSchema.parse(credentials)
 
-          const response = await UserService.login(email, password)
+          const response = await login(email, password)
           if (!response.ok) {
             return null
           }
@@ -39,14 +39,15 @@ const handler = NextAuth({
           if (!accessToken) {
             return null
           }
-
-          const user = await UserService.getProfile(accessToken)
-          if (!user) {
-            return null
-          }
-
           const cookieStore = await cookies()
           cookieStore.set('access_token', accessToken)
+          
+          const user = await getUserProfile()
+          if (!user) {
+            cookieStore.delete('access_token')
+            return null
+          }
+          
           cookieStore.set('user_id', user.id)
 
           console.log('------ authorize', { user })

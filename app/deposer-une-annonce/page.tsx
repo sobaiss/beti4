@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Header from '@/components/Header';
-import { getCities } from '@/lib/services/location';
+import { getCities } from '@/lib/actions/location';
 import DeposerUneAnnonceView from '@/ui/deposer-une-annonce/deposer-une-annonce';
 
 

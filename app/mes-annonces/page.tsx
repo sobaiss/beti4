@@ -29,7 +29,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Header from '@/components/Header';
 import { Property } from '@/types/property';
-import { PropertyService } from '@/lib/services/property';
+import { deleteUserProperty, getProperties } from '@/lib/actions/property';
 
 export default function MesAnnoncesPage() {
   const { data: session, status } = useSession();
@@ -54,13 +54,13 @@ export default function MesAnnoncesPage() {
 
       try {
         setLoading(true);
-        const response = await PropertyService.getProperties({ owner: session.user.id });
+        const response = await getProperties({ owner: session.user.id });
 
-        if (response) {
-          setProperties(response.properties || []);
-        } else {
+        if ('errors' in response) {
           setError('Erreur lors du chargement de vos annonces');
         }
+
+        setProperties(response.properties || []);
       } catch (error) {
         console.error('Error fetching user properties:', error);
         setError('Erreur lors du chargement de vos annonces');
@@ -115,7 +115,7 @@ export default function MesAnnoncesPage() {
     // if (!confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')) return;
 
     try {
-      const response = await PropertyService.deleteUserProperty(propertyId, session.user.id);
+      const response = await deleteUserProperty(propertyId, session.user.id);
 
       if (response.ok) {
         setProperties(prev => prev.filter(p => p.id !== propertyId));

@@ -1,5 +1,16 @@
+'use server'
+
 import { CreateAgencyInput, CreateAgencySchema } from "../validations/agency";
 import { CreateUserInput, createUserSchema } from "../validations/user";
+
+function apiUrl(): string {
+  const url = process.env.NEXT_PUBLIC_API_URL;
+  if (!url) {
+    throw new Error('NEXT_PUBLIC_API_URL is not defined');
+  }
+  return url;
+}
+
 
 export async function createAgency(data: {agency: CreateAgencyInput, user: CreateUserInput}) {
   console.log('Creating agency with data:', data);
@@ -19,10 +30,7 @@ export async function createAgency(data: {agency: CreateAgencyInput, user: Creat
     };
   }
 
-  const publicApiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-  console.log('Calling URL:', `${publicApiUrl}/agencies`);
-  const response = await fetch(`${publicApiUrl}/agencies`, {
+  const response = await fetch(`${apiUrl()}/agencies`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -33,14 +41,13 @@ export async function createAgency(data: {agency: CreateAgencyInput, user: Creat
     })
   });
 
+  const responseData = await response.json();
   if (!response.ok) {
-    const errorData = await response.json();
-    console.error('Error creating agency:', errorData);
     return {
-      errors: errorData.errors,
-      message: 'Une erreur est survenue lors de la création de l\'agence.',
+      errors: responseData.errors ?? {},
+      message: responseData.message ?? 'Une erreur est survenue lors de la création de l\'agence.',
     };
   }
 
-  return await response.json();
+  return responseData;
 }
