@@ -66,10 +66,11 @@ export default function DeposerUneAnnonceView() {
     parking: false,
     elevator: false,
     cellar: false,
-    contactName: '',
+    contactFirstName: '',
+    contactLastName: '',
     contactEmail: '',
     contactPhone: '',
-    isAgent: false
+    useUserContact: true
   });
 
   const locations = [
@@ -527,42 +528,56 @@ export default function DeposerUneAnnonceView() {
             <div className="space-y-4">
               <div className="flex items-center space-x-2 mb-4">
                 <Checkbox
-                  isSelected={formData.isAgent}
-                  onValueChange={(checked) => handleInputChange('isAgent', checked)}
+                  isSelected={formData.useUserContact}
+                  onValueChange={(checked) => handleInputChange('useUserContact', checked)}
                 > 
-                  Je suis un professionnel de l'immobilier
+                  Utiliser mes informations de contact
                 </Checkbox>
               </div>
 
               <div>
-                <label htmlFor="contactName" className="block text-sm font-medium text-gray-700 mb-1">Nom complet</label>
                 <Input
-                  id="contactName"
-                  placeholder="Jean Dupont"
-                  value={formData.contactName}
-                  onChange={(e) => handleInputChange('contactName', e.target.value)}
+                  id="contactFirstName"
+                  label="Prénom"
+                  placeholder="Prénom"
+                  value={formData.contactFirstName}
+                  onChange={(e) => handleInputChange('contactFirstName', e.target.value)}
+                  isDisabled={formData.useUserContact}
                 />
               </div>
 
               <div>
-                <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700 mb-1">Adresse email</label>
+                <Input
+                  id="contactLastName"
+                  label="Nom"
+                  placeholder="Nom"
+                  value={formData.contactLastName}
+                  onChange={(e) => handleInputChange('contactLastName', e.target.value)}
+                  isDisabled={formData.useUserContact}
+                />
+              </div>
+
+              <div>
                 <Input
                   id="contactEmail"
+                  label="Adresse email"
                   type="email"
                   placeholder="jean.dupont@email.com"
                   value={formData.contactEmail}
                   onChange={(e) => handleInputChange('contactEmail', e.target.value)}
+                  isDisabled={formData.useUserContact}
                 />
               </div>
 
               <div>
-                <label htmlFor="contactPhone" className="block text-sm font-medium text-gray-700 mb-1">Numéro de téléphone</label>
                 <Input
                   id="contactPhone"
+                  label="Numéro de téléphone"
                   type="tel"
                   placeholder="06 12 34 56 78"
                   value={formData.contactPhone}
                   onChange={(e) => handleInputChange('contactPhone', e.target.value)}
+                  isDisabled={formData.useUserContact}
                 />
               </div>
 
