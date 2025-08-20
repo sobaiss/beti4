@@ -110,7 +110,6 @@ export default function DeposerUneAnnonceView() {
   useEffect(() => {
     (async () => {
       const cities = await getCities();
-      console.log('Fetched cities:', cities);
       setCityMap(cities);
     })();
   }, []);
@@ -125,6 +124,7 @@ export default function DeposerUneAnnonceView() {
   ];
 
   const handleInputChange = (field: string, value: string | boolean) => {
+    console.log(`Field changed: ${field}, New value: ${value}`);
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -233,7 +233,7 @@ export default function DeposerUneAnnonceView() {
 
             <div className="space-y-4">
               <div>
-                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Adresse complète</label>
+                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Adresse</label>
                 <Input
                   id="address"
                   placeholder="Numéro et nom de rue"
@@ -253,10 +253,9 @@ export default function DeposerUneAnnonceView() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Ville</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Ville *</label>
                   <Autocomplete
                     allowsCustomValue
-                    onChange={(e) => handleInputChange('city', e.target.value)}
                     className="max-w-xs"
                     defaultItems={cityMap}
                     defaultSelectedKey=""
@@ -266,6 +265,7 @@ export default function DeposerUneAnnonceView() {
                     radius="full"
                     size="lg"
                     isClearable
+                    onSelectionChange={(item) => handleInputChange('city', item ? item.toString() : '')}
                     >
                     {(locationItem) => <AutocompleteItem key={locationItem.sk}>{locationItem.name}</AutocompleteItem>}
                 </Autocomplete>
@@ -273,7 +273,7 @@ export default function DeposerUneAnnonceView() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Quartier / Secteur (optionnel)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Quartier / Secteur</label>
                 <Select
                   selectedKeys={formData.location ? [formData.location] : []}
                   onSelectionChange={(keys) => handleInputChange('location', Array.from(keys)[0] as string)}
@@ -301,9 +301,10 @@ export default function DeposerUneAnnonceView() {
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label htmlFor="area" className="block text-sm font-medium text-gray-700 mb-1">Surface (m²)</label>
                   <Input
                     id="area"
+                    label="Surface (m²)"
+                    labelPlacement="outside"
                     type="number"
                     placeholder="85"
                     value={formData.area}
@@ -311,11 +312,12 @@ export default function DeposerUneAnnonceView() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="rooms" className="block text-sm font-medium text-gray-700 mb-1">Nombre de pièces</label>
                   <Select 
                     selectedKeys={formData.rooms ? [formData.rooms] : []}
                     onSelectionChange={(keys) => handleInputChange('rooms', Array.from(keys)[0] as string)}
                     placeholder="Sélectionner"
+                    label="Nombre de pièces"
+                    labelPlacement="outside"
                   >
                     <SelectItem key="1">1 pièce</SelectItem>
                     <SelectItem key="2">2 pièces</SelectItem>
@@ -326,11 +328,12 @@ export default function DeposerUneAnnonceView() {
                   </Select>
                 </div>
                 <div>
-                  <label htmlFor="bedrooms" className="block text-sm font-medium text-gray-700 mb-1">Chambres</label>
                   <Select 
                     selectedKeys={formData.bedrooms ? [formData.bedrooms] : []}
                     onSelectionChange={(keys) => handleInputChange('bedrooms', Array.from(keys)[0] as string)}
                     placeholder="Sélectionner"
+                    label="Chambres"
+                    labelPlacement="outside"
                   >
                     <SelectItem key="0">0 chambre</SelectItem>
                     <SelectItem key="1">1 chambre</SelectItem>
@@ -344,11 +347,12 @@ export default function DeposerUneAnnonceView() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label htmlFor="bathrooms" className="block text-sm font-medium text-gray-700 mb-1">Salles de bain</label>
                   <Select 
                     selectedKeys={formData.bathrooms ? [formData.bathrooms] : []}
                     onSelectionChange={(keys) => handleInputChange('bathrooms', Array.from(keys)[0] as string)}
                     placeholder="Sélectionner"
+                    label="Salles de bain"
+                    labelPlacement="outside"
                   >
                     <SelectItem key="1">1 salle de bain</SelectItem>
                     <SelectItem key="2">2 salles de bain</SelectItem>
@@ -357,18 +361,20 @@ export default function DeposerUneAnnonceView() {
                   </Select>
                 </div>
                 <div>
-                  <label htmlFor="floor" className="block text-sm font-medium text-gray-700 mb-1">Étage</label>
                   <Input
                     id="floor"
+                    label="Étage"
+                    labelPlacement="outside"
                     placeholder="2"
                     value={formData.floor}
                     onChange={(e) => handleInputChange('floor', e.target.value)}
                   />
                 </div>
                 <div>
-                  <label htmlFor="yearBuilt" className="block text-sm font-medium text-gray-700 mb-1">Année de construction</label>
                   <Input
                     id="yearBuilt"
+                    label="Année de construction"
+                    labelPlacement="outside"
                     type="number"
                     placeholder="2010"
                     value={formData.yearBuilt}
@@ -403,9 +409,10 @@ export default function DeposerUneAnnonceView() {
               </div>
 
               <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">Description du bien</label>
                 <Textarea
                   id="description"
+                  label="Description du bien"
+                  labelPlacement="outside"
                   placeholder="Décrivez votre bien, ses atouts, son environnement..."
                   minRows={6}
                   value={formData.description}
@@ -688,7 +695,7 @@ export default function DeposerUneAnnonceView() {
                 onClick={nextStep}
                 isDisabled={
                   (currentStep === 1 && (!propertyType || !transactionType)) ||
-                  (currentStep === 2 && (!formData.address || !formData.postalCode || !formData.city)) ||
+                  (currentStep === 2 && (!formData.city)) ||
                   (currentStep === 4 && !formData.price) ||
                   (currentStep === 6 && (!formData.contactName || !formData.contactEmail || !formData.contactPhone))
                 }
