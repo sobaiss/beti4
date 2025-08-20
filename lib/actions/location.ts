@@ -12,15 +12,19 @@ function apiUrl(): string {
 
 
 export async function getCities() {
-  const response = await fetch(`${apiUrl()}/cities`);
-  const data = await response.json();
+  const response = await fetch(`${apiUrl()}/locations/cities`);
+  if (response.ok) {
+    return await response.json() as City[];
+  }
 
-  return data as City[];
+  return [] as City[];
 };
 
 export async function getLocations(): Promise<City[]> {
-  const response = await fetch(`${apiUrl()}/locations`);
-  const data = await response.json();
+  const response = await fetch(`${apiUrl()}/locations/locations`);
+  if (response.ok) {
+    return await response.json() as City[];
+  }
 
-  return data as City[];
+  return [] as City[];
 }

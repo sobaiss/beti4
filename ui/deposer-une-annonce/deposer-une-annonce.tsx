@@ -33,13 +33,16 @@ import {
 } from '@heroui/react';
 import Link from 'next/link';
 import { City } from '@/types/location';
+import { getCities } from '@/lib/actions/location';
 
-export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
+export default function DeposerUneAnnonceView() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [propertyType, setPropertyType] = useState('');
   const [transactionType, setTransactionType] = useState('');
+  const [cityMap, setCityMap] = useState<City[]>([]);
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -103,6 +106,15 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
     }
   }, [session, status, router]);
 
+    // Track property view on component mount
+  useEffect(() => {
+    (async () => {
+      const cities = await getCities();
+      console.log('Fetched cities:', cities);
+      setCityMap(cities);
+    })();
+  }, []);
+
   const steps = [
     { id: 1, title: 'Type de bien', icon: HomeIcon },
     { id: 2, title: 'Localisation', icon: MapPinIcon },
@@ -127,12 +139,6 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
       setCurrentStep(currentStep - 1);
     }
   };
-
-  // Convert cities to combobox options
-  const cityMap = cities.map(city => ({
-    key: city.sk,
-    label: city.name
-  }));
 
   const locationOptions = locations.map(location => ({
     value: location,
@@ -261,7 +267,7 @@ export default function DeposerUneAnnonceView({cities}: { cities: City[] }) {
                     size="lg"
                     isClearable
                     >
-                    {(locationItem) => <AutocompleteItem key={locationItem.label}>{locationItem.label}</AutocompleteItem>}
+                    {(locationItem) => <AutocompleteItem key={locationItem.sk}>{locationItem.name}</AutocompleteItem>}
                 </Autocomplete>
                 </div>
               </div>
