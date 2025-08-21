@@ -313,13 +313,13 @@ export default function DeposerUneAnnonceView() {
           <div className="space-y-6">
             <div> 
               <h2 className="text-2xl font-bold text-default-900 mb-4">Quel type de bien souhaitez-vous mettre en ligne ?</h2>
-              <p className="text-gray-600 mb-6">Sélectionnez le type de transaction et le type de bien</p>
+              <p className="text-default-600 mb-6">Sélectionnez le type de transaction et le type de bien</p>
             </div>
 
             <div className="space-y-6">
               <div>
-                <label className="text-base font-medium text-gray-900 mb-4 block">Type de transaction</label>
-                <div className="grid grid-cols-2 gap-4">
+                <label className="text-base font-medium text-default-900 mb-4 block">Type de transaction</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
                   <Button
                     onPress={() => setTransactionType('achat')}
                     size="lg"
@@ -333,7 +333,10 @@ export default function DeposerUneAnnonceView() {
                       : 'default'
                     }
                   >
-                    <div className="text-gray-600"><span className="font-semibold text-lg mb-2">Vendre</span><br />Je souhaite vendre mon bien</div>
+                    <div className="text-center py-4">
+                      <span className="font-semibold text-lg block mb-2">Vendre</span>
+                      <span className="text-sm opacity-80">Je souhaite vendre mon bien</span>
+                    </div>
                   </Button>
                   <Button
                     onPress={() => setTransactionType('location')}
@@ -348,14 +351,17 @@ export default function DeposerUneAnnonceView() {
                       : 'default'
                     }
                   >
-                    <div className="text-gray-600"><span className="font-semibold text-lg mb-2">Louer</span><br />Je souhaite louer mon bien</div>
+                    <div className="text-center py-4">
+                      <span className="font-semibold text-lg block mb-2">Louer</span>
+                      <span className="text-sm opacity-80">Je souhaite louer mon bien</span>
+                    </div>
                   </Button>
                 </div>
               </div>
 
               <div>
-                <label className="text-base font-medium text-gray-900 mb-4 block">Type de bien</label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <label className="text-base font-medium text-default-900 mb-4 block">Type de bien</label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                   {[
                     { value: 'terrain', label: 'Terrain', icon: <MapPinIcon /> },
                     { value: 'maison', label: 'Maison', icon: <HomeIcon /> },
@@ -371,11 +377,11 @@ export default function DeposerUneAnnonceView() {
                       className={`p-4 border-2 rounded-lg text-center transition-all ${
                         propertyType === type.value // Changed from border-blue-500 bg-blue-50 to border-primary-500 bg-primary-50
                           ? 'border-primary-500 bg-primary-50' 
-                          : 'border-gray-200 hover:border-gray-300'
+                          : 'border-default-200 hover:border-default-300'
                       }`}
                     >
-                      <div className="mb-2">{type.icon}</div>
-                      <div className="font-medium">{type.label}</div>
+                      <div className="mb-3 flex justify-center text-default-600">{type.icon}</div>
+                      <div className="font-medium text-sm">{type.label}</div>
                     </button>
                   ))}
                 </div>
@@ -389,41 +395,47 @@ export default function DeposerUneAnnonceView() {
           <div className="space-y-6">
             <div> 
               <h2 className="text-2xl font-bold text-default-900 mb-4">Où se situe votre bien ?</h2>
-              <p className="text-gray-600 mb-6">Indiquez l'adresse complète de votre propriété</p>
+              <p className="text-default-600 mb-6">Indiquez l'adresse complète de votre propriété</p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-6 max-w-4xl">
               <div>
-                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Adresse</label>
+                <label htmlFor="address" className="block text-sm font-medium text-default-700 mb-2">Adresse complète</label>
                 <Input
                   id="address"
                   placeholder="Numéro et nom de rue"
                   value={formData.address}
                   onChange={(e) => handleInputChange('address', e.target.value)}
+                  size="lg"
+                  variant="bordered"
+                  radius="lg"
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-foreground">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-foreground">
                 <div>
-                  <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-1">Code postal</label>
+                  <label htmlFor="postalCode" className="block text-sm font-medium text-default-700 mb-2">Code postal</label>
                   <Input
                     id="postalCode"
                     placeholder="75001"
                     value={formData.postalCode}
                     onChange={(e) => handleInputChange('postalCode', e.target.value)}
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Ville *</label>
+                  <label className="block text-sm font-medium text-default-700 mb-2">Ville *</label>
                   <Autocomplete
                     allowsCustomValue
-                    className="max-w-xs"
+                    className="w-full"
                     defaultItems={cityMap}
                     defaultSelectedKey=""
                     placeholder="Ville"
                     startContent={<MapPinIcon className="w-5 h-5 text-default-400" />}
                     variant="bordered"
-                    radius="full"
+                    radius="lg"
                     size="lg"
                     isClearable
                     onSelectionChange={(item) => handleInputChange('city', item ? item.toString() : '')}
@@ -431,21 +443,23 @@ export default function DeposerUneAnnonceView() {
                     {(locationItem) => <AutocompleteItem key={locationItem.sk}>{locationItem.name}</AutocompleteItem>}
                 </Autocomplete>
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Quartier / Secteur</label>
-                <Select
-                  selectedKeys={formData.location ? [formData.location] : []}
-                  onSelectionChange={(keys) => handleInputChange('location', Array.from(keys)[0] as string)}
-                  placeholder="Sélectionner un quartier..."
-                >
-                  {locationOptions.map((location) => (
-                    <SelectItem key={location.value}>
-                      {location.label}
-                    </SelectItem>
-                  ))}
-                </Select>
+                <div>
+                  <label className="block text-sm font-medium text-default-700 mb-2">Quartier / Secteur</label>
+                  <Select
+                    selectedKeys={formData.location ? [formData.location] : []}
+                    onSelectionChange={(keys) => handleInputChange('location', Array.from(keys)[0] as string)}
+                    placeholder="Sélectionner un quartier..."
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
+                  >
+                    {locationOptions.map((location) => (
+                      <SelectItem key={location.value}>
+                        {location.label}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                </div>
               </div>
             </div>
           </div>
@@ -456,11 +470,11 @@ export default function DeposerUneAnnonceView() {
           <div className="space-y-6">
             <div> 
               <h2 className="text-2xl font-bold text-default-900 mb-4">Caractéristiques du bien</h2>
-              <p className="text-gray-600 mb-6">Décrivez les principales caractéristiques de votre bien</p>
+              <p className="text-default-600 mb-6">Décrivez les principales caractéristiques de votre bien</p>
             </div>
 
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-8 max-w-5xl">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 <div>
                   <Input
                     id="area"
@@ -470,6 +484,9 @@ export default function DeposerUneAnnonceView() {
                     placeholder="85"
                     value={formData.area}
                     onChange={(e) => handleInputChange('area', e.target.value)}
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
                   />
                 </div>
                 <div>
@@ -479,6 +496,9 @@ export default function DeposerUneAnnonceView() {
                     placeholder="Sélectionner"
                     label="Nombre de pièces"
                     labelPlacement="outside"
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
                   >
                     <SelectItem key="1">1 pièce</SelectItem>
                     <SelectItem key="2">2 pièces</SelectItem>
@@ -495,6 +515,9 @@ export default function DeposerUneAnnonceView() {
                     placeholder="Sélectionner"
                     label="Chambres"
                     labelPlacement="outside"
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
                   >
                     <SelectItem key="0">0 chambre</SelectItem>
                     <SelectItem key="1">1 chambre</SelectItem>
@@ -504,9 +527,6 @@ export default function DeposerUneAnnonceView() {
                     <SelectItem key="5+">5+ chambres</SelectItem>
                   </Select>
                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <Select 
                     selectedKeys={formData.bathrooms ? [formData.bathrooms] : []}
@@ -514,6 +534,9 @@ export default function DeposerUneAnnonceView() {
                     placeholder="Sélectionner"
                     label="Salles de bain"
                     labelPlacement="outside"
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
                   >
                     <SelectItem key="1">1 salle de bain</SelectItem>
                     <SelectItem key="2">2 salles de bain</SelectItem>
@@ -521,6 +544,9 @@ export default function DeposerUneAnnonceView() {
                     <SelectItem key="4+">4+ salles de bain</SelectItem>
                   </Select>
                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div>
                   <Input
                     id="floor"
@@ -529,6 +555,9 @@ export default function DeposerUneAnnonceView() {
                     placeholder="2"
                     value={formData.floor}
                     onChange={(e) => handleInputChange('floor', e.target.value)}
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
                   />
                 </div>
                 <div>
@@ -540,13 +569,16 @@ export default function DeposerUneAnnonceView() {
                     placeholder="2010"
                     value={formData.yearBuilt}
                     onChange={(e) => handleInputChange('yearBuilt', e.target.value)}
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
                   />
                 </div>
               </div>
 
               <div>
                 <label className="text-base font-medium text-default-900 mb-4 block">Équipements et caractéristiques</label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                   {[
                     { key: 'furnished', label: 'Meublé' },
                     { key: 'balcony', label: 'Balcon' },
@@ -556,13 +588,13 @@ export default function DeposerUneAnnonceView() {
                     { key: 'elevator', label: 'Ascenseur' },
                     { key: 'cellar', label: 'Cave' }
                   ].map((item) => (
-                    <div key={item.key} className="flex items-center space-x-2">
+                    <div key={item.key} className="flex items-center space-x-2 p-3 border border-default-200 rounded-lg hover:border-default-300 transition-colors">
                       <Checkbox
                         id={item.key}
                         isSelected={formData[item.key as keyof typeof formData] as boolean}
                         onValueChange={(checked) => handleInputChange(item.key, checked)} // Changed from checked to checked
                       >
-                        {item.label}
+                        <span className="text-sm font-medium">{item.label}</span>
                       </Checkbox>
                     </div>
                   ))}
@@ -578,6 +610,9 @@ export default function DeposerUneAnnonceView() {
                   minRows={6}
                   value={formData.description}
                   onChange={(e) => handleInputChange('description', e.target.value)}
+                  size="lg"
+                  variant="bordered"
+                  radius="lg"
                 />
               </div>
             </div>
@@ -589,7 +624,7 @@ export default function DeposerUneAnnonceView() {
           <div className="space-y-6">
             <div> 
               <h2 className="text-2xl font-bold text-default-900 mb-4">Quel est le prix de votre bien ?</h2>
-              <p className="text-gray-600 mb-6">
+              <p className="text-default-600 mb-6">
                 {transactionType === 'achat' 
                   ? 'Indiquez le prix de vente souhaité' 
                   : 'Indiquez le loyer mensuel souhaité'
@@ -597,8 +632,8 @@ export default function DeposerUneAnnonceView() {
               </p>
             </div>
 
-            <div className="space-y-4">
-              <div>
+            <div className="space-y-6 max-w-2xl">
+              <div className="space-y-4">
                 <label htmlFor="price" className="text-lg font-medium block mb-2">
                   {transactionType === 'achat' ? 'Prix de vente' : 'Loyer mensuel'}
                 </label>
@@ -609,16 +644,21 @@ export default function DeposerUneAnnonceView() {
                     placeholder={transactionType === 'achat' ? '450000' : '1200'}
                     value={formData.price}
                     onChange={(e) => handleInputChange('price', e.target.value)}
-                    className="text-xl py-4 pr-12"
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
+                    classNames={{
+                      input: "text-xl font-semibold"
+                    }}
                   />
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 text-default-500 font-medium text-lg">
                     €{transactionType === 'location' ? '/mois' : ''}
                   </div>
                 </div>
               </div>
 
               {transactionType === 'location' && (
-                <div className="bg-primary/10 p-4 rounded-lg">
+                <div className="bg-primary-50 p-6 rounded-xl border border-primary-200">
                   <h3 className="font-medium text-primary-900 mb-2">Charges et frais supplémentaires</h3>
                   <div className="space-y-3">
                     <div className="flex items-center space-x-2">
@@ -635,11 +675,11 @@ export default function DeposerUneAnnonceView() {
                 </div>
               )}
 
-              <div className="bg-content2 p-4 rounded-lg">
+              <div className="bg-content2 p-6 rounded-xl border border-content3">
                 <h3 className="font-medium text-default-900 mb-2">Estimation automatique</h3>
                 <p className="text-sm text-default-600">
                   Basée sur les biens similaires dans votre secteur, nous estimons votre bien entre{' '} 
-                  <span className="font-medium text-blue-900">
+                  <span className="font-medium text-primary-900">
                     {transactionType === 'achat' ? '420 000€ et 480 000€' : '1 100€ et 1 400€/mois'}
                   </span>
                 </p>
@@ -675,7 +715,7 @@ export default function DeposerUneAnnonceView() {
               )}
 
               {/* File Upload Area */}
-              <div className="border-2 border-dashed border-default-300 rounded-lg p-8 text-center hover:border-primary-400 transition-colors text-foreground">
+              <div className="border-2 border-dashed border-default-300 rounded-xl p-8 lg:p-12 text-center hover:border-primary-400 transition-colors text-foreground">
                 <CloudArrowUpIcon className="w-12 h-12 text-default-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-default-900 mb-2">
                   {selectedFiles.length === 0 ? 'Ajoutez vos photos' : `${selectedFiles.length}/4 photos ajoutées`}
@@ -713,10 +753,10 @@ export default function DeposerUneAnnonceView() {
               {imagePreviews.length > 0 && (
                 <div className="space-y-4">
                   <h4 className="text-lg font-medium text-default-900">Photos sélectionnées</h4>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
                     {imagePreviews.map((preview, index) => (
                       <div key={index} className="relative group">
-                        <div className="aspect-square rounded-lg overflow-hidden border-2 border-default-200">
+                        <div className="aspect-square rounded-xl overflow-hidden border-2 border-default-200 hover:border-primary-300 transition-colors">
                           <Image
                             src={preview.previewUrl}
                             alt={`Preview ${index + 1}`}
@@ -745,7 +785,7 @@ export default function DeposerUneAnnonceView() {
               )}
 
               {/* Tips */}
-              <div className="bg-primary-50 p-4 rounded-lg">
+              <div className="bg-primary-50 p-6 rounded-xl border border-primary-200">
                 <h3 className="font-medium text-primary-900 mb-2">Conseils pour de belles photos</h3>
                 <ul className="text-sm text-primary-800 space-y-1">
                   <li>• Prenez des photos en haute résolution et bien éclairées</li>
@@ -764,10 +804,10 @@ export default function DeposerUneAnnonceView() {
           <div className="space-y-6">
             <div> 
               <h2 className="text-2xl font-bold text-default-900 mb-4">Vos informations de contact</h2>
-              <p className="text-gray-600 mb-6">Ces informations seront visibles par les personnes intéressées</p>
+              <p className="text-default-600 mb-6">Ces informations seront visibles par les personnes intéressées</p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-6 max-w-2xl">
               <div className="flex items-center space-x-2 mb-4">
                 <Checkbox
                   isSelected={formData.useUserContact}
@@ -777,31 +817,35 @@ export default function DeposerUneAnnonceView() {
                 </Checkbox>
               </div>
 
-              <div>
-                <Input
-                  id="contactFirstName"
-                  label="Prénom"
-                  labelPlacement="outside"
-                  placeholder="Prénom"
-                  radius="full"
-                  value={formData.contactFirstName}
-                  onChange={(e) => handleInputChange('contactFirstName', e.target.value)}
-                  isDisabled={formData.useUserContact}
-                />
-              </div>
-
-              <div>
-                <Input
-                  id="contactLastName"
-                  label="Nom"
-                  labelPlacement="outside"
-                  placeholder="Nom"
-                  radius="full"
-                  size="lg"
-                  value={formData.contactLastName}
-                  onChange={(e) => handleInputChange('contactLastName', e.target.value)}
-                  isDisabled={formData.useUserContact}
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <Input
+                    id="contactFirstName"
+                    label="Prénom"
+                    labelPlacement="outside"
+                    placeholder="Prénom"
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
+                    value={formData.contactFirstName}
+                    onChange={(e) => handleInputChange('contactFirstName', e.target.value)}
+                    isDisabled={formData.useUserContact}
+                  />
+                </div>
+                <div>
+                  <Input
+                    id="contactLastName"
+                    label="Nom"
+                    labelPlacement="outside"
+                    placeholder="Nom"
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
+                    value={formData.contactLastName}
+                    onChange={(e) => handleInputChange('contactLastName', e.target.value)}
+                    isDisabled={formData.useUserContact}
+                  />
+                </div>
               </div>
 
               <div>
@@ -809,7 +853,8 @@ export default function DeposerUneAnnonceView() {
                   id="contactEmail"
                   label="Adresse email"
                   labelPlacement="outside"
-                  radius="full"
+                  variant="bordered"
+                  radius="lg"
                   size="lg"
                   type="email"
                   placeholder="Email"
@@ -824,7 +869,8 @@ export default function DeposerUneAnnonceView() {
                   id="contactPhone"
                   label="Numéro de téléphone"
                   labelPlacement="outside"
-                  radius="full"
+                  variant="bordered"
+                  radius="lg"
                   size="lg"
                   type="tel"
                   placeholder="66000000"
@@ -834,7 +880,7 @@ export default function DeposerUneAnnonceView() {
                 />
               </div>
 
-              <div className="bg-success-50 p-4 rounded-lg">
+              <div className="bg-success-50 p-6 rounded-xl border border-success-200">
                 <h3 className="font-medium text-success-900 mb-2">Votre annonce est prête !</h3>
                 <p className="text-sm text-success-800">
                   Elle sera mise en ligne après validation par notre équipe (sous 24h).
@@ -895,7 +941,7 @@ export default function DeposerUneAnnonceView() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
       <div className="mb-8">
         <Link href="/" className="inline-flex items-center text-blue-900 hover:text-blue-800 mb-4">
@@ -909,7 +955,7 @@ export default function DeposerUneAnnonceView() {
       {/* Main Content with Sidebar */}
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar - Progress Steps */}
-        <div className="lg:w-80 flex-shrink-0">
+        <div className="lg:w-72 xl:w-80 flex-shrink-0">
           <Card className="sticky top-24">
             <CardHeader className="text-foreground">
               <h3 className="text-lg font-semibold">Étapes</h3>
@@ -964,8 +1010,8 @@ export default function DeposerUneAnnonceView() {
         {/* Main Content */}
         <div className="flex-1">
           {/* Step Content */}
-          <Card className="mb-8 text-foreground">
-            <CardBody className="p-8">
+          <Card className="mb-8 text-foreground max-w-none">
+            <CardBody className="p-6 lg:p-8 xl:p-10">
               {renderStepContent()}
             </CardBody>
           </Card>
@@ -976,7 +1022,9 @@ export default function DeposerUneAnnonceView() {
               variant="bordered"
               onClick={prevStep}
               isDisabled={currentStep === 1}
-              className="px-8"
+              className="px-8 py-3"
+              size="lg"
+              radius="lg"
             >
               Précédent
             </Button>
@@ -985,7 +1033,9 @@ export default function DeposerUneAnnonceView() {
               <Button color="success" className="px-8">
                 <Button 
                   color="success" 
-                  className="px-8"
+                  className="px-8 py-3"
+                  size="lg"
+                  radius="lg"
                   onClick={handleSubmit}
                   isLoading={isSubmitting}
                   isDisabled={isSubmitting || submitSuccess}
@@ -1004,7 +1054,9 @@ export default function DeposerUneAnnonceView() {
                   (currentStep === 6 && (!formData.contactFirstName || !formData.contactEmail || !formData.contactPhone))
                 }
                 color="primary"
-                className="px-8"
+                className="px-8 py-3"
+                size="lg"
+                radius="lg"
               >
                 Suivant
               </Button>
