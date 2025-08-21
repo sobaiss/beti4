@@ -310,20 +310,28 @@ export default function DeposerUneAnnonceView() {
     switch (currentStep) {
       case 1:
         return (
-          <div className="space-y-6">
-            <div> 
-              <h2 className="text-2xl font-bold text-default-900 mb-4">Quel type de bien souhaitez-vous mettre en ligne ?</h2>
-              <p className="text-default-600 mb-6">Sélectionnez le type de transaction et le type de bien</p>
+          <div className="space-y-8">
+            {/* Header Section */}
+            <div className="text-center max-w-3xl mx-auto">
+              <div className="w-20 h-20 bg-gradient-to-br from-primary-100 to-primary-200 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <HomeIcon className="w-10 h-10 text-primary-600" />
+              </div>
+              <h2 className="text-3xl font-bold text-default-900 mb-4">Quel type de bien souhaitez-vous mettre en ligne ?</h2>
+              <p className="text-lg text-default-600 leading-relaxed">Sélectionnez le type de transaction et le type de bien pour commencer votre annonce</p>
             </div>
 
-            <div className="space-y-6">
-              <div>
-                <label className="text-base font-medium text-default-900 mb-4 block">Type de transaction</label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
+            <div className="space-y-10">
+              {/* Transaction Type Section */}
+              <div className="max-w-4xl mx-auto">
+                <div className="text-center mb-8">
+                  <h3 className="text-xl font-semibold text-default-900 mb-2">Type de transaction</h3>
+                  <p className="text-default-600">Choisissez si vous souhaitez vendre ou louer votre bien</p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
                   <Button
                     onPress={() => setTransactionType('achat')}
                     size="lg"
-                    radius="full"
+                    radius="xl"
                     variant={transactionType === 'achat'
                       ? 'solid'
                       : 'faded'
@@ -332,16 +340,24 @@ export default function DeposerUneAnnonceView() {
                       ? 'primary'
                       : 'default'
                     }
+                    className={`h-auto p-6 transition-all duration-300 ${
+                      transactionType === 'achat' 
+                        ? 'shadow-lg scale-105 border-2 border-primary-300' 
+                        : 'hover:shadow-md hover:scale-102 border border-default-200'
+                    }`}
                   >
-                    <div className="text-center py-4">
-                      <span className="font-semibold text-lg block mb-2">Vendre</span>
-                      <span className="text-sm opacity-80">Je souhaite vendre mon bien</span>
+                    <div className="text-center">
+                      <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center">
+                        <CurrencyEuroIcon className="w-6 h-6 text-orange-600" />
+                      </div>
+                      <span className="font-bold text-xl block mb-2">Vendre</span>
+                      <span className="text-sm opacity-90 font-medium">Je souhaite vendre mon bien</span>
                     </div>
                   </Button>
                   <Button
                     onPress={() => setTransactionType('location')}
                     size="lg"
-                    radius="full"
+                    radius="xl"
                     variant={transactionType === 'location'
                       ? 'solid'
                       : 'faded'
@@ -350,39 +366,62 @@ export default function DeposerUneAnnonceView() {
                       ? 'primary'
                       : 'default'
                     }
+                    className={`h-auto p-6 transition-all duration-300 ${
+                      transactionType === 'location' 
+                        ? 'shadow-lg scale-105 border-2 border-primary-300' 
+                        : 'hover:shadow-md hover:scale-102 border border-default-200'
+                    }`}
                   >
-                    <div className="text-center py-4">
-                      <span className="font-semibold text-lg block mb-2">Louer</span>
-                      <span className="text-sm opacity-80">Je souhaite louer mon bien</span>
+                    <div className="text-center">
+                      <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                        <HomeIcon className="w-6 h-6 text-blue-600" />
+                      </div>
+                      <span className="font-bold text-xl block mb-2">Louer</span>
+                      <span className="text-sm opacity-90 font-medium">Je souhaite louer mon bien</span>
+                    </div>
                     </div>
                   </Button>
                 </div>
               </div>
 
-              <div>
-                <label className="text-base font-medium text-default-900 mb-4 block">Type de bien</label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              {/* Property Type Section */}
+              <div className="max-w-6xl mx-auto">
+                <div className="text-center mb-8">
+                  <h3 className="text-xl font-semibold text-default-900 mb-2">Type de bien</h3>
+                  <p className="text-default-600">Sélectionnez la catégorie qui correspond à votre propriété</p>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                   {[
-                    { value: 'terrain', label: 'Terrain', icon: <MapPinIcon /> },
-                    { value: 'maison', label: 'Maison', icon: <HomeIcon /> },
-                    { value: 'villa', label: 'Villa', icon: <BuildingOffice2Icon /> },
-                    { value: 'appartement', label: 'Appartement', icon: <HomeModernIcon /> },
-                    { value: 'terrain_agricole', label: 'Terrain Agricole', icon: <PhotoIcon /> },
-                    { value: 'immeuble', label: 'Immeuble', icon: <BuildingOfficeIcon /> },
-                    { value: 'bureau_commerce', label: 'Bureaux & Commerces', icon: <BriefcaseIcon /> }
+                    { value: 'terrain', label: 'Terrain', icon: <MapPinIcon className="w-8 h-8" />, color: 'from-green-100 to-green-200', iconColor: 'text-green-600' },
+                    { value: 'maison', label: 'Maison', icon: <HomeIcon className="w-8 h-8" />, color: 'from-blue-100 to-blue-200', iconColor: 'text-blue-600' },
+                    { value: 'villa', label: 'Villa', icon: <BuildingOffice2Icon className="w-8 h-8" />, color: 'from-purple-100 to-purple-200', iconColor: 'text-purple-600' },
+                    { value: 'appartement', label: 'Appartement', icon: <HomeModernIcon className="w-8 h-8" />, color: 'from-indigo-100 to-indigo-200', iconColor: 'text-indigo-600' },
+                    { value: 'terrain_agricole', label: 'Terrain Agricole', icon: <PhotoIcon className="w-8 h-8" />, color: 'from-yellow-100 to-yellow-200', iconColor: 'text-yellow-600' },
+                    { value: 'immeuble', label: 'Immeuble', icon: <BuildingOfficeIcon className="w-8 h-8" />, color: 'from-gray-100 to-gray-200', iconColor: 'text-gray-600' },
+                    { value: 'bureau_commerce', label: 'Bureaux & Commerces', icon: <BriefcaseIcon className="w-8 h-8" />, color: 'from-orange-100 to-orange-200', iconColor: 'text-orange-600' }
                   ].map((type) => (
-                    <button
+                    <Card
                       key={type.value}
-                      onClick={() => setPropertyType(type.value)}
-                      className={`p-4 border-2 rounded-lg text-center transition-all ${
-                        propertyType === type.value // Changed from border-blue-500 bg-blue-50 to border-primary-500 bg-primary-50
-                          ? 'border-primary-500 bg-primary-50' 
-                          : 'border-default-200 hover:border-default-300'
+                      isPressable
+                      onPress={() => setPropertyType(type.value)}
+                      className={`transition-all duration-300 cursor-pointer ${
+                        propertyType === type.value 
+                          ? 'scale-105 shadow-lg border-2 border-primary-300 bg-gradient-to-br from-primary-50 to-primary-100' 
+                          : 'hover:scale-102 hover:shadow-md border border-default-200 bg-white hover:bg-default-50'
                       }`}
                     >
-                      <div className="mb-3 flex justify-center text-default-600">{type.icon}</div>
-                      <div className="font-medium text-sm">{type.label}</div>
-                    </button>
+                      <CardBody className="p-6 text-center">
+                        <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${type.color} flex items-center justify-center shadow-sm`}>
+                          <div className={type.iconColor}>{type.icon}</div>
+                        </div>
+                        <div className="font-semibold text-sm text-default-900 leading-tight">{type.label}</div>
+                        {propertyType === type.value && (
+                          <div className="mt-2">
+                            <CheckIcon className="w-5 h-5 text-primary-600 mx-auto" />
+                          </div>
+                        )}
+                      </CardBody>
+                    </Card>
                   ))}
                 </div>
               </div>
@@ -954,49 +993,81 @@ export default function DeposerUneAnnonceView() {
 
       {/* Main Content with Sidebar */}
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* Sidebar - Progress Steps */}
-        <div className="lg:w-72 xl:w-80 flex-shrink-0">
-          <Card className="sticky top-24">
-            <CardHeader className="text-foreground">
-              <h3 className="text-lg font-semibold">Étapes</h3>
+        {/* Sidebar - Enhanced Progress Steps */}
+        <div className="lg:w-80 xl:w-96 flex-shrink-0">
+          <Card className="sticky top-24 bg-gradient-to-br from-white to-blue-50/30 border-0 shadow-xl">
+            <CardHeader className="text-foreground pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <DocumentTextIcon className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-default-900">Progression</h3>
+                  <p className="text-sm text-default-600">Étape {currentStep} sur {steps.length}</p>
+                </div>
+              </div>
+              {/* Progress Bar */}
+              <div className="mt-4">
+                <div className="flex justify-between text-xs font-medium text-default-600 mb-2">
+                  <span>Progression</span>
+                  <span>{Math.round((currentStep / steps.length) * 100)}%</span>
+                </div>
+                <div className="w-full bg-default-200 rounded-full h-2 overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full transition-all duration-500 ease-out shadow-sm"
+                    style={{ width: `${(currentStep / steps.length) * 100}%` }}
+                  />
+                </div>
+              </div>
             </CardHeader>
             <CardBody className="pt-0">
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {steps.map((step, index) => {
                   const Icon = step.icon;
                   const isActive = currentStep === step.id;
                   const isCompleted = currentStep > step.id;
                   
                   return (
-                    <div key={step.id} className="flex items-center relative">
-                      <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 flex-shrink-0 ${
-                        isCompleted // Changed from bg-green-500 border-green-500 to bg-success-500 border-success-500
-                          ? 'bg-success-500 border-success-500 text-white' 
-                          : isActive // Changed from bg-blue-500 border-blue-500 to bg-primary-500 border-primary-500
-                            ? 'bg-primary-500 border-primary-500 text-white' 
-                            : 'border-default-300 text-default-400'
+                    <div key={step.id} className="relative">
+                      <div className={`flex items-center p-3 rounded-xl transition-all duration-300 ${
+                        isActive 
+                          ? 'bg-gradient-to-r from-primary-50 to-primary-100 border border-primary-200 shadow-sm' 
+                          : isCompleted 
+                            ? 'bg-gradient-to-r from-success-50 to-success-100 border border-success-200' 
+                            : 'hover:bg-default-50 border border-transparent'
                       }`}>
-                        {isCompleted ? (
-                          <CheckIcon className="w-5 h-5" />
-                        ) : (
-                          <Icon className="w-5 h-5" />
+                        <div className={`flex items-center justify-center w-12 h-12 rounded-xl flex-shrink-0 transition-all duration-300 ${
+                          isCompleted 
+                            ? 'bg-gradient-to-br from-success-500 to-success-600 text-white shadow-lg' 
+                            : isActive 
+                              ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-lg' 
+                              : 'bg-default-100 text-default-400 border border-default-200'
+                        }`}>
+                          {isCompleted ? (
+                            <CheckIcon className="w-6 h-6" />
+                          ) : (
+                            <Icon className="w-6 h-6" />
+                          )}
+                        </div>
+                        <div className="ml-4 flex-1">
+                          <div className={`text-sm font-semibold transition-colors ${
+                            isActive ? 'text-primary-900' : isCompleted ? 'text-success-700' : 'text-default-500'
+                          }`}>
+                            Étape {step.id}
+                          </div>
+                          <div className={`text-sm font-medium transition-colors ${
+                            isActive ? 'text-primary-700' : isCompleted ? 'text-success-600' : 'text-default-400'
+                          }`}>
+                            {step.title}
+                          </div>
+                        </div>
+                        {isActive && (
+                          <div className="w-2 h-2 bg-primary-500 rounded-full animate-pulse" />
                         )}
                       </div>
-                      <div className="ml-4 flex-1 text-foreground">
-                        <div className={`text-sm font-medium ${
-                          isActive ? 'text-blue-900' : isCompleted ? 'text-green-700' : 'text-gray-500'
-                        }`}>
-                          Étape {step.id}
-                        </div>
-                        <div className={`text-sm ${
-                          isActive ? 'text-blue-700' : isCompleted ? 'text-green-600' : 'text-gray-400'
-                        }`}>
-                          {step.title}
-                        </div>
-                      </div>
-                      {index < steps.length - 1 && ( // Changed from bg-green-500 to bg-success-500
-                        <div className={`absolute left-[1.25rem] top-12 w-0.5 h-8 ${ // Changed from bg-gray-300 to bg-default-300
-                          isCompleted ? 'bg-success-500' : 'bg-default-300'
+                      {index < steps.length - 1 && (
+                        <div className={`ml-9 w-0.5 h-4 transition-colors duration-300 ${
+                          isCompleted ? 'bg-gradient-to-b from-success-400 to-success-300' : 'bg-default-200'
                         }`} />
                       )}
                     </div>
