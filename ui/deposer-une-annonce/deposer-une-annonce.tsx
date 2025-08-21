@@ -17,6 +17,8 @@ import {
   BuildingOfficeIcon,
   BriefcaseIcon,
   PhotoIcon, 
+  XMarkIcon,
+  ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
 import { 
   Button, 
@@ -32,8 +34,12 @@ import {
   AutocompleteItem,
 } from '@heroui/react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { City } from '@/types/location';
 import { getCities } from '@/lib/actions/location';
+import { convertFileToBase64 } from '@/lib/files/files';
+import { createProperty } from '@/lib/actions/property';
+import { generatePropertyReference } from '@/lib/utils/property-reference';
 
 export default function DeposerUneAnnonceView() {
   const { data: session, status } = useSession();
@@ -42,6 +48,12 @@ export default function DeposerUneAnnonceView() {
   const [propertyType, setPropertyType] = useState('');
   const [transactionType, setTransactionType] = useState('');
   const [cityMap, setCityMap] = useState<City[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<{ file: File, previewUrl: string }[]>([]);
+  const [imageErrors, setImageErrors] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const [submitSuccess, setSubmitSuccess] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -123,6 +135,145 @@ export default function DeposerUneAnnonceView() {
       setCityMap(cities);
     })();
   }, []);
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    const newErrors: string[] = [];
+    const validFiles: File[] = [];
+    const newPreviews: { file: File, previewUrl: string }[] = [];
+
+    // Check if adding new files would exceed the limit
+    if (selectedFiles.length + files.length > 4) {
+      newErrors.push('Vous ne pouvez ajouter que 4 images maximum');
+      setImageErrors(newErrors);
+      return;
+    }
+
+    files.forEach((file) => {
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        newErrors.push(`${file.name}: Seuls les fichiers image sont acceptés`);
+        return;
+      }
+
+      // Check file size (5MB = 5 * 1024 * 1024 bytes)
+      if (file.size > 5 * 1024 * 1024) {
+        newErrors.push(`${file.name}: La taille ne peut pas dépasser 5MB`);
+        return;
+      }
+
+      // Check if file already exists
+      if (selectedFiles.some(existingFile => existingFile.name === file.name && existingFile.size === file.size)) {
+        newErrors.push(`${file.name}: Ce fichier a déjà été ajouté`);
+        return;
+      }
+
+      validFiles.push(file);
+      newPreviews.push({
+        file,
+        previewUrl: URL.createObjectURL(file)
+      });
+    });
+
+    if (newErrors.length > 0) {
+      setImageErrors(newErrors);
+    } else {
+      setImageErrors([]);
+    }
+
+    if (validFiles.length > 0) {
+      setSelectedFiles(prev => [...prev, ...validFiles]);
+      setImagePreviews(prev => [...prev, ...newPreviews]);
+    }
+
+    // Reset the input value to allow selecting the same file again if needed
+    event.target.value = '';
+  };
+
+  const handleRemoveImage = (index: number) => {
+    const previewToRemove = imagePreviews[index];
+    
+    // Revoke the object URL to free up memory
+    URL.revokeObjectURL(previewToRemove.previewUrl);
+    
+    // Remove from both arrays
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+    
+    // Clear any related errors
+    setImageErrors([]);
+  };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    setSubmitError('');
+    setSubmitSuccess(false);
+
+    try {
+      // Convert images to base64
+      const images = await Promise.all(
+        selectedFiles.map(async (file, index) => {
+          const base64 = await convertFileToBase64(file);
+          return {
+            url: base64,
+            alt: `${formData.title || 'Propriété'} - Image ${index + 1}`,
+            order: index
+          };
+        })
+      );
+
+      // Generate property reference
+      const reference = await generatePropertyReference({
+        type: propertyType as any,
+        postalCode: formData.postalCode
+      });
+
+      // Prepare property data
+      const propertyData = {
+        title: formData.title,
+        description: formData.description,
+        price: parseFloat(formData.price),
+        location: formData.location,
+        address: formData.address,
+        postalCode: formData.postalCode,
+        city: formData.city,
+        type: propertyType as any,
+        transactionType: transactionType as any,
+        bedrooms: parseInt(formData.bedrooms) || 0,
+        bathrooms: parseInt(formData.bathrooms) || 0,
+        area: parseFloat(formData.area),
+        floor: formData.floor ? parseInt(formData.floor) : undefined,
+        yearBuilt: formData.yearBuilt ? parseInt(formData.yearBuilt) : undefined,
+        reference,
+        images: images.length > 0 ? images : undefined,
+        amenities: [
+          ...(formData.furnished ? [{ amenityId: 'furnished', amenityCount: 1 }] : []),
+          ...(formData.balcony ? [{ amenityId: 'balcony', amenityCount: 1 }] : []),
+          ...(formData.terrace ? [{ amenityId: 'terrace', amenityCount: 1 }] : []),
+          ...(formData.garden ? [{ amenityId: 'garden', amenityCount: 1 }] : []),
+          ...(formData.parking ? [{ amenityId: 'parking', amenityCount: 1 }] : []),
+          ...(formData.elevator ? [{ amenityId: 'elevator', amenityCount: 1 }] : []),
+          ...(formData.cellar ? [{ amenityId: 'cellar', amenityCount: 1 }] : []),
+        ]
+      };
+
+      const response = await createProperty(propertyData);
+
+      if ('errors' in response) {
+        setSubmitError(response.message || 'Erreur lors de la création de l\'annonce');
+      } else {
+        setSubmitSuccess(true);
+        // Redirect to the new property page after a short delay
+        setTimeout(() => {
+          router.push(`/property/${response.id}`);
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('Error creating property:', error);
+      setSubmitError('Erreur lors de la création de l\'annonce. Veuillez réessayer.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const steps = [
     { id: 1, title: 'Type de bien', icon: HomeIcon },
@@ -505,21 +656,103 @@ export default function DeposerUneAnnonceView() {
               <p className="text-default-600 mb-6">Les annonces avec photos reçoivent 5 fois plus de contacts</p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-6">
+              {/* Error Messages */}
+              {imageErrors.length > 0 && (
+                <div className="bg-danger-50 border border-danger-200 rounded-lg p-4">
+                  <div className="flex items-start">
+                    <ExclamationTriangleIcon className="w-5 h-5 text-danger-600 mt-0.5 mr-3 flex-shrink-0" />
+                    <div>
+                      <h4 className="text-sm font-medium text-danger-800 mb-2">Erreurs de téléchargement :</h4>
+                      <ul className="text-sm text-danger-700 space-y-1">
+                        {imageErrors.map((error, index) => (
+                          <li key={index}>• {error}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* File Upload Area */}
               <div className="border-2 border-dashed border-default-300 rounded-lg p-8 text-center hover:border-primary-400 transition-colors text-foreground">
                 <CloudArrowUpIcon className="w-12 h-12 text-default-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-default-900 mb-2">Glissez vos photos ici</h3>
-                <p className="text-default-600 mb-4">ou cliquez pour sélectionner des fichiers</p>
-                <Button variant="bordered">Choisir des photos</Button>
+                <h3 className="text-lg font-medium text-default-900 mb-2">
+                  {selectedFiles.length === 0 ? 'Ajoutez vos photos' : `${selectedFiles.length}/4 photos ajoutées`}
+                </h3>
+                <p className="text-default-600 mb-4">
+                  Glissez vos photos ici ou cliquez pour sélectionner des fichiers
+                </p>
+                <p className="text-sm text-default-500 mb-4">
+                  Maximum 4 images • 5MB par image • Formats acceptés: JPG, PNG, WebP
+                </p>
+                
+                <input
+                  type="file"
+                  id="property-images"
+                  multiple
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  disabled={selectedFiles.length >= 4}
+                />
+                <label htmlFor="property-images">
+                  <Button 
+                    as="span" 
+                    variant="bordered" 
+                    isDisabled={selectedFiles.length >= 4}
+                    className="cursor-pointer"
+                  >
+                    <CameraIcon className="w-4 h-4 mr-2" />
+                    {selectedFiles.length >= 4 ? 'Limite atteinte' : 'Choisir des photos'}
+                  </Button>
+                </label>
               </div>
 
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h3 className="font-medium text-blue-900 mb-2">Conseils pour de belles photos</h3>
-                <ul className="text-sm text-blue-800 space-y-1">
-                  <li>• Prenez des photos en haute résolution</li>
-                  <li>• Privilégiez la lumière naturelle</li>
-                  <li>• Montrez toutes les pièces principales</li>
-                  <li>• Incluez des vues extérieures si possible</li>
+              {/* Image Previews */}
+              {imagePreviews.length > 0 && (
+                <div className="space-y-4">
+                  <h4 className="text-lg font-medium text-default-900">Photos sélectionnées</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {imagePreviews.map((preview, index) => (
+                      <div key={index} className="relative group">
+                        <div className="aspect-square rounded-lg overflow-hidden border-2 border-default-200">
+                          <Image
+                            src={preview.previewUrl}
+                            alt={`Preview ${index + 1}`}
+                            width={200}
+                            height={200}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <button
+                          onClick={() => handleRemoveImage(index)}
+                          className="absolute -top-2 -right-2 w-6 h-6 bg-danger-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-danger-600"
+                          title="Supprimer cette image"
+                        >
+                          <XMarkIcon className="w-4 h-4" />
+                        </button>
+                        <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                          {index === 0 ? 'Principal' : `Image ${index + 1}`}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-sm text-default-600">
+                    La première image sera utilisée comme photo principale de votre annonce.
+                  </p>
+                </div>
+              )}
+
+              {/* Tips */}
+              <div className="bg-primary-50 p-4 rounded-lg">
+                <h3 className="font-medium text-primary-900 mb-2">Conseils pour de belles photos</h3>
+                <ul className="text-sm text-primary-800 space-y-1">
+                  <li>• Prenez des photos en haute résolution et bien éclairées</li>
+                  <li>• Privilégiez la lumière naturelle pour un rendu optimal</li>
+                  <li>• Montrez les pièces principales et les atouts du bien</li>
+                  <li>• Incluez des vues extérieures si possible (façade, jardin, balcon)</li>
+                  <li>• Évitez les photos floues ou mal cadrées</li>
                 </ul>
               </div>
             </div>
@@ -607,6 +840,33 @@ export default function DeposerUneAnnonceView() {
                   Elle sera mise en ligne après validation par notre équipe (sous 24h).
                 </p>
               </div>
+
+              {/* Submit Status Messages */}
+              {submitError && (
+                <div className="bg-danger-50 border border-danger-200 rounded-lg p-4">
+                  <div className="flex items-start">
+                    <ExclamationTriangleIcon className="w-5 h-5 text-danger-600 mt-0.5 mr-3 flex-shrink-0" />
+                    <div>
+                      <h4 className="text-sm font-medium text-danger-800 mb-1">Erreur</h4>
+                      <p className="text-sm text-danger-700">{submitError}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {submitSuccess && (
+                <div className="bg-success-50 border border-success-200 rounded-lg p-4">
+                  <div className="flex items-start">
+                    <CheckIcon className="w-5 h-5 text-success-600 mt-0.5 mr-3 flex-shrink-0" />
+                    <div>
+                      <h4 className="text-sm font-medium text-success-800 mb-1">Succès !</h4>
+                      <p className="text-sm text-success-700">
+                        Votre annonce a été créée avec succès. Redirection en cours...
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         );
@@ -723,7 +983,15 @@ export default function DeposerUneAnnonceView() {
             
             {currentStep === steps.length ? (
               <Button color="success" className="px-8">
-                Publier l'annonce
+                <Button 
+                  color="success" 
+                  className="px-8"
+                  onClick={handleSubmit}
+                  isLoading={isSubmitting}
+                  isDisabled={isSubmitting || submitSuccess}
+                >
+                  {isSubmitting ? 'Publication en cours...' : submitSuccess ? 'Annonce publiée !' : 'Publier l\'annonce'}
+                </Button>
               </Button>
             ) : (
               <Button
@@ -731,8 +999,9 @@ export default function DeposerUneAnnonceView() {
                 isDisabled={
                   (currentStep === 1 && (!propertyType || !transactionType)) ||
                   (currentStep === 2 && (!formData.city)) ||
+                  (currentStep === 3 && (!formData.area || !formData.description)) ||
                   (currentStep === 4 && !formData.price) ||
-                  (currentStep === 6 && (!formData.contactName || !formData.contactEmail || !formData.contactPhone))
+                  (currentStep === 6 && (!formData.contactFirstName || !formData.contactEmail || !formData.contactPhone))
                 }
                 color="primary"
                 className="px-8"

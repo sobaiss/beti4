@@ -2,6 +2,7 @@
 
 import { PaginatedProperty, Property } from '@/types/property'
 import { cookies } from 'next/headers'
+import { CreatePropertyInput, createPropertySchema } from '../validations/property'
 
 export interface PropertyFilters {
   location?: string
@@ -34,6 +35,34 @@ async function fetchHeaderOptions() {
     'Content-Type': 'application/json',
     ...(accessToken ? { Authorization: `Bearer ${accessToken.value}` } : {})
   }
+}
+
+export async function createProperty(data: CreatePropertyInput) {
+  const validatedFields = createPropertySchema.safeParse(data);
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Corriger les erreurs ci-dessous.',
+    };
+  }
+
+  const response = await fetch(`${apiUrl()}/properties`, {
+    method: 'POST',
+    headers: await fetchHeaderOptions(),
+    body: JSON.stringify(validatedFields.data)
+  });
+
+  const responseData = await response.json();
+
+  if (!response.ok) {
+    return {
+      errors: responseData.errors || {},
+      message: responseData.message || 'Erreur lors de la création de la propriété.',
+    };
+  }
+
+  return responseData;
 }
 
   export async function getProperties(filters: PropertyFilters = {}, page = 1, limit = 12/* , sort: PropertySortOptions = { field: 'createdAt', direction: 'desc' } */) {
