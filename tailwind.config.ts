@@ -13,16 +13,16 @@ const config: Config = {
     extend: {
       fontFamily: {
         'sans': [
-          'system-ui',
+          '"Cera SL sys"',
           '-apple-system',
           'BlinkMacSystemFont',
-          'Segoe UI',
+          '"Segoe UI"',
           'Roboto',
           'Oxygen',
           'Ubuntu',
           'Cantarell',
-          'Open Sans',
-          'Helvetica Neue',
+          '"Open Sans"',
+          '"Helvetica Neue"',
           'sans-serif'
         ],
       },
