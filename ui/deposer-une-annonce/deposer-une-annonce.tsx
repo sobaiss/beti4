@@ -379,7 +379,6 @@ export default function DeposerUneAnnonceView() {
                       <span className="font-bold text-xl block mb-2">Louer</span>
                       <span className="text-sm opacity-90 font-medium">Je souhaite louer mon bien</span>
                     </div>
-                    </div>
                   </Button>
                 </div>
               </div>
