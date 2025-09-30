@@ -70,7 +70,6 @@ export default function DeposerUneAnnonceView() {
     floor: '',
     totalFloors: '',
     yearBuilt: '',
-    energyRating: '',
     furnished: false,
     balcony: false,
     terrace: false,
@@ -120,10 +119,10 @@ export default function DeposerUneAnnonceView() {
     if (formData.useUserContact) {
       setFormData(prev => ({
         ...prev,
-        contactFirstName: session.user.firstName || '',
-        contactLastName: session.user.lastName || '',
-        contactEmail: session.user.email || '',
-        contactPhone: session.user.phone || ''
+        contactFirstName: session.user.firstName || prev.contactFirstName,
+        contactLastName: session.user.lastName || prev.contactLastName,
+        contactEmail: session.user.email || prev.contactEmail,
+        contactPhone: session.user.phone || prev.contactPhone
       }));
     }
   }, [session, status, router]);

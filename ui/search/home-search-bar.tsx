@@ -11,7 +11,7 @@ export default function HomeSearchBarHome({ locations }: { locations: City[] }) 
 
     const [searchLocation, setSearchLocation] = useState('');
     const [propertyTypes, setPropertyTypes] = useState<string[]>([]);
-    const [transactionType, setTransactionType] = useState('achat');
+    const [transactionType, setTransactionType] = useState('');
 
     const locationItems = locations.map((location) => ({ key: location.sk, label: location.name }));
 
@@ -48,11 +48,11 @@ export default function HomeSearchBarHome({ locations }: { locations: City[] }) 
             <label className="text-sm font-medium text-default-700">Localisation</label>
             <Autocomplete
                 allowsCustomValue
-                onChange={(e) => setSearchLocation(e.target.value)}
+                onSelectionChange={(key) => setSearchLocation(key as string)}
                 className="max-w-xs"
                 defaultItems={locationItems}
                 defaultSelectedKey=""
-                placeholder="Ville, adresse ou code postal"
+                placeholder="Ville, quartier ou code postal"
                 startContent={<MapPinIcon className="w-5 h-5 text-default-400" />}
                 variant="bordered"
                 radius="full"
@@ -74,6 +74,7 @@ export default function HomeSearchBarHome({ locations }: { locations: City[] }) 
                 variant="bordered"
                 radius="full"
             >
+                <SelectItem key="">Toutes</SelectItem>
                 <SelectItem key="achat">Acheter</SelectItem>
                 <SelectItem key="location">Louer</SelectItem>
             </Select>
@@ -90,7 +91,7 @@ export default function HomeSearchBarHome({ locations }: { locations: City[] }) 
                 variant="bordered"
                 radius="full"
             >
-                <SelectItem key="">Tous types</SelectItem>
+                <SelectItem key="">Tous</SelectItem>
                 <SelectItem key="appartement">Appartement</SelectItem>
                 <SelectItem key="maison">Maison</SelectItem>
                 <SelectItem key="villa">Villa</SelectItem>

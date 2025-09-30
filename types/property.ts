@@ -24,7 +24,6 @@ export interface Property {
   totalFloors?: number;
   featured?: boolean;
   yearBuilt?: number;
-  energyRating?: string;
   availableAt?: Date;
   publishedAt?: Date;
   reference?: string;

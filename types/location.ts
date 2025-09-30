@@ -3,4 +3,7 @@ export type City = {
   sk: string; // Sort key, e.g., "city"
   name: string; // Name of the city
   zip: string; // Postal code of the city
+  gmap?: string; // Google Maps link for the city
+  divisionLvevel?: number; // Administrative division level
+  divisionName?: string; // Name of the administrative division
 };

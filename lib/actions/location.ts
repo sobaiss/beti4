@@ -21,7 +21,7 @@ export async function getCities() {
 };
 
 export async function getLocations(): Promise<City[]> {
-  const response = await fetch(`${apiUrl()}/locations/locations`);
+  const response = await fetch(`${apiUrl()}/locations`);
   if (response.ok) {
     return await response.json() as City[];
   }

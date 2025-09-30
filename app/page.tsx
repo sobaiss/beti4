@@ -27,7 +27,6 @@ export default function Home() {
     }
   });
 
-  // Track property view on component mount
   useEffect(() => {
       getFeaturedProperties(6).then(response => {
         if (response) {
