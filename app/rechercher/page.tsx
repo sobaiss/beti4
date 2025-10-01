@@ -52,7 +52,7 @@ export default function SearchPage() {
   const [locations, setLocations] = useState<Location[]>([]);
   const [priceRange, setPriceRange] = useState([0, 2000000]);
   const [areaRange, setAreaRange] = useState([0, 300]);
-  const [bedrooms, setBedrooms] = useState<string>(searchParams.get('bedrooms') || '');
+  const [bedroomsRange, setBedroomsRange] = useState([0, 10]);
   const [sortBy, setSortBy] = useState('relevance');
   const [viewMode, setViewMode] = useState('grid');
   const [showFilters, setShowFilters] = useState(false);
@@ -67,7 +67,7 @@ export default function SearchPage() {
   const [tempPropertyTypes, setTempPropertyTypes] = useState<string[]>([]);
   const [tempPriceRange, setTempPriceRange] = useState([0, 2000000]);
   const [tempAreaRange, setTempAreaRange] = useState([0, 300]);
-  const [tempBedrooms, setTempBedrooms] = useState<string>('');
+  const [tempBedroomsRange, setTempBedroomsRange] = useState([0, 10]);
 
   // Initialize filters from URL params
   useEffect(() => {
@@ -83,12 +83,17 @@ export default function SearchPage() {
     if (searchLocations) {
       setSearchQuery(searchLocations);
     }
+    const searchBedrooms = searchParams.get('bedrooms');
+    if (searchBedrooms) {
+      const bedroomsValue = parseInt(searchBedrooms);
+      setBedroomsRange([bedroomsValue, 10]);
+    }
     
     // Initialize temp filters with current values
     setTempPropertyTypes(propertyTypes);
     setTempPriceRange(priceRange);
     setTempAreaRange(areaRange);
-    setTempBedrooms(bedrooms);
+    setTempBedroomsRange(bedroomsRange);
   }, [searchParams]);
 
   // Fetch properties from API
@@ -102,7 +107,7 @@ export default function SearchPage() {
           transactionType: transactionType !== 'all' ? transactionType : undefined,
           // priceRange: (priceMin && priceMax) ? [parseInt(priceMin), parseInt(priceMax)] as [number, number] : undefined,
           // areaRange: (areaMin && areaMax) ? [parseInt(areaMin), parseInt(areaMax)] as [number, number] : undefined,
-          // bedrooms: bedrooms
+          // bedroomsRange: bedroomsRange
         }
 
         const response = await getProperties(filters);
@@ -117,7 +122,7 @@ export default function SearchPage() {
     };
 
     fetchProperties();
-  }, [searchQuery, propertyTypes, transactionType, priceRange, areaRange, bedrooms, sortBy]);
+  }, [searchQuery, propertyTypes, transactionType, priceRange, areaRange, bedroomsRange, sortBy]);
 
   useEffect(() => {
     loadLocations();
@@ -146,7 +151,7 @@ export default function SearchPage() {
     setTempPropertyTypes(propertyTypes);
     setTempPriceRange(priceRange);
     setTempAreaRange(areaRange);
-    setTempBedrooms(bedrooms);
+    setTempBedroomsRange(bedroomsRange);
     onOpen();
   };
 
@@ -155,7 +160,7 @@ export default function SearchPage() {
     setPropertyTypes(tempPropertyTypes);
     setPriceRange(tempPriceRange);
     setAreaRange(tempAreaRange);
-    setBedrooms(tempBedrooms);
+    setBedroomsRange(tempBedroomsRange);
     onOpenChange();
   };
 
@@ -163,7 +168,7 @@ export default function SearchPage() {
     setTempPropertyTypes([]);
     setTempPriceRange([0, 2000000]);
     setTempAreaRange([0, 300]);
-    setTempBedrooms('');
+    setTempBedroomsRange([0, 10]);
   };
 
   const handlePropertyTypeChange = (type: string, checked: boolean) => {
@@ -180,7 +185,7 @@ export default function SearchPage() {
     setTransactionType('all');
     setPriceRange([0, 2000000]);
     setAreaRange([0, 300]);
-    setBedrooms('');
+    setBedroomsRange([0, 10]);
   };
 
 
@@ -190,7 +195,7 @@ export default function SearchPage() {
     transactionType !== 'all',
     priceRange[0] > 0 || priceRange[1] < 2000000,
     areaRange[0] > 0 || areaRange[1] < 300,
-    bedrooms !== undefined
+    bedroomsRange[0] > 0 || bedroomsRange[1] < 10
   ].filter(Boolean).length;
 
   const getPropertyTypeIcon = (type: string) => {
@@ -436,25 +441,48 @@ export default function SearchPage() {
                   <div className="space-y-4">
                     <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
                       <BuildingOfficeIcon className="w-5 h-5 text-primary-600" />
-                      Nombre de Chambres
+                      Chambres
                     </h4>
-                    <div className="max-w-xs">
-                      <Select
-                        selectedKeys={tempBedrooms ? [tempBedrooms] : []}
-                        onSelectionChange={(keys) => setTempBedrooms(Array.from(keys)[0] as string)}
-                        placeholder="Sélectionner..."
-                        size="lg"
-                        variant="bordered"
-                        radius="lg"
-                        aria-label="Sélectionner le nombre de chambres"
-                      >
-                        <SelectItem key="">Toutes</SelectItem>
-                        <SelectItem key="1">1+ chambre</SelectItem>
-                        <SelectItem key="2">2+ chambres</SelectItem>
-                        <SelectItem key="3">3+ chambres</SelectItem>
-                        <SelectItem key="4">4+ chambres</SelectItem>
-                      </Select>
-                    </div>
+                    <Card className="p-4 bg-content1">
+                      <CardBody className="p-0">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-default-700">Chambres minimum</label>
+                              <Input
+                                type="number"
+                                placeholder="0"
+                                value={tempBedroomsRange[0] === 0 ? '' : tempBedroomsRange[0].toString()}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value) || 0;
+                                  setTempBedroomsRange([value, tempBedroomsRange[1]]);
+                                }}
+                                startContent={<BuildingOfficeIcon className="w-4 h-4 text-default-400" />}
+                                variant="bordered"
+                                size="lg"
+                                aria-label="Nombre minimum de chambres"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-default-700">Chambres maximum</label>
+                              <Input
+                                type="number"
+                                placeholder="10"
+                                value={tempBedroomsRange[1] === 10 ? '' : tempBedroomsRange[1].toString()}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value) || 10;
+                                  setTempBedroomsRange([tempBedroomsRange[0], value]);
+                                }}
+                                startContent={<BuildingOfficeIcon className="w-4 h-4 text-default-400" />}
+                                variant="bordered"
+                                size="lg"
+                                aria-label="Nombre maximum de chambres"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </CardBody>
+                    </Card>
                   </div>
                 </div>
               </ModalBody>
@@ -585,11 +613,11 @@ export default function SearchPage() {
                   {bedrooms !== '' && (
                     <Chip 
                       variant="flat" 
-                      onClose={() => setBedrooms('')}
+                      onClose={() => setBedroomsRange([0, 10])}
                       size="sm"
-                      aria-label={`Supprimer le filtre chambres: ${bedrooms}+ chambres`}
+                      aria-label={`Supprimer le filtre chambres: ${bedroomsRange[0]}-${bedroomsRange[1]} chambres`}
                     >
-                      {bedrooms}+ chambres
+                      {bedroomsRange[0]}-{bedroomsRange[1]} chambres
                     </Chip>
                   )}
                 </div>
