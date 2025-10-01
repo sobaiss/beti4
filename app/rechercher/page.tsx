@@ -610,7 +610,7 @@ export default function SearchPage() {
                       {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
                     </Chip>
                   ))}
-                  {bedrooms !== '' && (
+                  {(bedroomsRange[0] > 0 || bedroomsRange[1] < 10) && (
                     <Chip 
                       variant="flat" 
                       onClose={() => setBedroomsRange([0, 10])}
