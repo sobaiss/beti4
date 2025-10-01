@@ -775,12 +775,12 @@ export default function SearchPage() {
                           <div className="space-y-2">
                             <label className="text-sm font-medium text-default-700">Date de disponibilité</label>
                             <DatePicker
-                             value={tempAvailableAt ? new Date(tempAvailableAt) : null}
-                             onChange={(date) => setTempAvailableAt(date ? date.toISOString().split('T')[0] : '')}
+                              value={tempAvailableAt ? new Date(tempAvailableAt) : null}
+                              onChange={(date) => setTempAvailableAt(date ? date.toISOString().split('T')[0] : '')}
                               variant="bordered"
                               size="lg"
-                              showMonthAndYearPickers
                               aria-label="Date de disponibilité"
+                              showMonthAndYearPickers
                             />
                           </div>
                         </div>
