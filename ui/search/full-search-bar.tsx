@@ -1,14 +1,16 @@
 'use client';
 
 import { City } from "@/types/location";
+import { getCachedLocations } from "@/lib/utils/location-cache";
 import { AdjustmentsHorizontalIcon, BuildingOffice2Icon, BuildingOfficeIcon, ChevronDownIcon, GlobeAltIcon, HomeIcon, MagnifyingGlassIcon, MapPinIcon, ShoppingBagIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Autocomplete, AutocompleteItem, Button, Card, CardBody, Checkbox, Chip, Link, Select, SelectItem, Slider } from "@heroui/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function FullSearchBarHome({ locations, totalProperties }: { locations: City[]; totalProperties: number }) {
+export default function FullSearchBarHome({ totalProperties }: { totalProperties: number }) {
     const { replace } = useRouter();
 
+    const [locations, setLocations] = useState<City[]>([]);
     const [searchLocation, setSearchLocation] = useState('');
     const [propertyTypes, setPropertyTypes] = useState<string[]>([]);
     const [transactionType, setTransactionType] = useState('achat');
@@ -18,6 +20,21 @@ export default function FullSearchBarHome({ locations, totalProperties }: { loca
     const [areaRange, setAreaRange] = useState([0, 300]);
     const [bedrooms, setBedrooms] = useState('all');
     const [sortBy, setSortBy] = useState('relevance');
+
+    // Load locations on component mount
+    useEffect(() => {
+        const loadLocations = async () => {
+            try {
+                const cachedLocations = await getCachedLocations();
+                setLocations(cachedLocations);
+            } catch (error) {
+                console.error('Error loading locations:', error);
+                setLocations([]);
+            }
+        };
+
+        loadLocations();
+    }, []);
 
     const activeFiltersCount = [
         searchLocation,

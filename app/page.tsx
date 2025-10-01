@@ -7,7 +7,7 @@ import HomeSearchBarHome from '@/ui/search/home-search-bar';
 import PropertyList from '@/ui/property/property-list';
 import { Suspense, useEffect, useState } from 'react';
 import Loading from '@/components/ui/loading';
-import { getLocations } from '@/lib/actions/location';
+import { getCachedLocations } from '@/lib/utils/location-cache';
 import { City } from '@/types/location';
 import { getFeaturedProperties } from '@/lib/actions/property';
 import { PaginatedProperty } from '@/types/property';
@@ -38,41 +38,18 @@ export default function Home() {
         setIsLoadingProperties(false);
       });
 
-      // Check if locations exist in localStorage
-      const cachedLocations = localStorage.getItem('locations');
-      if (cachedLocations) {
-        try {
-          // Decode base64 and parse locations
-          const decodedLocations = Buffer.from(cachedLocations, 'base64').toString('utf-8');
-          const parsedLocations = JSON.parse(decodedLocations);
-          if (Array.isArray(parsedLocations)) {
-            setLocations(parsedLocations);
-          } else {
-            throw new Error('Invalid locations data');
-          }
-        } catch (error) {
-          console.error('Error parsing cached locations:', error);
-          // If parsing fails, fetch from server
-          fetchAndCacheLocations();
-        }
-      } else {
-        // No cached data, fetch from server
-        fetchAndCacheLocations();
-      }
-
+      // Load locations using the cached utility
+      loadLocations();
   }, [])
 
-  const fetchAndCacheLocations = () => {
-    getLocations().then(response => {
-      if (response) {
-        setLocations(response);
-        // Encode as base64 and store in localStorage
-        const encodedLocations = Buffer.from(JSON.stringify(response)).toString('base64');
-        localStorage.setItem('locations', encodedLocations);
-      }
-    }).catch(error => {
-      console.error('Error fetching locations:', error);
-    });
+  const loadLocations = async () => {
+    try {
+      const locations = await getCachedLocations();
+      setLocations(locations);
+    } catch (error) {
+      console.error('Error loading locations:', error);
+      setLocations([]);
+    }
   }
 
   return (

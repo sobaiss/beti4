@@ -36,7 +36,7 @@ import {
 import Link from 'next/link';
 import Image from 'next/image';
 import { City } from '@/types/location';
-import { getCities } from '@/lib/actions/location';
+import { getCachedLocations } from '@/lib/utils/location-cache';
 import { convertFileToBase64 } from '@/lib/files/files';
 import { createProperty } from '@/lib/actions/property';
 import { generatePropertyReference } from '@/lib/utils/property-reference';
@@ -130,7 +130,7 @@ export default function DeposerUneAnnonceView() {
     // Track property view on component mount
   useEffect(() => {
     (async () => {
-      const cities = await getCities();
+      const cities = await getCachedLocations();
       setCityMap(cities);
     })();
   }, []);
