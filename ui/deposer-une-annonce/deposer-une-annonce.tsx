@@ -35,7 +35,7 @@ import {
 } from '@heroui/react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { City } from '@/types/location';
+import { Location } from '@/types/location';
 import { getCachedLocations } from '@/lib/utils/location-cache';
 import { convertFileToBase64 } from '@/lib/files/files';
 import { createProperty } from '@/lib/actions/property';
@@ -47,7 +47,7 @@ export default function DeposerUneAnnonceView() {
   const [currentStep, setCurrentStep] = useState(1);
   const [propertyType, setPropertyType] = useState('');
   const [transactionType, setTransactionType] = useState('');
-  const [cityMap, setCityMap] = useState<City[]>([]);
+  const [cityMap, setCityMap] = useState<Location[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<{ file: File, previewUrl: string }[]>([]);
   const [imageErrors, setImageErrors] = useState<string[]>([]);

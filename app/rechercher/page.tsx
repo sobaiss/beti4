@@ -19,7 +19,6 @@ import {
 } from '@heroicons/react/24/outline';
 import { 
   Button, 
-  Input, 
   Select, 
   SelectItem, 
   Slider, 
@@ -27,18 +26,23 @@ import {
   CardBody, 
   Chip, 
   Checkbox,
-  ButtonGroup
+  ButtonGroup,
+  Autocomplete,
+  AutocompleteItem
 } from '@heroui/react';
 import Header from '@/components/Header';
 import PropertyCard from '@/components/PropertyCard';
 import { Property } from '@/types/property';
 import { getProperties } from '@/lib/actions/property';
+import { getCachedLocations } from '@/lib/utils/location-cache';
+import { Location } from '@/types/location';
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get('location') || '');
   const [propertyTypes, setPropertyTypes] = useState<string[]>(searchParams.get('propertyTypes')?.split(',') || []);
-  const [transactionType, setTransactionType] = useState(searchParams.get('transactionType') || 'all');
+  const [transactionType, setTransactionType] = useState(searchParams.get('transactionType') || '');
+  const [locations, setLocations] = useState<Location[]>([]);
   const [priceRange, setPriceRange] = useState([0, 2000000]);
   const [areaRange, setAreaRange] = useState([0, 300]);
   const [bedrooms, setBedrooms] = useState<string>(searchParams.get('bedrooms') || '');
@@ -93,6 +97,20 @@ export default function SearchPage() {
     fetchProperties();
   }, [searchQuery, propertyTypes, transactionType, priceRange, areaRange, bedrooms, sortBy]);
 
+  useEffect(() => {
+    loadLocations();
+  }, []);
+
+  const loadLocations = async () => {
+    try {
+      const locations = await getCachedLocations();
+      setLocations(locations);
+    } catch (error) {
+      console.error('Error loading locations:', error);
+      setLocations([]);
+    }
+  }
+
   const handlePropertyTypeChange = (type: string, checked: boolean) => {
     if (checked) {
       setPropertyTypes(prev => [...prev, type]);
@@ -142,22 +160,36 @@ export default function SearchPage() {
           <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center text-foreground">
             {/* Search Bar */}
             <div className="flex-1 flex gap-2">
-              <Input
-                placeholder="Localisation, ville, code postal..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                startContent={<MapPinIcon className="w-4 h-4 text-default-400" />}
+              <Autocomplete
+                label="Localisation"
+                allowsCustomValue
+                onSelectionChange={(key) => setSearchQuery(key as string)}
                 className="flex-1"
-              />
-              <Select
+                defaultItems={locations}
+                defaultSelectedKey={searchQuery}
+                startContent={<MapPinIcon className="w-5 h-5 text-default-400" />}
+                variant="bordered"
+                radius="full"
+                size="lg"
+                isClearable
+                aria-label="Rechercher une localisation"
+                >
+                {(locationItem) => <AutocompleteItem key={locationItem.displayName} endContent={`(${locationItem.divisionName})`}>{locationItem.name}</AutocompleteItem>}
+              </Autocomplete>
+            <Select
+                label="Transaction"
                 selectedKeys={[transactionType]}
                 onSelectionChange={(keys) => setTransactionType(Array.from(keys)[0] as string)}
-                className="w-32"
-              >
-                <SelectItem key="all">Tous</SelectItem>
+                className="w-full sm:w-32"
+                size="lg"
+                variant="bordered"
+                radius="full"
+                aria-label="Sélectionner le type de transaction"
+            >
+                <SelectItem key="">Tous</SelectItem>
                 <SelectItem key="achat">Acheter</SelectItem>
                 <SelectItem key="location">Louer</SelectItem>
-              </Select>
+            </Select>
             </div>
 
             {/* Filter Toggle */}
@@ -298,6 +330,7 @@ export default function SearchPage() {
                   selectedKeys={[sortBy]}
                   onSelectionChange={(keys) => setSortBy(Array.from(keys)[0] as string)}
                   className="w-48"
+                  aria-label="Trier par"
                 >
                   <SelectItem key="relevance">Plus Pertinent</SelectItem>
                   <SelectItem key="price-asc">Prix: Croissant</SelectItem>

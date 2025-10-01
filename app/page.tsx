@@ -8,13 +8,13 @@ import PropertyList from '@/ui/property/property-list';
 import { Suspense, useEffect, useState } from 'react';
 import Loading from '@/components/ui/loading';
 import { getCachedLocations } from '@/lib/utils/location-cache';
-import { City } from '@/types/location';
+import { Location } from '@/types/location';
 import { getFeaturedProperties } from '@/lib/actions/property';
 import { PaginatedProperty } from '@/types/property';
 import { PropertiesListSkeleton } from '@/ui/property/skeletons';
 
 export default function Home() {
-  const [locations, setLocations] = useState<City[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
   const [isLoadingProperties, setIsLoadingProperties] = useState(true);
 
   const [featuredProperties, setFeaturedProperties] = useState<PaginatedProperty>({

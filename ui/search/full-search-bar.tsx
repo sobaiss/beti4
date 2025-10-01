@@ -1,6 +1,6 @@
 'use client';
 
-import { City } from "@/types/location";
+import { Location } from "@/types/location";
 import { getCachedLocations } from "@/lib/utils/location-cache";
 import { AdjustmentsHorizontalIcon, BuildingOffice2Icon, BuildingOfficeIcon, ChevronDownIcon, GlobeAltIcon, HomeIcon, MagnifyingGlassIcon, MapPinIcon, ShoppingBagIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Autocomplete, AutocompleteItem, Button, Card, CardBody, Checkbox, Chip, Link, Select, SelectItem, Slider } from "@heroui/react";
@@ -10,7 +10,7 @@ import { useState, useEffect } from "react";
 export default function FullSearchBarHome({ totalProperties }: { totalProperties: number }) {
     const { replace } = useRouter();
 
-    const [locations, setLocations] = useState<City[]>([]);
+    const [locations, setLocations] = useState<Location[]>([]);
     const [searchLocation, setSearchLocation] = useState('');
     const [propertyTypes, setPropertyTypes] = useState<string[]>([]);
     const [transactionType, setTransactionType] = useState('achat');

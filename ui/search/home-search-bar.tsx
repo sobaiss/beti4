@@ -1,19 +1,17 @@
 'use client';
 
-import { City } from "@/types/location";
+import { Location } from "@/types/location";
 import { MagnifyingGlassIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import { Autocomplete, AutocompleteItem, Button, Card, CardBody, Link, Select, SelectItem } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function HomeSearchBarHome({ locations }: { locations: City[] }) {
+export default function HomeSearchBarHome({ locations }: { locations: Location[] }) {
     const { replace } = useRouter();
 
     const [searchLocation, setSearchLocation] = useState('');
     const [propertyTypes, setPropertyTypes] = useState<string[]>([]);
     const [transactionType, setTransactionType] = useState('');
-
-    const locationItems = locations.map((location) => ({ key: location.displayName, label: location.name, divisionName: location.divisionName || '' }));
 
     const handleSearch = () => {
         const params = new URLSearchParams();
@@ -50,7 +48,7 @@ export default function HomeSearchBarHome({ locations }: { locations: City[] }) 
                 allowsCustomValue
                 onSelectionChange={(key) => setSearchLocation(key as string)}
                 className="max-w-xs"
-                defaultItems={locationItems}
+                defaultItems={locations}
                 defaultSelectedKey=""
                 startContent={<MapPinIcon className="w-5 h-5 text-default-400" />}
                 variant="bordered"
@@ -59,7 +57,7 @@ export default function HomeSearchBarHome({ locations }: { locations: City[] }) 
                 isClearable
                 aria-label="Rechercher une localisation"
                 >
-                {(locationItem) => <AutocompleteItem key={locationItem.key} endContent={`(${locationItem.divisionName})`}>{locationItem.label}</AutocompleteItem>}
+                {(locationItem) => <AutocompleteItem key={locationItem.displayName} endContent={`(${locationItem.divisionName})`}>{locationItem.name}</AutocompleteItem>}
             </Autocomplete>
         </div>
 

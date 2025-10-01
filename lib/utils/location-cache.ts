@@ -3,7 +3,7 @@
  * Handles UTF-8 encoding/decoding and provides a centralized API
  */
 
-import { City } from '@/types/location';
+import { Location } from '@/types/location';
 import { getLocations } from '@/lib/actions/location';
 
 const LOCATIONS_CACHE_KEY = 'locations';
@@ -55,7 +55,7 @@ function isCacheValid(): boolean {
 /**
  * Get locations from cache if available and valid
  */
-function getLocationsFromCache(): City[] | null {
+function getLocationsFromCache(): Location[] | null {
   try {
     if (!isCacheValid()) {
       return null;
@@ -75,7 +75,7 @@ function getLocationsFromCache(): City[] | null {
       return null;
     }
 
-    return decodedLocations as City[];
+    return decodedLocations as Location[];
   } catch (error) {
     console.error('Error retrieving locations from cache:', error);
     // Clear corrupted cache
@@ -87,7 +87,7 @@ function getLocationsFromCache(): City[] | null {
 /**
  * Save locations to cache with expiry
  */
-function saveLocationsToCache(locations: City[]): void {
+function saveLocationsToCache(locations: Location[]): void {
   try {
     if (!Array.isArray(locations)) {
       throw new Error('Locations must be an array');
@@ -119,7 +119,7 @@ function clearLocationsCache(): void {
 /**
  * Fetch locations from server and update cache
  */
-async function fetchAndCacheLocations(): Promise<City[]> {
+async function fetchAndCacheLocations(): Promise<Location[]> {
   try {
     const locations = await getLocations();
     if (locations && Array.isArray(locations)) {
@@ -137,7 +137,7 @@ async function fetchAndCacheLocations(): Promise<City[]> {
  * Main function to get locations with caching
  * Returns cached data if available and valid, otherwise fetches from server
  */
-export async function getCachedLocations(): Promise<City[]> {
+export async function getCachedLocations(): Promise<Location[]> {
   try {
     // First, try to get from cache
     const cachedLocations = getLocationsFromCache();
@@ -157,7 +157,7 @@ export async function getCachedLocations(): Promise<City[]> {
 /**
  * Force refresh locations from server
  */
-export async function refreshLocations(): Promise<City[]> {
+export async function refreshLocations(): Promise<Location[]> {
   try {
     clearLocationsCache();
     return await fetchAndCacheLocations();

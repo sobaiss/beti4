@@ -1,4 +1,4 @@
-export type City = {
+export type Location = {
   pk: string; // Partition key, e.g., "commune"
   sk: string; // Sort key, e.g., "city"
   name: string; // Name of the city
