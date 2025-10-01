@@ -34,7 +34,8 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  useDisclosure
+  useDisclosure,
+  Input
 } from '@heroui/react';
 import Header from '@/components/Header';
 import PropertyCard from '@/components/PropertyCard';
@@ -348,7 +349,8 @@ export default function SearchPage() {
                             <div className="grid grid-cols-2 gap-4">
                               <div className="space-y-2">
                                 <label className="text-sm font-medium text-default-700">Prix minimum</label>
-                                <NumberInput
+                                <Input
+                                  type="number"
                                   placeholder="0"
                                   value={tempPriceRange[0].toString()}
                                   onChange={(e) => {
@@ -363,7 +365,8 @@ export default function SearchPage() {
                               </div>
                               <div className="space-y-2">
                                 <label className="text-sm font-medium text-default-700">Prix maximum</label>
-                                <NumberInput
+                                <Input
+                                  type="number"
                                   placeholder="2000000"
                                   value={tempPriceRange[1].toString()}
                                   onChange={(e) => {
@@ -394,7 +397,8 @@ export default function SearchPage() {
                             <div className="grid grid-cols-2 gap-4">
                               <div className="space-y-2">
                                 <label className="text-sm font-medium text-default-700">Surface minimum</label>
-                                <NumberInput
+                                <Input
+                                  type="number"
                                   placeholder="0"
                                   value={tempAreaRange[0].toString()}
                                   onChange={(e) => {
@@ -409,7 +413,8 @@ export default function SearchPage() {
                               </div>
                               <div className="space-y-2">
                                 <label className="text-sm font-medium text-default-700">Surface maximum</label>
-                                <NumberInput
+                                <Input
+                                  type="number"
                                   placeholder="300"
                                   value={tempAreaRange[1].toString()}
                                   onChange={(e) => {
