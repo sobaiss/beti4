@@ -42,8 +42,8 @@ export default function Home() {
       const cachedLocations = localStorage.getItem('locations');
       if (cachedLocations) {
         try {
-          // Decode UTF-8 and parse locations
-          const decodedLocations = decodeURIComponent(cachedLocations);
+          // Decode base64 and parse locations
+          const decodedLocations = Buffer.from(cachedLocations, 'base64').toString('utf-8');
           const parsedLocations = JSON.parse(decodedLocations);
           if (Array.isArray(parsedLocations)) {
             setLocations(parsedLocations);
@@ -66,8 +66,8 @@ export default function Home() {
     getLocations().then(response => {
       if (response) {
         setLocations(response);
-        // Encode as UTF-8 and store in localStorage
-        const encodedLocations = encodeURIComponent(JSON.stringify(response));
+        // Encode as base64 and store in localStorage
+        const encodedLocations = Buffer.from(JSON.stringify(response)).toString('base64');
         localStorage.setItem('locations', encodedLocations);
       }
     }).catch(error => {

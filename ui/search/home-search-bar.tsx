@@ -66,7 +66,7 @@ export default function HomeSearchBarHome({ locations }: { locations: City[] }) 
         <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
             <div className="space-y-2">
             <Select
-                label="Type de transaction"
+                label="Transaction"
                 selectedKeys={[transactionType]}
                 onSelectionChange={(keys) => setTransactionType(Array.from(keys)[0] as string)}
                 className="w-full sm:w-32"
