@@ -273,6 +273,7 @@ export default function SearchPage() {
         isOpen={isOpen} 
         onOpenChange={onOpenChange}
         size="4xl"
+            aria-label="Ouvrir les filtres avancés"
         scrollBehavior="inside"
         classNames={{
           base: "max-h-[90vh]",
@@ -405,6 +406,7 @@ export default function SearchPage() {
                         size="lg"
                         variant="bordered"
                         radius="lg"
+                        aria-label="Sélectionner le nombre de chambres"
                       >
                         <SelectItem key="">Toutes</SelectItem>
                         <SelectItem key="1">1+ chambre</SelectItem>
@@ -479,6 +481,7 @@ export default function SearchPage() {
                     size="sm"
                     onClick={() => setViewMode('grid')}
                     isIconOnly
+                    aria-label="Vue en grille"
                   >
                     <Squares2X2Icon className="w-4 h-4" />
                   </Button>
@@ -487,6 +490,7 @@ export default function SearchPage() {
                     size="sm"
                     onClick={() => setViewMode('list')}
                     isIconOnly
+                    aria-label="Vue en liste"
                   >
                     <ListBulletIcon className="w-4 h-4" />
                   </Button>
@@ -495,6 +499,7 @@ export default function SearchPage() {
                     size="sm"
                     onClick={() => setViewMode('map')}
                     isIconOnly
+                    aria-label="Vue carte"
                   >
                     <MapIcon className="w-4 h-4" />
                   </Button>
@@ -511,6 +516,7 @@ export default function SearchPage() {
                       variant="flat" 
                       onClose={() => setSearchQuery('')}
                       size="sm"
+                      aria-label={`Supprimer le filtre localisation: ${searchQuery}`}
                     >
                       Localisation: {searchQuery}
                     </Chip>
@@ -520,6 +526,7 @@ export default function SearchPage() {
                       variant="flat" 
                       onClose={() => setTransactionType('all')}
                       size="sm"
+                      aria-label={`Supprimer le filtre transaction: ${transactionType === 'achat' ? 'À Vendre' : 'À Louer'}`}
                     >
                       {transactionType === 'achat' ? 'À Vendre' : 'À Louer'}
                     </Chip>
@@ -530,6 +537,7 @@ export default function SearchPage() {
                       variant="flat" 
                       onClose={() => handlePropertyTypeChange(type, false)}
                       size="sm"
+                      aria-label={`Supprimer le filtre type: ${type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}`}
                     >
                       {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
                     </Chip>
@@ -539,6 +547,7 @@ export default function SearchPage() {
                       variant="flat" 
                       onClose={() => setBedrooms('')}
                       size="sm"
+                      aria-label={`Supprimer le filtre chambres: ${bedrooms}+ chambres`}
                     >
                       {bedrooms}+ chambres
                     </Chip>
