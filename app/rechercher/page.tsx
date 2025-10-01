@@ -348,8 +348,7 @@ export default function SearchPage() {
                             <div className="grid grid-cols-2 gap-4">
                               <div className="space-y-2">
                                 <label className="text-sm font-medium text-default-700">Prix minimum</label>
-                                <Input
-                                  type="number"
+                                <NumberInput
                                   placeholder="0"
                                   value={tempPriceRange[0].toString()}
                                   onChange={(e) => {
@@ -364,8 +363,7 @@ export default function SearchPage() {
                               </div>
                               <div className="space-y-2">
                                 <label className="text-sm font-medium text-default-700">Prix maximum</label>
-                                <Input
-                                  type="number"
+                                <NumberInput
                                   placeholder="2000000"
                                   value={tempPriceRange[1].toString()}
                                   onChange={(e) => {
@@ -396,8 +394,7 @@ export default function SearchPage() {
                             <div className="grid grid-cols-2 gap-4">
                               <div className="space-y-2">
                                 <label className="text-sm font-medium text-default-700">Surface minimum</label>
-                                <Input
-                                  type="number"
+                                <NumberInput
                                   placeholder="0"
                                   value={tempAreaRange[0].toString()}
                                   onChange={(e) => {
@@ -412,8 +409,7 @@ export default function SearchPage() {
                               </div>
                               <div className="space-y-2">
                                 <label className="text-sm font-medium text-default-700">Surface maximum</label>
-                                <Input
-                                  type="number"
+                                <NumberInput
                                   placeholder="300"
                                   value={tempAreaRange[1].toString()}
                                   onChange={(e) => {
