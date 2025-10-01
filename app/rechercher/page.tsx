@@ -779,8 +779,8 @@ export default function SearchPage() {
                               onChange={(date) => setTempAvailableAt(date ? date.toString() : '')}
                               variant="bordered"
                               size="lg"
-                              aria-label="Date de disponibilité"
                               showMonthAndYearPickers
+                              aria-label="Date de disponibilité"
                             />
                           </div>
                         </div>
