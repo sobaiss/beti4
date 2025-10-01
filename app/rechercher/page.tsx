@@ -37,7 +37,8 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
-  Input
+  Input,
+  DatePicker
 } from '@heroui/react';
 import Header from '@/components/Header';
 import PropertyCard from '@/components/PropertyCard';
@@ -773,13 +774,13 @@ export default function SearchPage() {
                         <div className="space-y-4">
                           <div className="space-y-2">
                             <label className="text-sm font-medium text-default-700">Date de disponibilité</label>
-                            <Input
-                              type="date"
+                            <DatePicker
                               value={tempAvailableAt}
-                              onChange={(e) => setTempAvailableAt(e.target.value)}
+                              onChange={(date) => setTempAvailableAt(date ? date.toString() : '')}
                               variant="bordered"
                               size="lg"
                               aria-label="Date de disponibilité"
+                              showMonthAndYearPickers
                             />
                           </div>
                         </div>
