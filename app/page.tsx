@@ -38,17 +38,35 @@ export default function Home() {
         setIsLoadingProperties(false);
       });
 
-      getLocations().then(response => {
-        if (response) {
-          setLocations(response);
+      // Check if locations exist in localStorage
+      const cachedLocations = localStorage.getItem('locations');
+      if (cachedLocations) {
+        try {
+          const parsedLocations = JSON.parse(cachedLocations);
+          setLocations(parsedLocations);
+        } catch (error) {
+          console.error('Error parsing cached locations:', error);
+          // If parsing fails, fetch from server
+          fetchAndCacheLocations();
         }
-      }).catch(error => {
-        console.error('Error fetching locations:', error);
-      });
+      } else {
+        // No cached data, fetch from server
+        fetchAndCacheLocations();
+      }
 
   }, [])
 
-  
+  const fetchAndCacheLocations = () => {
+    getLocations().then(response => {
+      if (response) {
+        setLocations(response);
+        // Store in localStorage
+        localStorage.setItem('locations', JSON.stringify(response));
+      }
+    }).catch(error => {
+      console.error('Error fetching locations:', error);
+    });
+  }
 
   return (
     <div className="min-h-screen bg-background">
