@@ -28,7 +28,13 @@ import {
   Checkbox,
   ButtonGroup,
   Autocomplete,
-  AutocompleteItem
+  AutocompleteItem,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure
 } from '@heroui/react';
 import Header from '@/components/Header';
 import PropertyCard from '@/components/PropertyCard';
@@ -53,6 +59,15 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(true);
   const [totalProperties, setTotalProperties] = useState(0);
 
+  // Modal state for filters
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  
+  // Temporary filter state for dialog
+  const [tempPropertyTypes, setTempPropertyTypes] = useState<string[]>([]);
+  const [tempPriceRange, setTempPriceRange] = useState([0, 2000000]);
+  const [tempAreaRange, setTempAreaRange] = useState([0, 300]);
+  const [tempBedrooms, setTempBedrooms] = useState<string>('');
+
   // Initialize filters from URL params
   useEffect(() => {
     const searchPropertyTypes = searchParams.get('propertyTypes');
@@ -67,6 +82,12 @@ export default function SearchPage() {
     if (searchLocations) {
       setSearchQuery(searchLocations);
     }
+    
+    // Initialize temp filters with current values
+    setTempPropertyTypes(propertyTypes);
+    setTempPriceRange(priceRange);
+    setTempAreaRange(areaRange);
+    setTempBedrooms(bedrooms);
   }, [searchParams]);
 
   // Fetch properties from API
@@ -111,6 +132,39 @@ export default function SearchPage() {
     }
   }
 
+  const handleTempPropertyTypeChange = (type: string, checked: boolean) => {
+    if (checked) {
+      setTempPropertyTypes(prev => [...prev, type]);
+    } else {
+      setTempPropertyTypes(prev => prev.filter(t => t !== type));
+    }
+  };
+
+  const openFiltersDialog = () => {
+    // Reset temp filters to current values when opening dialog
+    setTempPropertyTypes(propertyTypes);
+    setTempPriceRange(priceRange);
+    setTempAreaRange(areaRange);
+    setTempBedrooms(bedrooms);
+    onOpen();
+  };
+
+  const applyFilters = () => {
+    // Apply temp filters to actual filters
+    setPropertyTypes(tempPropertyTypes);
+    setPriceRange(tempPriceRange);
+    setAreaRange(tempAreaRange);
+    setBedrooms(tempBedrooms);
+    onOpenChange();
+  };
+
+  const resetFilters = () => {
+    setTempPropertyTypes([]);
+    setTempPriceRange([0, 2000000]);
+    setTempAreaRange([0, 300]);
+    setTempBedrooms('');
+  };
+
   const handlePropertyTypeChange = (type: string, checked: boolean) => {
     if (checked) {
       setPropertyTypes(prev => [...prev, type]);
@@ -127,6 +181,7 @@ export default function SearchPage() {
     setAreaRange([0, 300]);
     setBedrooms('');
   };
+
 
   const activeFiltersCount = [
     searchQuery,
@@ -195,7 +250,7 @@ export default function SearchPage() {
             {/* Filter Toggle */}
             <Button
               variant="bordered"
-              onClick={() => setShowFilters(!showFilters)}
+              onClick={openFiltersDialog}
               startContent={<AdjustmentsHorizontalIcon className="w-4 h-4" />}
               endContent={
                 <>
@@ -204,111 +259,190 @@ export default function SearchPage() {
                       {activeFiltersCount}
                     </Chip>
                   )}
-                  <ChevronDownIcon className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
                 </>
               }
             >
               Filtres
             </Button>
           </div>
-
-          {/* Advanced Filters */}
-          {showFilters && ( // Changed from bg-gray-50 to bg-content2
-            <div className="mt-4 p-4 bg-content2 rounded-lg border border-content4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {/* Property Types */}
-                <div className="space-y-3"> 
-                  <label className="text-sm font-medium text-gray-700">Type de Bien</label>
-                  <div className="space-y-2">
-                    {[
-                      { value: 'appartement', label: 'Appartement' },
-                      { value: 'maison', label: 'Maison' },
-                      { value: 'villa', label: 'Villa' },
-                      { value: 'terrain', label: 'Terrain' },
-                      { value: 'bureau_commerce', label: 'Bureau/Commerce' }
-                    ].map((type) => (
-                      <Checkbox
-                        key={type.value}
-                        isSelected={propertyTypes.includes(type.value)}
-                        onValueChange={(checked) => 
-                          handlePropertyTypeChange(type.value, checked)
-                        }
-                      >
-                        <div className="flex items-center gap-2">
-                          {getPropertyTypeIcon(type.value)}
-                          {type.label}
-                        </div>
-                      </Checkbox>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Price Range */}
-                <div className="space-y-3"> 
-                  <label className="text-sm font-medium text-gray-700">Fourchette de Prix</label>
-                  <div className="px-2">
-                    <Slider
-                      value={priceRange}
-                      onChange={setPriceRange}
-                      maxValue={2000000}
-                      minValue={0}
-                      step={10000}
-                      className="w-full"
-                      formatOptions={{style: "currency", currency: "EUR"}}
-                    />
-                  </div>
-                  <div className="flex justify-between text-xs text-default-600">
-                    <span>€{priceRange[0].toLocaleString()}</span>
-                    <span>€{priceRange[1].toLocaleString()}</span>
-                  </div>
-                </div>
- 
-                {/* Area Range */}
-                <div className="space-y-3">
-                  <label className="text-sm font-medium text-gray-700">Surface (m²)</label>
-                  <div className="px-2">
-                    <Slider
-                      value={areaRange}
-                      onChange={setAreaRange}
-                      maxValue={300}
-                      minValue={0}
-                      step={5}
-                      className="w-full"
-                    />
-                  </div>
-                  <div className="flex justify-between text-xs text-default-600">
-                    <span>{areaRange[0]}m²</span>
-                    <span>{areaRange[1]}m²</span>
-                  </div>
-                </div>
-                {/* Bedrooms */}
-                <div className="space-y-3">
-                  <label className="text-sm font-medium text-gray-700">Chambres</label>
-                  <Select
-                    selectedKeys={[bedrooms]}
-                    onSelectionChange={(keys) => setBedrooms(Array.from(keys)[0] as string)}
-                  >
-                    <SelectItem key="">Toutes</SelectItem>
-                    <SelectItem key="1">1+</SelectItem>
-                    <SelectItem key="2">2+</SelectItem>
-                    <SelectItem key="3">3+</SelectItem>
-                    <SelectItem key="4">4+</SelectItem>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="flex justify-between items-center mt-4 pt-4 border-t border-content4">
-                <Button variant="light" onClick={clearAllFilters} startContent={<XMarkIcon className="w-4 h-4" />}>
-                  Effacer tous les filtres
-                </Button>
-                <div className="text-sm text-default-600">
-                  {totalProperties} biens trouvés
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
+
+      {/* Advanced Filters Modal */}
+      <Modal 
+        isOpen={isOpen} 
+        onOpenChange={onOpenChange}
+        size="4xl"
+        scrollBehavior="inside"
+        classNames={{
+          base: "max-h-[90vh]",
+          body: "py-6",
+          header: "border-b border-content4",
+          footer: "border-t border-content4"
+        }}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-primary-100 to-primary-200 rounded-lg flex items-center justify-center">
+                  <AdjustmentsHorizontalIcon className="w-4 h-4 text-primary-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-default-900">Filtres Avancés</h3>
+                  <p className="text-sm text-default-600">Affinez votre recherche</p>
+                </div>
+              </ModalHeader>
+              <ModalBody>
+                <div className="space-y-8">
+                  {/* Property Types */}
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
+                      <HomeIcon className="w-5 h-5 text-primary-600" />
+                      Type de Bien
+                    </h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                      {[
+                        { value: 'appartement', label: 'Appartement' },
+                        { value: 'maison', label: 'Maison' },
+                        { value: 'villa', label: 'Villa' },
+                        { value: 'terrain', label: 'Terrain' },
+                        { value: 'bureau_commerce', label: 'Bureau/Commerce' }
+                      ].map((type) => (
+                        <Card
+                          key={type.value}
+                          isPressable
+                          onPress={() => handleTempPropertyTypeChange(type.value, !tempPropertyTypes.includes(type.value))}
+                          className={`transition-all duration-200 cursor-pointer ${
+                            tempPropertyTypes.includes(type.value)
+                              ? 'bg-primary-50 border-2 border-primary-300 shadow-md'
+                              : 'border border-content4 hover:border-primary-200 hover:shadow-sm'
+                          }`}
+                        >
+                          <CardBody className="p-4 text-center">
+                            <div className="flex flex-col items-center gap-2">
+                              {getPropertyTypeIcon(type.value)}
+                              <span className="text-sm font-medium">{type.label}</span>
+                              {tempPropertyTypes.includes(type.value) && (
+                                <div className="w-2 h-2 bg-primary-500 rounded-full" />
+                              )}
+                            </div>
+                          </CardBody>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Price and Area Ranges */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* Price Range */}
+                    <div className="space-y-4">
+                      <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
+                        <span className="text-primary-600">€</span>
+                        Fourchette de Prix
+                      </h4>
+                      <Card className="p-4 bg-content1">
+                        <CardBody className="p-0">
+                          <div className="space-y-4">
+                            <Slider
+                              value={tempPriceRange}
+                              onChange={setTempPriceRange}
+                              maxValue={2000000}
+                              minValue={0}
+                              step={10000}
+                              className="w-full"
+                              formatOptions={{style: "currency", currency: "EUR"}}
+                              color="primary"
+                            />
+                            <div className="flex justify-between text-sm font-medium text-default-700">
+                              <span>€{tempPriceRange[0].toLocaleString()}</span>
+                              <span>€{tempPriceRange[1].toLocaleString()}</span>
+                            </div>
+                          </div>
+                        </CardBody>
+                      </Card>
+                    </div>
+
+                    {/* Area Range */}
+                    <div className="space-y-4">
+                      <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-primary-600"></div>
+                        Surface (m²)
+                      </h4>
+                      <Card className="p-4 bg-content1">
+                        <CardBody className="p-0">
+                          <div className="space-y-4">
+                            <Slider
+                              value={tempAreaRange}
+                              onChange={setTempAreaRange}
+                              maxValue={300}
+                              minValue={0}
+                              step={5}
+                              className="w-full"
+                              color="primary"
+                            />
+                            <div className="flex justify-between text-sm font-medium text-default-700">
+                              <span>{tempAreaRange[0]}m²</span>
+                              <span>{tempAreaRange[1]}m²</span>
+                            </div>
+                          </div>
+                        </CardBody>
+                      </Card>
+                    </div>
+                  </div>
+
+                  {/* Bedrooms */}
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
+                      <BuildingOfficeIcon className="w-5 h-5 text-primary-600" />
+                      Nombre de Chambres
+                    </h4>
+                    <div className="max-w-xs">
+                      <Select
+                        selectedKeys={tempBedrooms ? [tempBedrooms] : []}
+                        onSelectionChange={(keys) => setTempBedrooms(Array.from(keys)[0] as string)}
+                        placeholder="Sélectionner..."
+                        size="lg"
+                        variant="bordered"
+                        radius="lg"
+                      >
+                        <SelectItem key="">Toutes</SelectItem>
+                        <SelectItem key="1">1+ chambre</SelectItem>
+                        <SelectItem key="2">2+ chambres</SelectItem>
+                        <SelectItem key="3">3+ chambres</SelectItem>
+                        <SelectItem key="4">4+ chambres</SelectItem>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              </ModalBody>
+              <ModalFooter className="gap-3">
+                <Button 
+                  variant="light" 
+                  onClick={resetFilters}
+                  startContent={<XMarkIcon className="w-4 h-4" />}
+                >
+                  Réinitialiser
+                </Button>
+                <Button 
+                  variant="bordered" 
+                  onClick={onClose}
+                >
+                  Annuler
+                </Button>
+                <Button 
+                  color="primary" 
+                  onClick={applyFilters}
+                  startContent={<MagnifyingGlassIcon className="w-4 h-4" />}
+                  className="font-semibold"
+                >
+                  Appliquer les Filtres
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Results Header */}
