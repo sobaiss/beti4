@@ -15,7 +15,8 @@ import {
   BuildingOfficeIcon,
   BuildingOffice2Icon,
   GlobeAltIcon,
-  ShoppingBagIcon
+  ShoppingBagIcon,
+  CheckIcon
 } from '@heroicons/react/24/outline';
 import { 
   Button, 
@@ -72,6 +73,16 @@ export default function SearchPage() {
   const [tempLandAreaRange, setTempLandAreaRange] = useState([0, 1000]);
   const [tempBedroomsRange, setTempBedroomsRange] = useState([0, 10]);
   const [tempRoomsRange, setTempRoomsRange] = useState([0, 10]);
+  
+  // Features state
+  const [externalFeatures, setExternalFeatures] = useState<string[]>([]);
+  const [internalFeatures, setInternalFeatures] = useState<string[]>([]);
+  const [accessibilityFeatures, setAccessibilityFeatures] = useState<string[]>([]);
+  
+  // Temporary features state for dialog
+  const [tempExternalFeatures, setTempExternalFeatures] = useState<string[]>([]);
+  const [tempInternalFeatures, setTempInternalFeatures] = useState<string[]>([]);
+  const [tempAccessibilityFeatures, setTempAccessibilityFeatures] = useState<string[]>([]);
 
   // Initialize filters from URL params
   useEffect(() => {
@@ -105,6 +116,9 @@ export default function SearchPage() {
     setTempLandAreaRange(landAreaRange);
     setTempBedroomsRange(bedroomsRange);
     setTempRoomsRange(roomsRange);
+    setTempExternalFeatures(externalFeatures);
+    setTempInternalFeatures(internalFeatures);
+    setTempAccessibilityFeatures(accessibilityFeatures);
   }, [searchParams]);
 
   // Fetch properties from API
@@ -135,7 +149,7 @@ export default function SearchPage() {
     };
 
     fetchProperties();
-  }, [searchQuery, propertyTypes, transactionType, priceRange, areaRange, landAreaRange, bedroomsRange, roomsRange, sortBy]);
+  }, [searchQuery, propertyTypes, transactionType, priceRange, areaRange, landAreaRange, bedroomsRange, roomsRange, externalFeatures, internalFeatures, accessibilityFeatures, sortBy]);
 
   useEffect(() => {
     loadLocations();
@@ -167,6 +181,9 @@ export default function SearchPage() {
     setTempLandAreaRange(landAreaRange);
     setTempBedroomsRange(bedroomsRange);
     setTempRoomsRange(roomsRange);
+    setTempExternalFeatures(externalFeatures);
+    setTempInternalFeatures(internalFeatures);
+    setTempAccessibilityFeatures(accessibilityFeatures);
     onOpen();
   };
 
@@ -178,6 +195,9 @@ export default function SearchPage() {
     setLandAreaRange(tempLandAreaRange);
     setBedroomsRange(tempBedroomsRange);
     setRoomsRange(tempRoomsRange);
+    setExternalFeatures(tempExternalFeatures);
+    setInternalFeatures(tempInternalFeatures);
+    setAccessibilityFeatures(tempAccessibilityFeatures);
     onOpenChange();
   };
 
@@ -188,6 +208,9 @@ export default function SearchPage() {
     setTempLandAreaRange([0, 1000]);
     setTempBedroomsRange([0, 10]);
     setTempRoomsRange([0, 10]);
+    setTempExternalFeatures([]);
+    setTempInternalFeatures([]);
+    setTempAccessibilityFeatures([]);
   };
 
   const handlePropertyTypeChange = (type: string, checked: boolean) => {
@@ -207,6 +230,9 @@ export default function SearchPage() {
     setLandAreaRange([0, 1000]);
     setBedroomsRange([0, 10]);
     setRoomsRange([0, 10]);
+    setExternalFeatures([]);
+    setInternalFeatures([]);
+    setAccessibilityFeatures([]);
   };
 
 
@@ -218,7 +244,10 @@ export default function SearchPage() {
     areaRange[0] > 0 || areaRange[1] < 300,
     landAreaRange[0] > 0 || landAreaRange[1] < 1000,
     bedroomsRange[0] > 0 || bedroomsRange[1] < 10,
-    roomsRange[0] > 0 || roomsRange[1] < 10
+    roomsRange[0] > 0 || roomsRange[1] < 10,
+    externalFeatures.length > 0,
+    internalFeatures.length > 0,
+    accessibilityFeatures.length > 0
   ].filter(Boolean).length;
 
   const getPropertyTypeIcon = (type: string) => {
@@ -608,6 +637,127 @@ export default function SearchPage() {
               <ModalFooter className="gap-3">
                 <Button 
                   variant="light" 
+          {/* Features */}
+          <div className="space-y-4">
+            <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
+              <CheckIcon className="w-5 h-5 text-primary-600" />
+              Caractéristiques
+            </h4>
+            <Card className="p-4 bg-content1">
+              <CardBody className="p-0">
+                <div className="space-y-6">
+                  {/* Externe Group */}
+                  <div className="space-y-3">
+                    <h5 className="text-base font-semibold text-default-800 flex items-center gap-2">
+                      <GlobeAltIcon className="w-4 h-4 text-success-600" />
+                      Externe
+                    </h5>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                      {[
+                        'Parking',
+                        'Garage',
+                        'Balcon',
+                        'Terrasse',
+                        'Jardin',
+                        'Cour',
+                        'Piscine'
+                      ].map((feature) => (
+                        <div key={feature} className="flex items-center space-x-2 p-2 border border-default-200 rounded-lg hover:border-default-300 transition-colors">
+                          <Checkbox
+                            size="sm"
+                            isSelected={tempExternalFeatures.includes(feature)}
+                            onValueChange={(checked) => {
+                              if (checked) {
+                                setTempExternalFeatures(prev => [...prev, feature]);
+                              } else {
+                                setTempExternalFeatures(prev => prev.filter(f => f !== feature));
+                              }
+                            }}
+                          >
+                            <span className="text-sm font-medium">{feature}</span>
+                          </Checkbox>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Interne Group */}
+                  <div className="space-y-3">
+                    <h5 className="text-base font-semibold text-default-800 flex items-center gap-2">
+                      <HomeIcon className="w-4 h-4 text-primary-600" />
+                      Interne
+                    </h5>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                      {[
+                        'Cave',
+                        'Entièrement meublé',
+                        'Non meublé',
+                        'Cuisine intégrée',
+                        'Grandes Fenêtres',
+                        'Salle de Sport',
+                        'Rangements',
+                        'Buanderie',
+                        'Sols Marbre',
+                        'Murs Pierre',
+                        'Cheminée'
+                      ].map((feature) => (
+                        <div key={feature} className="flex items-center space-x-2 p-2 border border-default-200 rounded-lg hover:border-default-300 transition-colors">
+                          <Checkbox
+                            size="sm"
+                            isSelected={tempInternalFeatures.includes(feature)}
+                            onValueChange={(checked) => {
+                              if (checked) {
+                                setTempInternalFeatures(prev => [...prev, feature]);
+                              } else {
+                                setTempInternalFeatures(prev => prev.filter(f => f !== feature));
+                              }
+                            }}
+                          >
+                            <span className="text-sm font-medium">{feature}</span>
+                          </Checkbox>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Accessibilité Group */}
+                  <div className="space-y-3">
+                    <h5 className="text-base font-semibold text-default-800 flex items-center gap-2">
+                      <BuildingOfficeIcon className="w-4 h-4 text-secondary-600" />
+                      Accessibilité
+                    </h5>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                      {[
+                        'Ascenseur',
+                        'Concierge',
+                        'Quartier Calme',
+                        'Caractère Historique',
+                        'Proche Écoles',
+                        'Centre Ville'
+                      ].map((feature) => (
+                        <div key={feature} className="flex items-center space-x-2 p-2 border border-default-200 rounded-lg hover:border-default-300 transition-colors">
+                          <Checkbox
+                            size="sm"
+                            isSelected={tempAccessibilityFeatures.includes(feature)}
+                            onValueChange={(checked) => {
+                              if (checked) {
+                                setTempAccessibilityFeatures(prev => [...prev, feature]);
+                              } else {
+                                setTempAccessibilityFeatures(prev => prev.filter(f => f !== feature));
+                              }
+                            }}
+                          >
+                            <span className="text-sm font-medium">{feature}</span>
+                          </Checkbox>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+          </div>
+
                   onClick={resetFilters}
                   startContent={<XMarkIcon className="w-4 h-4" />}
                 >
@@ -749,6 +899,39 @@ export default function SearchPage() {
                       {roomsRange[0]}-{roomsRange[1]} pièces
                     </Chip>
                   )}
+                  {externalFeatures.map(feature => (
+                    <Chip 
+                      key={`external-${feature}`}
+                      variant="flat" 
+                      onClose={() => setExternalFeatures(prev => prev.filter(f => f !== feature))}
+                      size="sm"
+                      aria-label={`Supprimer le filtre externe: ${feature}`}
+                    >
+                      Externe: {feature}
+                    </Chip>
+                  ))}
+                  {internalFeatures.map(feature => (
+                    <Chip 
+                      key={`internal-${feature}`}
+                      variant="flat" 
+                      onClose={() => setInternalFeatures(prev => prev.filter(f => f !== feature))}
+                      size="sm"
+                      aria-label={`Supprimer le filtre interne: ${feature}`}
+                    >
+                      Interne: {feature}
+                    </Chip>
+                  ))}
+                  {accessibilityFeatures.map(feature => (
+                    <Chip 
+                      key={`accessibility-${feature}`}
+                      variant="flat" 
+                      onClose={() => setAccessibilityFeatures(prev => prev.filter(f => f !== feature))}
+                      size="sm"
+                      aria-label={`Supprimer le filtre accessibilité: ${feature}`}
+                    >
+                      Accessibilité: {feature}
+                    </Chip>
+                  ))}
                   {(bedroomsRange[0] > 0 || bedroomsRange[1] < 10) && (
                     <Chip 
                       variant="flat" 
