@@ -53,6 +53,7 @@ export default function SearchPage() {
   const [priceRange, setPriceRange] = useState([0, 2000000]);
   const [areaRange, setAreaRange] = useState([0, 300]);
   const [bedroomsRange, setBedroomsRange] = useState([0, 10]);
+  const [roomsRange, setRoomsRange] = useState([0, 10]);
   const [sortBy, setSortBy] = useState('relevance');
   const [viewMode, setViewMode] = useState('grid');
   const [showFilters, setShowFilters] = useState(false);
@@ -68,6 +69,7 @@ export default function SearchPage() {
   const [tempPriceRange, setTempPriceRange] = useState([0, 2000000]);
   const [tempAreaRange, setTempAreaRange] = useState([0, 300]);
   const [tempBedroomsRange, setTempBedroomsRange] = useState([0, 10]);
+  const [tempRoomsRange, setTempRoomsRange] = useState([0, 10]);
 
   // Initialize filters from URL params
   useEffect(() => {
@@ -88,12 +90,18 @@ export default function SearchPage() {
       const bedroomsValue = parseInt(searchBedrooms);
       setBedroomsRange([bedroomsValue, 10]);
     }
+    const searchRooms = searchParams.get('rooms');
+    if (searchRooms) {
+      const roomsValue = parseInt(searchRooms);
+      setRoomsRange([roomsValue, 10]);
+    }
     
     // Initialize temp filters with current values
     setTempPropertyTypes(propertyTypes);
     setTempPriceRange(priceRange);
     setTempAreaRange(areaRange);
     setTempBedroomsRange(bedroomsRange);
+    setTempRoomsRange(roomsRange);
   }, [searchParams]);
 
   // Fetch properties from API
@@ -108,6 +116,7 @@ export default function SearchPage() {
           // priceRange: (priceMin && priceMax) ? [parseInt(priceMin), parseInt(priceMax)] as [number, number] : undefined,
           // areaRange: (areaMin && areaMax) ? [parseInt(areaMin), parseInt(areaMax)] as [number, number] : undefined,
           // bedroomsRange: bedroomsRange
+          // roomsRange: roomsRange
         }
 
         const response = await getProperties(filters);
@@ -122,7 +131,7 @@ export default function SearchPage() {
     };
 
     fetchProperties();
-  }, [searchQuery, propertyTypes, transactionType, priceRange, areaRange, bedroomsRange, sortBy]);
+  }, [searchQuery, propertyTypes, transactionType, priceRange, areaRange, bedroomsRange, roomsRange, sortBy]);
 
   useEffect(() => {
     loadLocations();
@@ -152,6 +161,7 @@ export default function SearchPage() {
     setTempPriceRange(priceRange);
     setTempAreaRange(areaRange);
     setTempBedroomsRange(bedroomsRange);
+    setTempRoomsRange(roomsRange);
     onOpen();
   };
 
@@ -161,6 +171,7 @@ export default function SearchPage() {
     setPriceRange(tempPriceRange);
     setAreaRange(tempAreaRange);
     setBedroomsRange(tempBedroomsRange);
+    setRoomsRange(tempRoomsRange);
     onOpenChange();
   };
 
@@ -169,6 +180,7 @@ export default function SearchPage() {
     setTempPriceRange([0, 2000000]);
     setTempAreaRange([0, 300]);
     setTempBedroomsRange([0, 10]);
+    setTempRoomsRange([0, 10]);
   };
 
   const handlePropertyTypeChange = (type: string, checked: boolean) => {
@@ -186,6 +198,7 @@ export default function SearchPage() {
     setPriceRange([0, 2000000]);
     setAreaRange([0, 300]);
     setBedroomsRange([0, 10]);
+    setRoomsRange([0, 10]);
   };
 
 
@@ -195,7 +208,8 @@ export default function SearchPage() {
     transactionType !== 'all',
     priceRange[0] > 0 || priceRange[1] < 2000000,
     areaRange[0] > 0 || areaRange[1] < 300,
-    bedroomsRange[0] > 0 || bedroomsRange[1] < 10
+    bedroomsRange[0] > 0 || bedroomsRange[1] < 10,
+    roomsRange[0] > 0 || roomsRange[1] < 10
   ].filter(Boolean).length;
 
   const getPropertyTypeIcon = (type: string) => {
@@ -437,6 +451,54 @@ export default function SearchPage() {
                     </Card>
                   </div>
 
+                  {/* Rooms */}
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
+                      <HomeIcon className="w-5 h-5 text-primary-600" />
+                      Pièces
+                    </h4>
+                    <Card className="p-4 bg-content1">
+                      <CardBody className="p-0">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-default-700">Pièces minimum</label>
+                              <Input
+                                type="number"
+                                placeholder="0"
+                                value={tempRoomsRange[0] === 0 ? '' : tempRoomsRange[0].toString()}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value) || 0;
+                                  setTempRoomsRange([value, tempRoomsRange[1]]);
+                                }}
+                                startContent={<HomeIcon className="w-4 h-4 text-default-400" />}
+                                variant="bordered"
+                                size="lg"
+                                aria-label="Nombre minimum de pièces"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-default-700">Pièces maximum</label>
+                              <Input
+                                type="number"
+                                placeholder="10"
+                                value={tempRoomsRange[1] === 10 ? '' : tempRoomsRange[1].toString()}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value) || 10;
+                                  setTempRoomsRange([tempRoomsRange[0], value]);
+                                }}
+                                startContent={<HomeIcon className="w-4 h-4 text-default-400" />}
+                                variant="bordered"
+                                size="lg"
+                                aria-label="Nombre maximum de pièces"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </CardBody>
+                    </Card>
+                  </div>
+
                   {/* Bedrooms */}
                   <div className="space-y-4">
                     <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
@@ -610,6 +672,16 @@ export default function SearchPage() {
                       {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
                     </Chip>
                   ))}
+                  {(roomsRange[0] > 0 || roomsRange[1] < 10) && (
+                    <Chip 
+                      variant="flat" 
+                      onClose={() => setRoomsRange([0, 10])}
+                      size="sm"
+                      aria-label={`Supprimer le filtre pièces: ${roomsRange[0]}-${roomsRange[1]} pièces`}
+                    >
+                      {roomsRange[0]}-{roomsRange[1]} pièces
+                    </Chip>
+                  )}
                   {(bedroomsRange[0] > 0 || bedroomsRange[1] < 10) && (
                     <Chip 
                       variant="flat" 
