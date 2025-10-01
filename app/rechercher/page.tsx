@@ -345,19 +345,39 @@ export default function SearchPage() {
                       <Card className="p-4 bg-content1">
                         <CardBody className="p-0">
                           <div className="space-y-4">
-                            <Slider
-                              value={tempPriceRange}
-                              onChange={setTempPriceRange}
-                              maxValue={2000000}
-                              minValue={0}
-                              step={10000}
-                              className="w-full"
-                              formatOptions={{style: "currency", currency: "EUR"}}
-                              color="primary"
-                            />
-                            <div className="flex justify-between text-sm font-medium text-default-700">
-                              <span>€{tempPriceRange[0].toLocaleString()}</span>
-                              <span>€{tempPriceRange[1].toLocaleString()}</span>
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-default-700">Prix minimum</label>
+                                <Input
+                                  type="number"
+                                  placeholder="0"
+                                  value={tempPriceRange[0].toString()}
+                                  onChange={(e) => {
+                                    const value = parseInt(e.target.value) || 0;
+                                    setTempPriceRange([value, tempPriceRange[1]]);
+                                  }}
+                                  startContent={<span className="text-default-400">€</span>}
+                                  variant="bordered"
+                                  size="lg"
+                                  aria-label="Prix minimum"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-default-700">Prix maximum</label>
+                                <Input
+                                  type="number"
+                                  placeholder="2000000"
+                                  value={tempPriceRange[1].toString()}
+                                  onChange={(e) => {
+                                    const value = parseInt(e.target.value) || 2000000;
+                                    setTempPriceRange([tempPriceRange[0], value]);
+                                  }}
+                                  startContent={<span className="text-default-400">€</span>}
+                                  variant="bordered"
+                                  size="lg"
+                                  aria-label="Prix maximum"
+                                />
+                              </div>
                             </div>
                           </div>
                         </CardBody>
@@ -373,18 +393,39 @@ export default function SearchPage() {
                       <Card className="p-4 bg-content1">
                         <CardBody className="p-0">
                           <div className="space-y-4">
-                            <Slider
-                              value={tempAreaRange}
-                              onChange={setTempAreaRange}
-                              maxValue={300}
-                              minValue={0}
-                              step={5}
-                              className="w-full"
-                              color="primary"
-                            />
-                            <div className="flex justify-between text-sm font-medium text-default-700">
-                              <span>{tempAreaRange[0]}m²</span>
-                              <span>{tempAreaRange[1]}m²</span>
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-default-700">Surface minimum</label>
+                                <Input
+                                  type="number"
+                                  placeholder="0"
+                                  value={tempAreaRange[0].toString()}
+                                  onChange={(e) => {
+                                    const value = parseInt(e.target.value) || 0;
+                                    setTempAreaRange([value, tempAreaRange[1]]);
+                                  }}
+                                  endContent={<span className="text-default-400">m²</span>}
+                                  variant="bordered"
+                                  size="lg"
+                                  aria-label="Surface minimum"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-default-700">Surface maximum</label>
+                                <Input
+                                  type="number"
+                                  placeholder="300"
+                                  value={tempAreaRange[1].toString()}
+                                  onChange={(e) => {
+                                    const value = parseInt(e.target.value) || 300;
+                                    setTempAreaRange([tempAreaRange[0], value]);
+                                  }}
+                                  endContent={<span className="text-default-400">m²</span>}
+                                  variant="bordered"
+                                  size="lg"
+                                  aria-label="Surface maximum"
+                                />
+                              </div>
                             </div>
                           </div>
                         </CardBody>
