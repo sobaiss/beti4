@@ -58,6 +58,7 @@ export default function HomeSearchBarHome({ locations }: { locations: City[] }) 
                 radius="full"
                 size="lg"
                 isClearable
+                aria-label="Rechercher une localisation"
                 >
                 {(locationItem) => <AutocompleteItem key={locationItem.key}>{locationItem.label}</AutocompleteItem>}
             </Autocomplete>
@@ -73,6 +74,7 @@ export default function HomeSearchBarHome({ locations }: { locations: City[] }) 
                 size="lg"
                 variant="bordered"
                 radius="full"
+                aria-label="Sélectionner le type de transaction"
             >
                 <SelectItem key="">Toutes</SelectItem>
                 <SelectItem key="achat">Acheter</SelectItem>
@@ -90,6 +92,7 @@ export default function HomeSearchBarHome({ locations }: { locations: City[] }) 
                 size="lg"
                 variant="bordered"
                 radius="full"
+                aria-label="Sélectionner le type de bien"
             >
                 <SelectItem key="">Tous</SelectItem>
                 <SelectItem key="appartement">Appartement</SelectItem>
