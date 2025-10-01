@@ -253,13 +253,13 @@ export default function SearchPage() {
               onClick={openFiltersDialog}
               startContent={<AdjustmentsHorizontalIcon className="w-4 h-4" />}
               endContent={
-                <>
+                <div className="flex items-center gap-2">
                   {activeFiltersCount > 0 && (
                     <Chip size="sm" color="primary" variant="solid">
                       {activeFiltersCount}
                     </Chip>
                   )}
-                </>
+                </div>
               }
             >
               Filtres
