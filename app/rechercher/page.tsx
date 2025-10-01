@@ -16,7 +16,8 @@ import {
   BuildingOffice2Icon,
   GlobeAltIcon,
   ShoppingBagIcon,
-  CheckIcon
+  CheckIcon,
+  CalendarIcon
 } from '@heroicons/react/24/outline';
 import { 
   Button, 
@@ -153,7 +154,6 @@ export default function SearchPage() {
     };
 
     fetchProperties();
-  }, [searchQuery, propertyTypes, transactionType, priceRange, areaRange, landAreaRange, bedroomsRange, roomsRange, externalFeatures, internalFeatures, accessibilityFeatures, sortBy]);
   }, [searchQuery, propertyTypes, transactionType, priceRange, areaRange, landAreaRange, bedroomsRange, roomsRange, externalFeatures, internalFeatures, accessibilityFeatures, availableAt, sortBy]);
 
   useEffect(() => {
@@ -762,36 +762,35 @@ export default function SearchPage() {
                       </CardBody>
                     </Card>
                   </div>
+                  {/* Available at */}
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
+                      <CalendarIcon className="w-5 h-5 text-primary-600" />
+                      Disponible à partir de
+                    </h4>
+                    <Card className="p-4 bg-content1">
+                      <CardBody className="p-0">
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-default-700">Date de disponibilité</label>
+                            <Input
+                              type="date"
+                              value={tempAvailableAt}
+                              onChange={(e) => setTempAvailableAt(e.target.value)}
+                              variant="bordered"
+                              size="lg"
+                              aria-label="Date de disponibilité"
+                            />
+                          </div>
+                        </div>
+                      </CardBody>
+                    </Card>
+                  </div>
                 </div>
               </ModalBody>
               <ModalFooter className="gap-3">
                 <Button 
                   variant="light"
-          {/* Available at */}
-          <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
-              <CalendarIcon className="w-5 h-5 text-primary-600" />
-              Disponible à partir de
-            </h4>
-            <Card className="p-4 bg-content1">
-              <CardBody className="p-0">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-default-700">Date de disponibilité</label>
-                    <Input
-                      type="date"
-                      value={tempAvailableAt}
-                      onChange={(e) => setTempAvailableAt(e.target.value)}
-                      variant="bordered"
-                      size="lg"
-                      aria-label="Date de disponibilité"
-                    />
-                  </div>
-                </div>
-              </CardBody>
-            </Card>
-          </div>
-
                   onClick={resetFilters}
                   startContent={<XMarkIcon className="w-4 h-4" />}
                 >
