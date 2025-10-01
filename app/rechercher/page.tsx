@@ -336,102 +336,100 @@ export default function SearchPage() {
                   </div>
 
                   {/* Price and Area Ranges */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Price Range */}
-                    <div className="space-y-4">
-                      <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
-                        <span className="text-primary-600">€</span>
-                        Fourchette de Prix
-                      </h4>
-                      <Card className="p-4 bg-content1">
-                        <CardBody className="p-0">
-                          <div className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-default-700">Prix minimum</label>
-                                <Input
-                                  type="number"
-                                  placeholder="0"
-                                  value={tempPriceRange[0] === 0 ? '' : tempPriceRange[0].toString()}
-                                  onChange={(e) => {
-                                    const value = parseInt(e.target.value) || 0;
-                                    setTempPriceRange([value, tempPriceRange[1]]);
-                                  }}
-                                  startContent={<span className="text-default-400">€</span>}
-                                  variant="bordered"
-                                  size="lg"
-                                  aria-label="Prix minimum"
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-default-700">Prix maximum</label>
-                                <Input
-                                  type="number"
-                                  placeholder="2000000"
-                                  value={tempPriceRange[1] === 2000000 ? '' : tempPriceRange[1].toString()}
-                                  onChange={(e) => {
-                                    const value = parseInt(e.target.value) || 2000000;
-                                    setTempPriceRange([tempPriceRange[0], value]);
-                                  }}
-                                  startContent={<span className="text-default-400">€</span>}
-                                  variant="bordered"
-                                  size="lg"
-                                  aria-label="Prix maximum"
-                                />
-                              </div>
+                  {/* Price Range */}
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
+                      <span className="text-primary-600">€</span>
+                      Fourchette de Prix
+                    </h4>
+                    <Card className="p-4 bg-content1">
+                      <CardBody className="p-0">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-default-700">Prix minimum</label>
+                              <Input
+                                type="number"
+                                placeholder="0"
+                                value={tempPriceRange[0] === 0 ? '' : tempPriceRange[0].toString()}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value) || 0;
+                                  setTempPriceRange([value, tempPriceRange[1]]);
+                                }}
+                                startContent={<span className="text-default-400">€</span>}
+                                variant="bordered"
+                                size="lg"
+                                aria-label="Prix minimum"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-default-700">Prix maximum</label>
+                              <Input
+                                type="number"
+                                placeholder="2000000"
+                                value={tempPriceRange[1] === 2000000 ? '' : tempPriceRange[1].toString()}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value) || 2000000;
+                                  setTempPriceRange([tempPriceRange[0], value]);
+                                }}
+                                startContent={<span className="text-default-400">€</span>}
+                                variant="bordered"
+                                size="lg"
+                                aria-label="Prix maximum"
+                              />
                             </div>
                           </div>
-                        </CardBody>
-                      </Card>
-                    </div>
+                        </div>
+                      </CardBody>
+                    </Card>
+                  </div>
 
-                    {/* Area Range */}
-                    <div className="space-y-4">
-                      <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
-                        <div className="w-4 h-4 border-2 border-primary-600"></div>
-                        Surface (m²)
-                      </h4>
-                      <Card className="p-4 bg-content1">
-                        <CardBody className="p-0">
-                          <div className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-default-700">Surface minimum</label>
-                                <Input
-                                  type="number"
-                                  placeholder="0"
-                                  value={tempAreaRange[0] === 0 ? '' : tempAreaRange[0].toString()}
-                                  onChange={(e) => {
-                                    const value = parseInt(e.target.value) || 0;
-                                    setTempAreaRange([value, tempAreaRange[1]]);
-                                  }}
-                                  endContent={<span className="text-default-400">m²</span>}
-                                  variant="bordered"
-                                  size="lg"
-                                  aria-label="Surface minimum"
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-default-700">Surface maximum</label>
-                                <Input
-                                  type="number"
-                                  placeholder="300"
-                                  value={tempAreaRange[1] === 300 ? '' : tempAreaRange[1].toString()}
-                                  onChange={(e) => {
-                                    const value = parseInt(e.target.value) || 300;
-                                    setTempAreaRange([tempAreaRange[0], value]);
-                                  }}
-                                  endContent={<span className="text-default-400">m²</span>}
-                                  variant="bordered"
-                                  size="lg"
-                                  aria-label="Surface maximum"
-                                />
-                              </div>
+                  {/* Area Range */}
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-primary-600"></div>
+                      Surface (m²)
+                    </h4>
+                    <Card className="p-4 bg-content1">
+                      <CardBody className="p-0">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-default-700">Surface minimum</label>
+                              <Input
+                                type="number"
+                                placeholder="0"
+                                value={tempAreaRange[0] === 0 ? '' : tempAreaRange[0].toString()}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value) || 0;
+                                  setTempAreaRange([value, tempAreaRange[1]]);
+                                }}
+                                endContent={<span className="text-default-400">m²</span>}
+                                variant="bordered"
+                                size="lg"
+                                aria-label="Surface minimum"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-default-700">Surface maximum</label>
+                              <Input
+                                type="number"
+                                placeholder="300"
+                                value={tempAreaRange[1] === 300 ? '' : tempAreaRange[1].toString()}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value) || 300;
+                                  setTempAreaRange([tempAreaRange[0], value]);
+                                }}
+                                endContent={<span className="text-default-400">m²</span>}
+                                variant="bordered"
+                                size="lg"
+                                aria-label="Surface maximum"
+                              />
                             </div>
                           </div>
-                        </CardBody>
-                      </Card>
-                    </div>
+                        </div>
+                      </CardBody>
+                    </Card>
                   </div>
 
                   {/* Bedrooms */}
