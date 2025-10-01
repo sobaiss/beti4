@@ -13,7 +13,7 @@ export default function HomeSearchBarHome({ locations }: { locations: City[] }) 
     const [propertyTypes, setPropertyTypes] = useState<string[]>([]);
     const [transactionType, setTransactionType] = useState('');
 
-    const locationItems = locations.map((location) => ({ key: location.sk, label: location.name }));
+    const locationItems = locations.map((location) => ({ key: location.displayName, label: location.name, divisionName: location.divisionName || '' }));
 
     const handleSearch = () => {
         const params = new URLSearchParams();
@@ -45,14 +45,13 @@ export default function HomeSearchBarHome({ locations }: { locations: City[] }) 
     <CardBody className="p-6 text-foreground">
         <div className="flex flex-col lg:flex-row gap-4 items-end">
         <div className="flex-1 space-y-2">
-            <label className="text-sm font-medium text-default-700">Localisation</label>
             <Autocomplete
+                label="Localisation"
                 allowsCustomValue
                 onSelectionChange={(key) => setSearchLocation(key as string)}
                 className="max-w-xs"
                 defaultItems={locationItems}
                 defaultSelectedKey=""
-                placeholder="Ville, quartier ou code postal"
                 startContent={<MapPinIcon className="w-5 h-5 text-default-400" />}
                 variant="bordered"
                 radius="full"
@@ -60,14 +59,14 @@ export default function HomeSearchBarHome({ locations }: { locations: City[] }) 
                 isClearable
                 aria-label="Rechercher une localisation"
                 >
-                {(locationItem) => <AutocompleteItem key={locationItem.key}>{locationItem.label}</AutocompleteItem>}
+                {(locationItem) => <AutocompleteItem key={locationItem.key} endContent={`(${locationItem.divisionName})`}>{locationItem.label}</AutocompleteItem>}
             </Autocomplete>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
             <div className="space-y-2">
-            <label className="text-sm font-medium text-default-700">Transaction</label>
-            <Select 
+            <Select
+                label="Type de transaction"
                 selectedKeys={[transactionType]}
                 onSelectionChange={(keys) => setTransactionType(Array.from(keys)[0] as string)}
                 className="w-full sm:w-32"
@@ -76,15 +75,15 @@ export default function HomeSearchBarHome({ locations }: { locations: City[] }) 
                 radius="full"
                 aria-label="Sélectionner le type de transaction"
             >
-                <SelectItem key="">Toutes</SelectItem>
+                <SelectItem key="">Tous</SelectItem>
                 <SelectItem key="achat">Acheter</SelectItem>
                 <SelectItem key="location">Louer</SelectItem>
             </Select>
             </div>
 
             <div className="space-y-2">
-            <label className="text-sm font-medium text-default-700">Type</label>
-            <Select 
+            <Select
+                label="Type de bien"
                 selectedKeys={propertyTypes.length > 0 ? propertyTypes : []}
                 onSelectionChange={(keys) => setPropertyTypes(Array.from(keys) as string[])}
                 placeholder="Tous types"

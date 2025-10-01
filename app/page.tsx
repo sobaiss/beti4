@@ -43,7 +43,11 @@ export default function Home() {
       if (cachedLocations) {
         try {
           const parsedLocations = JSON.parse(cachedLocations);
-          setLocations(parsedLocations);
+          if (Array.isArray(parsedLocations)) {
+            setLocations(parsedLocations);
+          } else {
+            throw new Error('Invalid locations data');
+          }
         } catch (error) {
           console.error('Error parsing cached locations:', error);
           // If parsing fails, fetch from server
