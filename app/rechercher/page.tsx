@@ -51,9 +51,17 @@ export default function SearchPage() {
 
   // Initialize filters from URL params
   useEffect(() => {
-    const types = searchParams.get('propertyTypes');
-    if (types) {
-      setPropertyTypes(types.split(','));
+    const searchPropertyTypes = searchParams.get('propertyTypes');
+    if (searchPropertyTypes) {
+      setPropertyTypes(searchPropertyTypes.split(','));
+    }
+    const searchTransactionType = searchParams.get('transactionType');
+    if (searchTransactionType) {
+      setTransactionType(searchTransactionType);
+    }
+    const searchLocations = searchParams.get('location');
+    if (searchLocations) {
+      setSearchQuery(searchLocations);
     }
   }, [searchParams]);
 
