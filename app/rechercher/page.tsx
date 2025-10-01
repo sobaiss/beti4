@@ -352,7 +352,7 @@ export default function SearchPage() {
                                 <Input
                                   type="number"
                                   placeholder="0"
-                                  value={tempPriceRange[0].toString()}
+                                  value={tempPriceRange[0] === 0 ? '' : tempPriceRange[0].toString()}
                                   onChange={(e) => {
                                     const value = parseInt(e.target.value) || 0;
                                     setTempPriceRange([value, tempPriceRange[1]]);
@@ -368,7 +368,7 @@ export default function SearchPage() {
                                 <Input
                                   type="number"
                                   placeholder="2000000"
-                                  value={tempPriceRange[1].toString()}
+                                  value={tempPriceRange[1] === 2000000 ? '' : tempPriceRange[1].toString()}
                                   onChange={(e) => {
                                     const value = parseInt(e.target.value) || 2000000;
                                     setTempPriceRange([tempPriceRange[0], value]);
@@ -400,7 +400,7 @@ export default function SearchPage() {
                                 <Input
                                   type="number"
                                   placeholder="0"
-                                  value={tempAreaRange[0].toString()}
+                                  value={tempAreaRange[0] === 0 ? '' : tempAreaRange[0].toString()}
                                   onChange={(e) => {
                                     const value = parseInt(e.target.value) || 0;
                                     setTempAreaRange([value, tempAreaRange[1]]);
@@ -416,7 +416,7 @@ export default function SearchPage() {
                                 <Input
                                   type="number"
                                   placeholder="300"
-                                  value={tempAreaRange[1].toString()}
+                                  value={tempAreaRange[1] === 300 ? '' : tempAreaRange[1].toString()}
                                   onChange={(e) => {
                                     const value = parseInt(e.target.value) || 300;
                                     setTempAreaRange([tempAreaRange[0], value]);
