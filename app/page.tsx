@@ -42,7 +42,9 @@ export default function Home() {
       const cachedLocations = localStorage.getItem('locations');
       if (cachedLocations) {
         try {
-          const parsedLocations = JSON.parse(cachedLocations);
+          // Decode UTF-8 and parse locations
+          const decodedLocations = decodeURIComponent(cachedLocations);
+          const parsedLocations = JSON.parse(decodedLocations);
           if (Array.isArray(parsedLocations)) {
             setLocations(parsedLocations);
           } else {
@@ -64,8 +66,9 @@ export default function Home() {
     getLocations().then(response => {
       if (response) {
         setLocations(response);
-        // Store in localStorage
-        localStorage.setItem('locations', JSON.stringify(response));
+        // Encode as UTF-8 and store in localStorage
+        const encodedLocations = encodeURIComponent(JSON.stringify(response));
+        localStorage.setItem('locations', encodedLocations);
       }
     }).catch(error => {
       console.error('Error fetching locations:', error);
