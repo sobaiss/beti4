@@ -83,6 +83,10 @@ export default function SearchPage() {
   const [tempExternalFeatures, setTempExternalFeatures] = useState<string[]>([]);
   const [tempInternalFeatures, setTempInternalFeatures] = useState<string[]>([]);
   const [tempAccessibilityFeatures, setTempAccessibilityFeatures] = useState<string[]>([]);
+  
+  // Available at state
+  const [availableAt, setAvailableAt] = useState('');
+  const [tempAvailableAt, setTempAvailableAt] = useState('');
 
   // Initialize filters from URL params
   useEffect(() => {
@@ -150,6 +154,7 @@ export default function SearchPage() {
 
     fetchProperties();
   }, [searchQuery, propertyTypes, transactionType, priceRange, areaRange, landAreaRange, bedroomsRange, roomsRange, externalFeatures, internalFeatures, accessibilityFeatures, sortBy]);
+  }, [searchQuery, propertyTypes, transactionType, priceRange, areaRange, landAreaRange, bedroomsRange, roomsRange, externalFeatures, internalFeatures, accessibilityFeatures, availableAt, sortBy]);
 
   useEffect(() => {
     loadLocations();
@@ -184,6 +189,7 @@ export default function SearchPage() {
     setTempExternalFeatures(externalFeatures);
     setTempInternalFeatures(internalFeatures);
     setTempAccessibilityFeatures(accessibilityFeatures);
+    setTempAvailableAt(availableAt);
     onOpen();
   };
 
@@ -198,6 +204,7 @@ export default function SearchPage() {
     setExternalFeatures(tempExternalFeatures);
     setInternalFeatures(tempInternalFeatures);
     setAccessibilityFeatures(tempAccessibilityFeatures);
+    setAvailableAt(tempAvailableAt);
     onOpenChange();
   };
 
@@ -211,6 +218,7 @@ export default function SearchPage() {
     setTempExternalFeatures([]);
     setTempInternalFeatures([]);
     setTempAccessibilityFeatures([]);
+    setTempAvailableAt('');
   };
 
   const handlePropertyTypeChange = (type: string, checked: boolean) => {
@@ -233,6 +241,7 @@ export default function SearchPage() {
     setExternalFeatures([]);
     setInternalFeatures([]);
     setAccessibilityFeatures([]);
+    setAvailableAt('');
   };
 
 
@@ -247,7 +256,8 @@ export default function SearchPage() {
     roomsRange[0] > 0 || roomsRange[1] < 10,
     externalFeatures.length > 0,
     internalFeatures.length > 0,
-    accessibilityFeatures.length > 0
+    accessibilityFeatures.length > 0,
+    availableAt !== ''
   ].filter(Boolean).length;
 
   const getPropertyTypeIcon = (type: string) => {
@@ -757,6 +767,31 @@ export default function SearchPage() {
               <ModalFooter className="gap-3">
                 <Button 
                   variant="light"
+          {/* Available at */}
+          <div className="space-y-4">
+            <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
+              <CalendarIcon className="w-5 h-5 text-primary-600" />
+              Disponible à partir de
+            </h4>
+            <Card className="p-4 bg-content1">
+              <CardBody className="p-0">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-default-700">Date de disponibilité</label>
+                    <Input
+                      type="date"
+                      value={tempAvailableAt}
+                      onChange={(e) => setTempAvailableAt(e.target.value)}
+                      variant="bordered"
+                      size="lg"
+                      aria-label="Date de disponibilité"
+                    />
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+          </div>
+
                   onClick={resetFilters}
                   startContent={<XMarkIcon className="w-4 h-4" />}
                 >
@@ -840,6 +875,16 @@ export default function SearchPage() {
                     <MapIcon className="w-4 h-4" />
                   </Button>
                 </ButtonGroup>
+                 {availableAt && (
+                   <Chip 
+                     variant="flat" 
+                     onClose={() => setAvailableAt('')}
+                     size="sm"
+                     aria-label={`Supprimer le filtre disponible à partir de: ${availableAt}`}
+                   >
+                     Disponible: {new Date(availableAt).toLocaleDateString('fr-FR')}
+                   </Chip>
+                 )}
               </div>
             </div>
 
