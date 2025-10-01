@@ -52,6 +52,7 @@ export default function SearchPage() {
   const [locations, setLocations] = useState<Location[]>([]);
   const [priceRange, setPriceRange] = useState([0, 2000000]);
   const [areaRange, setAreaRange] = useState([0, 300]);
+  const [landAreaRange, setLandAreaRange] = useState([0, 1000]);
   const [bedroomsRange, setBedroomsRange] = useState([0, 10]);
   const [roomsRange, setRoomsRange] = useState([0, 10]);
   const [sortBy, setSortBy] = useState('relevance');
@@ -68,6 +69,7 @@ export default function SearchPage() {
   const [tempPropertyTypes, setTempPropertyTypes] = useState<string[]>([]);
   const [tempPriceRange, setTempPriceRange] = useState([0, 2000000]);
   const [tempAreaRange, setTempAreaRange] = useState([0, 300]);
+  const [tempLandAreaRange, setTempLandAreaRange] = useState([0, 1000]);
   const [tempBedroomsRange, setTempBedroomsRange] = useState([0, 10]);
   const [tempRoomsRange, setTempRoomsRange] = useState([0, 10]);
 
@@ -100,6 +102,7 @@ export default function SearchPage() {
     setTempPropertyTypes(propertyTypes);
     setTempPriceRange(priceRange);
     setTempAreaRange(areaRange);
+    setTempLandAreaRange(landAreaRange);
     setTempBedroomsRange(bedroomsRange);
     setTempRoomsRange(roomsRange);
   }, [searchParams]);
@@ -115,6 +118,7 @@ export default function SearchPage() {
           transactionType: transactionType !== 'all' ? transactionType : undefined,
           // priceRange: (priceMin && priceMax) ? [parseInt(priceMin), parseInt(priceMax)] as [number, number] : undefined,
           // areaRange: (areaMin && areaMax) ? [parseInt(areaMin), parseInt(areaMax)] as [number, number] : undefined,
+          // landAreaRange: landAreaRange
           // bedroomsRange: bedroomsRange
           // roomsRange: roomsRange
         }
@@ -131,7 +135,7 @@ export default function SearchPage() {
     };
 
     fetchProperties();
-  }, [searchQuery, propertyTypes, transactionType, priceRange, areaRange, bedroomsRange, roomsRange, sortBy]);
+  }, [searchQuery, propertyTypes, transactionType, priceRange, areaRange, landAreaRange, bedroomsRange, roomsRange, sortBy]);
 
   useEffect(() => {
     loadLocations();
@@ -160,6 +164,7 @@ export default function SearchPage() {
     setTempPropertyTypes(propertyTypes);
     setTempPriceRange(priceRange);
     setTempAreaRange(areaRange);
+    setTempLandAreaRange(landAreaRange);
     setTempBedroomsRange(bedroomsRange);
     setTempRoomsRange(roomsRange);
     onOpen();
@@ -170,6 +175,7 @@ export default function SearchPage() {
     setPropertyTypes(tempPropertyTypes);
     setPriceRange(tempPriceRange);
     setAreaRange(tempAreaRange);
+    setLandAreaRange(tempLandAreaRange);
     setBedroomsRange(tempBedroomsRange);
     setRoomsRange(tempRoomsRange);
     onOpenChange();
@@ -179,6 +185,7 @@ export default function SearchPage() {
     setTempPropertyTypes([]);
     setTempPriceRange([0, 2000000]);
     setTempAreaRange([0, 300]);
+    setTempLandAreaRange([0, 1000]);
     setTempBedroomsRange([0, 10]);
     setTempRoomsRange([0, 10]);
   };
@@ -197,6 +204,7 @@ export default function SearchPage() {
     setTransactionType('all');
     setPriceRange([0, 2000000]);
     setAreaRange([0, 300]);
+    setLandAreaRange([0, 1000]);
     setBedroomsRange([0, 10]);
     setRoomsRange([0, 10]);
   };
@@ -208,6 +216,7 @@ export default function SearchPage() {
     transactionType !== 'all',
     priceRange[0] > 0 || priceRange[1] < 2000000,
     areaRange[0] > 0 || areaRange[1] < 300,
+    landAreaRange[0] > 0 || landAreaRange[1] < 1000,
     bedroomsRange[0] > 0 || bedroomsRange[1] < 10,
     roomsRange[0] > 0 || roomsRange[1] < 10
   ].filter(Boolean).length;
@@ -451,6 +460,54 @@ export default function SearchPage() {
                     </Card>
                   </div>
 
+                  {/* Land Area Range */}
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
+                      <GlobeAltIcon className="w-5 h-5 text-primary-600" />
+                      Surface du Terrain (m²)
+                    </h4>
+                    <Card className="p-4 bg-content1">
+                      <CardBody className="p-0">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-default-700">Surface terrain minimum</label>
+                              <Input
+                                type="number"
+                                placeholder="0"
+                                value={tempLandAreaRange[0] === 0 ? '' : tempLandAreaRange[0].toString()}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value) || 0;
+                                  setTempLandAreaRange([value, tempLandAreaRange[1]]);
+                                }}
+                                endContent={<span className="text-default-400">m²</span>}
+                                variant="bordered"
+                                size="lg"
+                                aria-label="Surface terrain minimum"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-default-700">Surface terrain maximum</label>
+                              <Input
+                                type="number"
+                                placeholder="1000"
+                                value={tempLandAreaRange[1] === 1000 ? '' : tempLandAreaRange[1].toString()}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value) || 1000;
+                                  setTempLandAreaRange([tempLandAreaRange[0], value]);
+                                }}
+                                endContent={<span className="text-default-400">m²</span>}
+                                variant="bordered"
+                                size="lg"
+                                aria-label="Surface terrain maximum"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </CardBody>
+                    </Card>
+                  </div>
+
                   {/* Rooms */}
                   <div className="space-y-4">
                     <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
@@ -672,6 +729,16 @@ export default function SearchPage() {
                       {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
                     </Chip>
                   ))}
+                  {(landAreaRange[0] > 0 || landAreaRange[1] < 1000) && (
+                    <Chip 
+                      variant="flat" 
+                      onClose={() => setLandAreaRange([0, 1000])}
+                      size="sm"
+                      aria-label={`Supprimer le filtre surface terrain: ${landAreaRange[0]}-${landAreaRange[1]} m²`}
+                    >
+                      Terrain: {landAreaRange[0]}-{landAreaRange[1]} m²
+                    </Chip>
+                  )}
                   {(roomsRange[0] > 0 || roomsRange[1] < 10) && (
                     <Chip 
                       variant="flat" 
