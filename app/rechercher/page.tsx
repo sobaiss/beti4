@@ -407,7 +407,7 @@ export default function SearchPage() {
                               <label className="text-sm font-medium text-default-700">Prix minimum</label>
                               <Input
                                 type="number"
-                                placeholder="0"
+                                min={0}
                                 value={tempPriceRange[0] === 0 ? '' : tempPriceRange[0].toString()}
                                 onChange={(e) => {
                                   const value = parseInt(e.target.value) || 0;
@@ -423,7 +423,7 @@ export default function SearchPage() {
                               <label className="text-sm font-medium text-default-700">Prix maximum</label>
                               <Input
                                 type="number"
-                                placeholder="2000000"
+                                min={0}
                                 value={tempPriceRange[1] === 2000000 ? '' : tempPriceRange[1].toString()}
                                 onChange={(e) => {
                                   const value = parseInt(e.target.value) || 2000000;
@@ -455,7 +455,7 @@ export default function SearchPage() {
                               <label className="text-sm font-medium text-default-700">Surface minimum</label>
                               <Input
                                 type="number"
-                                placeholder="0"
+                                min={0}
                                 value={tempAreaRange[0] === 0 ? '' : tempAreaRange[0].toString()}
                                 onChange={(e) => {
                                   const value = parseInt(e.target.value) || 0;
@@ -471,7 +471,7 @@ export default function SearchPage() {
                               <label className="text-sm font-medium text-default-700">Surface maximum</label>
                               <Input
                                 type="number"
-                                placeholder="300"
+                                min={0}
                                 value={tempAreaRange[1] === 300 ? '' : tempAreaRange[1].toString()}
                                 onChange={(e) => {
                                   const value = parseInt(e.target.value) || 300;
@@ -503,7 +503,7 @@ export default function SearchPage() {
                               <label className="text-sm font-medium text-default-700">Surface terrain minimum</label>
                               <Input
                                 type="number"
-                                placeholder="0"
+                                min={0}
                                 value={tempLandAreaRange[0] === 0 ? '' : tempLandAreaRange[0].toString()}
                                 onChange={(e) => {
                                   const value = parseInt(e.target.value) || 0;
@@ -519,7 +519,7 @@ export default function SearchPage() {
                               <label className="text-sm font-medium text-default-700">Surface terrain maximum</label>
                               <Input
                                 type="number"
-                                placeholder="1000"
+                                min={0}
                                 value={tempLandAreaRange[1] === 1000 ? '' : tempLandAreaRange[1].toString()}
                                 onChange={(e) => {
                                   const value = parseInt(e.target.value) || 1000;
@@ -551,7 +551,7 @@ export default function SearchPage() {
                               <label className="text-sm font-medium text-default-700">Pièces minimum</label>
                               <Input
                                 type="number"
-                                placeholder="0"
+                                min={0}
                                 value={tempRoomsRange[0] === 0 ? '' : tempRoomsRange[0].toString()}
                                 onChange={(e) => {
                                   const value = parseInt(e.target.value) || 0;
@@ -567,7 +567,7 @@ export default function SearchPage() {
                               <label className="text-sm font-medium text-default-700">Pièces maximum</label>
                               <Input
                                 type="number"
-                                placeholder="10"
+                                min={0}
                                 value={tempRoomsRange[1] === 10 ? '' : tempRoomsRange[1].toString()}
                                 onChange={(e) => {
                                   const value = parseInt(e.target.value) || 10;
@@ -599,7 +599,7 @@ export default function SearchPage() {
                               <label className="text-sm font-medium text-default-700">Chambres minimum</label>
                               <Input
                                 type="number"
-                                placeholder="0"
+                                min={0}
                                 value={tempBedroomsRange[0] === 0 ? '' : tempBedroomsRange[0].toString()}
                                 onChange={(e) => {
                                   const value = parseInt(e.target.value) || 0;
@@ -615,7 +615,7 @@ export default function SearchPage() {
                               <label className="text-sm font-medium text-default-700">Chambres maximum</label>
                               <Input
                                 type="number"
-                                placeholder="10"
+                                min={0}
                                 value={tempBedroomsRange[1] === 10 ? '' : tempBedroomsRange[1].toString()}
                                 onChange={(e) => {
                                   const value = parseInt(e.target.value) || 10;
