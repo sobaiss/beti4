@@ -632,132 +632,131 @@ export default function SearchPage() {
                       </CardBody>
                     </Card>
                   </div>
+                  {/* Features */}
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
+                      <CheckIcon className="w-5 h-5 text-primary-600" />
+                      Caractéristiques
+                    </h4>
+                    <Card className="p-4 bg-content1">
+                      <CardBody className="p-0">
+                        <div className="space-y-6">
+                          {/* Externe Group */}
+                          <div className="space-y-3">
+                            <h5 className="text-base font-semibold text-default-800 flex items-center gap-2">
+                              <GlobeAltIcon className="w-4 h-4 text-success-600" />
+                              Externe
+                            </h5>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                              {[
+                                'Parking',
+                                'Garage',
+                                'Balcon',
+                                'Terrasse',
+                                'Jardin',
+                                'Cour',
+                                'Piscine'
+                              ].map((feature) => (
+                                <div key={feature} className="flex items-center space-x-2 p-2 rounded-lg hover:border-default-300 transition-colors">
+                                  <Checkbox
+                                    size="sm"
+                                    isSelected={tempExternalFeatures.includes(feature)}
+                                    onValueChange={(checked) => {
+                                      if (checked) {
+                                        setTempExternalFeatures(prev => [...prev, feature]);
+                                      } else {
+                                        setTempExternalFeatures(prev => prev.filter(f => f !== feature));
+                                      }
+                                    }}
+                                  >
+                                    <span className="text-sm font-medium">{feature}</span>
+                                  </Checkbox>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Interne Group */}
+                          <div className="space-y-3">
+                            <h5 className="text-base font-semibold text-default-800 flex items-center gap-2">
+                              <HomeIcon className="w-4 h-4 text-primary-600" />
+                              Interne
+                            </h5>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                              {[
+                                'Cave',
+                                'Entièrement meublé',
+                                'Non meublé',
+                                'Cuisine intégrée',
+                                'Grandes Fenêtres',
+                                'Salle de Sport',
+                                'Rangements',
+                                'Buanderie',
+                                'Sols Marbre',
+                                'Murs Pierre',
+                                'Cheminée'
+                              ].map((feature) => (
+                                <div key={feature} className="flex items-center space-x-2 p-2 rounded-lg hover:border-default-300 transition-colors">
+                                  <Checkbox
+                                    size="sm"
+                                    isSelected={tempInternalFeatures.includes(feature)}
+                                    onValueChange={(checked) => {
+                                      if (checked) {
+                                        setTempInternalFeatures(prev => [...prev, feature]);
+                                      } else {
+                                        setTempInternalFeatures(prev => prev.filter(f => f !== feature));
+                                      }
+                                    }}
+                                  >
+                                    <span className="text-sm font-medium">{feature}</span>
+                                  </Checkbox>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Accessibilité Group */}
+                          <div className="space-y-3">
+                            <h5 className="text-base font-semibold text-default-800 flex items-center gap-2">
+                              <BuildingOfficeIcon className="w-4 h-4 text-secondary-600" />
+                              Accessibilité
+                            </h5>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                              {[
+                                'Ascenseur',
+                                'Concierge',
+                                'Quartier Calme',
+                                'Caractère Historique',
+                                'Proche Écoles',
+                                'Centre Ville'
+                              ].map((feature) => (
+                                <div key={feature} className="flex items-center space-x-2 p-2 rounded-lg hover:border-default-300 transition-colors">
+                                  <Checkbox
+                                    size="sm"
+                                    isSelected={tempAccessibilityFeatures.includes(feature)}
+                                    onValueChange={(checked) => {
+                                      if (checked) {
+                                        setTempAccessibilityFeatures(prev => [...prev, feature]);
+                                      } else {
+                                        setTempAccessibilityFeatures(prev => prev.filter(f => f !== feature));
+                                      }
+                                    }}
+                                  >
+                                    <span className="text-sm font-medium">{feature}</span>
+                                  </Checkbox>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </CardBody>
+                    </Card>
+                  </div>
                 </div>
               </ModalBody>
               <ModalFooter className="gap-3">
                 <Button 
-                  variant="light" 
-          {/* Features */}
-          <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
-              <CheckIcon className="w-5 h-5 text-primary-600" />
-              Caractéristiques
-            </h4>
-            <Card className="p-4 bg-content1">
-              <CardBody className="p-0">
-                <div className="space-y-6">
-                  {/* Externe Group */}
-                  <div className="space-y-3">
-                    <h5 className="text-base font-semibold text-default-800 flex items-center gap-2">
-                      <GlobeAltIcon className="w-4 h-4 text-success-600" />
-                      Externe
-                    </h5>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                      {[
-                        'Parking',
-                        'Garage',
-                        'Balcon',
-                        'Terrasse',
-                        'Jardin',
-                        'Cour',
-                        'Piscine'
-                      ].map((feature) => (
-                        <div key={feature} className="flex items-center space-x-2 p-2 border border-default-200 rounded-lg hover:border-default-300 transition-colors">
-                          <Checkbox
-                            size="sm"
-                            isSelected={tempExternalFeatures.includes(feature)}
-                            onValueChange={(checked) => {
-                              if (checked) {
-                                setTempExternalFeatures(prev => [...prev, feature]);
-                              } else {
-                                setTempExternalFeatures(prev => prev.filter(f => f !== feature));
-                              }
-                            }}
-                          >
-                            <span className="text-sm font-medium">{feature}</span>
-                          </Checkbox>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Interne Group */}
-                  <div className="space-y-3">
-                    <h5 className="text-base font-semibold text-default-800 flex items-center gap-2">
-                      <HomeIcon className="w-4 h-4 text-primary-600" />
-                      Interne
-                    </h5>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                      {[
-                        'Cave',
-                        'Entièrement meublé',
-                        'Non meublé',
-                        'Cuisine intégrée',
-                        'Grandes Fenêtres',
-                        'Salle de Sport',
-                        'Rangements',
-                        'Buanderie',
-                        'Sols Marbre',
-                        'Murs Pierre',
-                        'Cheminée'
-                      ].map((feature) => (
-                        <div key={feature} className="flex items-center space-x-2 p-2 border border-default-200 rounded-lg hover:border-default-300 transition-colors">
-                          <Checkbox
-                            size="sm"
-                            isSelected={tempInternalFeatures.includes(feature)}
-                            onValueChange={(checked) => {
-                              if (checked) {
-                                setTempInternalFeatures(prev => [...prev, feature]);
-                              } else {
-                                setTempInternalFeatures(prev => prev.filter(f => f !== feature));
-                              }
-                            }}
-                          >
-                            <span className="text-sm font-medium">{feature}</span>
-                          </Checkbox>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Accessibilité Group */}
-                  <div className="space-y-3">
-                    <h5 className="text-base font-semibold text-default-800 flex items-center gap-2">
-                      <BuildingOfficeIcon className="w-4 h-4 text-secondary-600" />
-                      Accessibilité
-                    </h5>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                      {[
-                        'Ascenseur',
-                        'Concierge',
-                        'Quartier Calme',
-                        'Caractère Historique',
-                        'Proche Écoles',
-                        'Centre Ville'
-                      ].map((feature) => (
-                        <div key={feature} className="flex items-center space-x-2 p-2 border border-default-200 rounded-lg hover:border-default-300 transition-colors">
-                          <Checkbox
-                            size="sm"
-                            isSelected={tempAccessibilityFeatures.includes(feature)}
-                            onValueChange={(checked) => {
-                              if (checked) {
-                                setTempAccessibilityFeatures(prev => [...prev, feature]);
-                              } else {
-                                setTempAccessibilityFeatures(prev => prev.filter(f => f !== feature));
-                              }
-                            }}
-                          >
-                            <span className="text-sm font-medium">{feature}</span>
-                          </Checkbox>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </CardBody>
-            </Card>
-          </div>
-
+                  variant="light"
                   onClick={resetFilters}
                   startContent={<XMarkIcon className="w-4 h-4" />}
                 >
