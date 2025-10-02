@@ -17,7 +17,8 @@ import {
   GlobeAltIcon,
   ShoppingBagIcon,
   CheckIcon,
-  CalendarIcon
+  CalendarIcon,
+  UserIcon
 } from '@heroicons/react/24/outline';
 import { 
   Button, 
@@ -90,6 +91,10 @@ export default function SearchPage() {
   const [availableAt, setAvailableAt] = useState('');
   const [tempAvailableAt, setTempAvailableAt] = useState('');
 
+  // Proposed by state
+  const [proposedBy, setProposedBy] = useState<string[]>([]);
+  const [tempProposedBy, setTempProposedBy] = useState<string[]>([]);
+
   // Initialize filters from URL params
   useEffect(() => {
     const searchPropertyTypes = searchParams.get('propertyTypes');
@@ -155,7 +160,7 @@ export default function SearchPage() {
     };
 
     fetchProperties();
-  }, [searchQuery, propertyTypes, transactionType, priceRange, areaRange, landAreaRange, bedroomsRange, roomsRange, externalFeatures, internalFeatures, accessibilityFeatures, availableAt, sortBy]);
+  }, [searchQuery, propertyTypes, transactionType, priceRange, areaRange, landAreaRange, bedroomsRange, roomsRange, externalFeatures, internalFeatures, accessibilityFeatures, availableAt, proposedBy, sortBy]);
 
   useEffect(() => {
     loadLocations();
@@ -191,6 +196,7 @@ export default function SearchPage() {
     setTempInternalFeatures(internalFeatures);
     setTempAccessibilityFeatures(accessibilityFeatures);
     setTempAvailableAt(availableAt);
+    setTempProposedBy(proposedBy);
     onOpen();
   };
 
@@ -206,6 +212,7 @@ export default function SearchPage() {
     setInternalFeatures(tempInternalFeatures);
     setAccessibilityFeatures(tempAccessibilityFeatures);
     setAvailableAt(tempAvailableAt);
+    setProposedBy(tempProposedBy);
     onOpenChange();
   };
 
@@ -220,6 +227,7 @@ export default function SearchPage() {
     setTempInternalFeatures([]);
     setTempAccessibilityFeatures([]);
     setTempAvailableAt('');
+    setTempProposedBy([]);
   };
 
   const handlePropertyTypeChange = (type: string, checked: boolean) => {
@@ -243,6 +251,7 @@ export default function SearchPage() {
     setInternalFeatures([]);
     setAccessibilityFeatures([]);
     setAvailableAt('');
+    setProposedBy([]);
   };
 
 
@@ -258,7 +267,8 @@ export default function SearchPage() {
     externalFeatures.length > 0,
     internalFeatures.length > 0,
     accessibilityFeatures.length > 0,
-    availableAt !== ''
+    availableAt !== '',
+    proposedBy.length > 0
   ].filter(Boolean).length;
 
   const getPropertyTypeIcon = (type: string) => {
@@ -782,6 +792,52 @@ export default function SearchPage() {
                               aria-label="Date de disponibilité"
                               showMonthAndYearPickers
                             />
+                          </div>
+                        </div>
+                      </CardBody>
+                    </Card>
+                  </div>
+
+                  {/* Proposed by */}
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
+                      <UserIcon className="w-5 h-5 text-primary-600" />
+                      Proposé par
+                    </h4>
+                    <Card className="p-4 bg-content1">
+                      <CardBody className="p-0">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="flex items-center space-x-2 p-3 border border-default-200 rounded-lg hover:border-default-300 transition-colors">
+                              <Checkbox
+                                size="sm"
+                                isSelected={tempProposedBy.includes('particulier')}
+                                onValueChange={(checked) => {
+                                  if (checked) {
+                                    setTempProposedBy(prev => [...prev, 'particulier']);
+                                  } else {
+                                    setTempProposedBy(prev => prev.filter(p => p !== 'particulier'));
+                                  }
+                                }}
+                              >
+                                <span className="text-sm font-medium">Particulier</span>
+                              </Checkbox>
+                            </div>
+                            <div className="flex items-center space-x-2 p-3 border border-default-200 rounded-lg hover:border-default-300 transition-colors">
+                              <Checkbox
+                                size="sm"
+                                isSelected={tempProposedBy.includes('agence')}
+                                onValueChange={(checked) => {
+                                  if (checked) {
+                                    setTempProposedBy(prev => [...prev, 'agence']);
+                                  } else {
+                                    setTempProposedBy(prev => prev.filter(p => p !== 'agence'));
+                                  }
+                                }}
+                              >
+                                <span className="text-sm font-medium">Agence</span>
+                              </Checkbox>
+                            </div>
                           </div>
                         </div>
                       </CardBody>
