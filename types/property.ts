@@ -15,11 +15,15 @@ export interface Property {
   address?: string;
   zipCode?: string;
   city?: string;
+  borough?: string;
+  neighborhood?: string;
   type: PropertyTypeEnum;
   transactionType: PropertyTransactionTypeEnum;
-  bedrooms: number;
+  rooms?: number;
+  bedrooms?: number;
   bathrooms?: number;
-  area: number;
+  area?: number;
+  landArea?: number;
   floor?: number;
   totalFloors?: number;
   featured?: boolean;
