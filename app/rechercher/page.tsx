@@ -808,7 +808,7 @@ export default function SearchPage() {
                       <CardBody className="p-0">
                         <div className="space-y-4">
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div className="flex items-center space-x-2 p-3 border border-default-200 rounded-lg hover:border-default-300 transition-colors">
+                            <div className="flex items-center space-x-2 p-3 rounded-lg hover:border-default-300 transition-colors">
                               <Checkbox
                                 size="sm"
                                 isSelected={tempProposedBy.includes('particulier')}
@@ -823,7 +823,7 @@ export default function SearchPage() {
                                 <span className="text-sm font-medium">Particulier</span>
                               </Checkbox>
                             </div>
-                            <div className="flex items-center space-x-2 p-3 border border-default-200 rounded-lg hover:border-default-300 transition-colors">
+                            <div className="flex items-center space-x-2 p-3 rounded-lg hover:border-default-300 transition-colors">
                               <Checkbox
                                 size="sm"
                                 isSelected={tempProposedBy.includes('agence')}
