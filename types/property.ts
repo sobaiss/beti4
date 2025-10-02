@@ -51,7 +51,7 @@ export interface Amenity {
   id: string;
   name: string;
   category: PropertyAmenityCategoryEnum;
-  createdAt: Date;
+  createdAt?: Date;
   updatedAt?: Date;
   properties?: PropertyAmenity[];
 }
