@@ -775,8 +775,8 @@ export default function SearchPage() {
                           <div className="space-y-2">
                             <label className="text-sm font-medium text-default-700">Date de disponibilité</label>
                             <DatePicker
-                              value={tempAvailableAt ? new Date(tempAvailableAt) : null}
-                              onChange={(date) => setTempAvailableAt(date ? date.toISOString().split('T')[0] : '')}
+                              value={tempAvailableAt ? tempAvailableAt : null}
+                              onChange={(value) => setTempAvailableAt(value ? value.toString() : '')}
                               variant="bordered"
                               size="lg"
                               aria-label="Date de disponibilité"
