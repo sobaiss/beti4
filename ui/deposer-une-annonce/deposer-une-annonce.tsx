@@ -223,7 +223,7 @@ export default function DeposerUneAnnonceView() {
       // Generate property reference
       const reference = await generatePropertyReference({
         type: propertyType as any,
-        postalCode: formData.postalCode
+        zipCode: formData.postalCode
       });
 
       // Prepare property data

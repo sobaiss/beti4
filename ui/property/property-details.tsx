@@ -198,9 +198,9 @@ export default function PropertyDetailsView({property}: { property: Property }) 
                       {property.address && (
                         <div className="text-gray-600">{property.address}</div>
                       )}
-                      {(property.postalCode || property.city) && (
+                      {(property.zipCode || property.city) && (
                         <div className="text-gray-600">
-                          {property.postalCode} {property.city}
+                          {property.zipCode} {property.city}
                         </div>
                       )}
                     </div>

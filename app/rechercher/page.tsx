@@ -140,7 +140,7 @@ export default function SearchPage() {
         const filters = {
           location: searchQuery !== '' ? searchQuery : undefined,
           propertyTypes: propertyTypes.length > 0 ? propertyTypes.join(',') : undefined,
-          transactionType: transactionType !== 'all' ? transactionType : undefined,
+          transactionType: transactionType !== '' ? transactionType : undefined,
           // priceRange: (priceMin && priceMax) ? [parseInt(priceMin), parseInt(priceMax)] as [number, number] : undefined,
           // areaRange: (areaMin && areaMax) ? [parseInt(areaMin), parseInt(areaMax)] as [number, number] : undefined,
           // landAreaRange: landAreaRange
@@ -958,10 +958,10 @@ export default function SearchPage() {
                       Localisation: {searchQuery}
                     </Chip>
                   )}
-                  {transactionType !== 'all' && (
+                  {transactionType !== '' && (
                     <Chip 
                       variant="flat" 
-                      onClose={() => setTransactionType('all')}
+                      onClose={() => setTransactionType('')}
                       size="sm"
                       aria-label={`Supprimer le filtre transaction: ${transactionType === 'achat' ? 'À Vendre' : 'À Louer'}`}
                     >

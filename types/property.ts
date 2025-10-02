@@ -13,7 +13,7 @@ export interface Property {
   price: number;
   location: string;
   address?: string;
-  postalCode?: string;
+  zipCode?: string;
   city?: string;
   type: PropertyTypeEnum;
   transactionType: PropertyTransactionTypeEnum;
