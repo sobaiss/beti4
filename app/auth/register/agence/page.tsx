@@ -37,7 +37,7 @@ export default function RegisterAgencyPage() {
     agencyDescription: '',
     agencyAddress: '',
     agencyCity: '',
-    agencyPostalCode: '',
+    agencyZipCode: '',
     agencyPhone: '',
     agencyEmail: '',
     agencyWebsite: '',
@@ -63,7 +63,7 @@ export default function RegisterAgencyPage() {
     description: '',
     address: '',
     city: '',
-    postalCode: '',
+    zipCode: '',
     phone: '',
     email: '',
     website: '',
@@ -108,7 +108,7 @@ export default function RegisterAgencyPage() {
           agencyPhone: validatedFields.error.flatten().fieldErrors.phone?.[0] || '',
           agencyAddress: validatedFields.error.flatten().fieldErrors.address?.[0] || '',
           agencyCity: validatedFields.error.flatten().fieldErrors.city?.[0] || '',
-          agencyPostalCode: validatedFields.error.flatten().fieldErrors.postalCode?.[0] || '',
+          agencyZipCode: validatedFields.error.flatten().fieldErrors.zipCode?.[0] || '',
           agencyWebsite: validatedFields.error.flatten().fieldErrors.website?.[0] || '',
         });
 
@@ -155,7 +155,7 @@ export default function RegisterAgencyPage() {
           agencyPhone: agencyResponse.errors.phone?.[0] || '',
           agencyAddress: agencyResponse.errors.address?.[0] || '',
           agencyCity: agencyResponse.errors.city?.[0] || '',
-          agencyPostalCode: agencyResponse.errors.postalCode?.[0] || '',
+          agencyZipCode: agencyResponse.errors.zipCode?.[0] || '',
           agencyWebsite: agencyResponse.errors.website?.[0] || '',
           firstName: agencyResponse.errors.firstName?.[0] || '',
           lastName: agencyResponse.errors.lastName?.[0] || '',
@@ -267,16 +267,16 @@ export default function RegisterAgencyPage() {
                 <label className="block text-sm font-medium text-default-700">Code postal *</label>
                 <Input
                   placeholder="Code postal"
-                  value={agencyData.postalCode}
-                  onChange={(e) => handleAgencyInputChange('postalCode', e.target.value)}
+                  value={agencyData.zipCode}
+                  onChange={(e) => handleAgencyInputChange('zipCode', e.target.value)}
                   isRequired
                   size="lg"
                   variant="bordered"
                   radius="lg"
                   isClearable
-                  onClear={() => handleAgencyInputChange('postalCode', '')}
-                  errorMessage={errorMessages.agencyPostalCode}
-                  isInvalid={errorMessages.agencyPostalCode !== ''}
+                  onClear={() => handleAgencyInputChange('zipCode', '')}
+                  errorMessage={errorMessages.agencyZipCode}
+                  isInvalid={errorMessages.agencyZipCode !== ''}
                 />
               </div>
             </div>

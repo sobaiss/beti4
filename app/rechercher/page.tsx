@@ -9,7 +9,6 @@ import {
   Squares2X2Icon, 
   ListBulletIcon,
   MapIcon,
-  ChevronDownIcon,
   XMarkIcon,
   HomeIcon,
   BuildingOfficeIcon,
@@ -23,11 +22,10 @@ import {
 import { 
   Button, 
   Select, 
-  SelectItem, 
-  Slider, 
+  SelectItem,
   Card, 
-  CardBody, 
-  Chip, 
+  CardBody,
+  Chip,
   Checkbox,
   ButtonGroup,
   Autocomplete,
@@ -61,7 +59,6 @@ export default function SearchPage() {
   const [roomsRange, setRoomsRange] = useState([0, 10]);
   const [sortBy, setSortBy] = useState('relevance');
   const [viewMode, setViewMode] = useState('grid');
-  const [showFilters, setShowFilters] = useState(false);
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalProperties, setTotalProperties] = useState(0);
@@ -78,14 +75,10 @@ export default function SearchPage() {
   const [tempRoomsRange, setTempRoomsRange] = useState([0, 10]);
   
   // Features state
-  const [externalFeatures, setExternalFeatures] = useState<string[]>([]);
-  const [internalFeatures, setInternalFeatures] = useState<string[]>([]);
-  const [accessibilityFeatures, setAccessibilityFeatures] = useState<string[]>([]);
+  const [features, setFeatures] = useState<string[]>([]);
   
   // Temporary features state for dialog
-  const [tempExternalFeatures, setTempExternalFeatures] = useState<string[]>([]);
-  const [tempInternalFeatures, setTempInternalFeatures] = useState<string[]>([]);
-  const [tempAccessibilityFeatures, setTempAccessibilityFeatures] = useState<string[]>([]);
+  const [tempFeatures, setTempFeatures] = useState<string[]>([]);
   
   // Available at state
   const [availableAt, setAvailableAt] = useState('');
@@ -127,9 +120,7 @@ export default function SearchPage() {
     setTempLandAreaRange(landAreaRange);
     setTempBedroomsRange(bedroomsRange);
     setTempRoomsRange(roomsRange);
-    setTempExternalFeatures(externalFeatures);
-    setTempInternalFeatures(internalFeatures);
-    setTempAccessibilityFeatures(accessibilityFeatures);
+    setTempFeatures(features);
   }, [searchParams]);
 
   // Fetch properties from API
@@ -160,7 +151,7 @@ export default function SearchPage() {
     };
 
     fetchProperties();
-  }, [searchQuery, propertyTypes, transactionType, priceRange, areaRange, landAreaRange, bedroomsRange, roomsRange, externalFeatures, internalFeatures, accessibilityFeatures, availableAt, proposedBy, sortBy]);
+  }, [searchQuery, propertyTypes, transactionType, priceRange, areaRange, landAreaRange, bedroomsRange, roomsRange, features, availableAt, proposedBy, sortBy]);
 
   useEffect(() => {
     loadLocations();
@@ -192,9 +183,7 @@ export default function SearchPage() {
     setTempLandAreaRange(landAreaRange);
     setTempBedroomsRange(bedroomsRange);
     setTempRoomsRange(roomsRange);
-    setTempExternalFeatures(externalFeatures);
-    setTempInternalFeatures(internalFeatures);
-    setTempAccessibilityFeatures(accessibilityFeatures);
+    setTempFeatures(features);
     setTempAvailableAt(availableAt);
     setTempProposedBy(proposedBy);
     onOpen();
@@ -208,9 +197,7 @@ export default function SearchPage() {
     setLandAreaRange(tempLandAreaRange);
     setBedroomsRange(tempBedroomsRange);
     setRoomsRange(tempRoomsRange);
-    setExternalFeatures(tempExternalFeatures);
-    setInternalFeatures(tempInternalFeatures);
-    setAccessibilityFeatures(tempAccessibilityFeatures);
+    setFeatures(tempFeatures);
     setAvailableAt(tempAvailableAt);
     setProposedBy(tempProposedBy);
     onOpenChange();
@@ -223,9 +210,7 @@ export default function SearchPage() {
     setTempLandAreaRange([0, 1000]);
     setTempBedroomsRange([0, 10]);
     setTempRoomsRange([0, 10]);
-    setTempExternalFeatures([]);
-    setTempInternalFeatures([]);
-    setTempAccessibilityFeatures([]);
+    setTempFeatures([]);
     setTempAvailableAt('');
     setTempProposedBy([]);
   };
@@ -247,9 +232,7 @@ export default function SearchPage() {
     setLandAreaRange([0, 1000]);
     setBedroomsRange([0, 10]);
     setRoomsRange([0, 10]);
-    setExternalFeatures([]);
-    setInternalFeatures([]);
-    setAccessibilityFeatures([]);
+    setFeatures([]);
     setAvailableAt('');
     setProposedBy([]);
   };
@@ -264,9 +247,7 @@ export default function SearchPage() {
     landAreaRange[0] > 0 || landAreaRange[1] < 1000,
     bedroomsRange[0] > 0 || bedroomsRange[1] < 10,
     roomsRange[0] > 0 || roomsRange[1] < 10,
-    externalFeatures.length > 0,
-    internalFeatures.length > 0,
-    accessibilityFeatures.length > 0,
+    features.length > 0,
     availableAt !== '',
     proposedBy.length > 0
   ].filter(Boolean).length;
@@ -681,12 +662,12 @@ export default function SearchPage() {
                                 <div key={feature} className="flex items-center space-x-2 p-2 rounded-lg hover:border-default-300 transition-colors">
                                   <Checkbox
                                     size="sm"
-                                    isSelected={tempExternalFeatures.includes(feature)}
+                                    isSelected={tempFeatures.includes(feature)}
                                     onValueChange={(checked) => {
                                       if (checked) {
-                                        setTempExternalFeatures(prev => [...prev, feature]);
+                                        setTempFeatures(prev => [...prev, feature]);
                                       } else {
-                                        setTempExternalFeatures(prev => prev.filter(f => f !== feature));
+                                        setTempFeatures(prev => prev.filter(f => f !== feature));
                                       }
                                     }}
                                   >
@@ -720,12 +701,12 @@ export default function SearchPage() {
                                 <div key={feature} className="flex items-center space-x-2 p-2 rounded-lg hover:border-default-300 transition-colors">
                                   <Checkbox
                                     size="sm"
-                                    isSelected={tempInternalFeatures.includes(feature)}
+                                    isSelected={tempFeatures.includes(feature)}
                                     onValueChange={(checked) => {
                                       if (checked) {
-                                        setTempInternalFeatures(prev => [...prev, feature]);
+                                        setTempFeatures(prev => [...prev, feature]);
                                       } else {
-                                        setTempInternalFeatures(prev => prev.filter(f => f !== feature));
+                                        setTempFeatures(prev => prev.filter(f => f !== feature));
                                       }
                                     }}
                                   >
@@ -754,12 +735,12 @@ export default function SearchPage() {
                                 <div key={feature} className="flex items-center space-x-2 p-2 rounded-lg hover:border-default-300 transition-colors">
                                   <Checkbox
                                     size="sm"
-                                    isSelected={tempAccessibilityFeatures.includes(feature)}
+                                    isSelected={tempFeatures.includes(feature)}
                                     onValueChange={(checked) => {
                                       if (checked) {
-                                        setTempAccessibilityFeatures(prev => [...prev, feature]);
+                                        setTempFeatures(prev => [...prev, feature]);
                                       } else {
-                                        setTempAccessibilityFeatures(prev => prev.filter(f => f !== feature));
+                                        setTempFeatures(prev => prev.filter(f => f !== feature));
                                       }
                                     }}
                                   >
@@ -999,33 +980,33 @@ export default function SearchPage() {
                       {roomsRange[0]}-{roomsRange[1]} pièces
                     </Chip>
                   )}
-                  {externalFeatures.map(feature => (
+                  {features.map(feature => (
                     <Chip 
                       key={`external-${feature}`}
                       variant="flat" 
-                      onClose={() => setExternalFeatures(prev => prev.filter(f => f !== feature))}
+                      onClose={() => setFeatures(prev => prev.filter(f => f !== feature))}
                       size="sm"
                       aria-label={`Supprimer le filtre externe: ${feature}`}
                     >
                       Externe: {feature}
                     </Chip>
                   ))}
-                  {internalFeatures.map(feature => (
+                  {features.map(feature => (
                     <Chip 
                       key={`internal-${feature}`}
                       variant="flat" 
-                      onClose={() => setInternalFeatures(prev => prev.filter(f => f !== feature))}
+                      onClose={() => setFeatures(prev => prev.filter(f => f !== feature))}
                       size="sm"
                       aria-label={`Supprimer le filtre interne: ${feature}`}
                     >
                       Interne: {feature}
                     </Chip>
                   ))}
-                  {accessibilityFeatures.map(feature => (
+                  {features.map(feature => (
                     <Chip 
                       key={`accessibility-${feature}`}
                       variant="flat" 
-                      onClose={() => setAccessibilityFeatures(prev => prev.filter(f => f !== feature))}
+                      onClose={() => setFeatures(prev => prev.filter(f => f !== feature))}
                       size="sm"
                       aria-label={`Supprimer le filtre accessibilité: ${feature}`}
                     >

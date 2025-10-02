@@ -31,7 +31,7 @@ export async function generatePropertyReference(property: CreatePropertyInput | 
   const currentHourMinuteSecond = currentDate.getHours().toString().padStart(2, '0') +
     currentDate.getMinutes().toString().padStart(2, '0') +
     currentDate.getSeconds().toString().padStart(2, '0');
-  const postalCode = property.zipCode ?? '00000'
+  const zipCode = property.zipCode ?? '00000'
 
-  return getReferencePrefix(property.type || 'appartement') + `-${currentYearMonthDay}-${postalCode}-${currentHourMinuteSecond}`;
+  return getReferencePrefix(property.type || 'appartement') + `-${currentYearMonthDay}-${zipCode}-${currentHourMinuteSecond}`;
 }

@@ -6,7 +6,7 @@ export const createPropertySchema = z.object({
   price: z.number().min(1, 'Le prix doit être supérieur à 0'),
   location: z.string().min(1, 'La localisation est requise'),
   address: z.string().optional(),
-  postalCode: z.string().optional(),
+  zipCode: z.string().optional(),
   city: z.string().optional(),
   type: z.enum(['appartement', 'maison', 'villa', 'bureau_commerce', 'terrain', 'terrain_agricole']),
   transactionType: z.enum(['achat', 'location']),

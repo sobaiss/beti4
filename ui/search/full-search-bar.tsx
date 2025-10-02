@@ -112,7 +112,7 @@ export default function FullSearchBarHome({ totalProperties }: { totalProperties
                 className="max-w-xs"
                 defaultItems={locationItems}
                 defaultSelectedKey=""
-                placeholder="Ville, quartier..."
+                placeholder="Ville, neighborhood..."
                 startContent={<MapPinIcon className="w-5 h-5 text-default-400" />}
                 variant="bordered"
                 radius="full"

@@ -6,7 +6,7 @@ export interface Agency {
   description?: string;
   address?: string;
   city?: string;
-  postalCode?: string;
+  zipCode?: string;
   phone?: string;
   email?: string;
   website?: string;
@@ -33,7 +33,7 @@ export interface CreateAgencyInput {
   description?: string;
   address?: string;
   city?: string;
-  postalCode?: string;
+  zipCode?: string;
   phone?: string;
   email?: string;
   website?: string;

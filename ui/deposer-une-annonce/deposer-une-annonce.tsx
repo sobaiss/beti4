@@ -61,7 +61,7 @@ export default function DeposerUneAnnonceView() {
     price: '',
     location: '',
     address: '',
-    postalCode: '',
+    zipCode: '',
     city: '',
     area: '',
     rooms: '',
@@ -223,7 +223,7 @@ export default function DeposerUneAnnonceView() {
       // Generate property reference
       const reference = await generatePropertyReference({
         type: propertyType as any,
-        zipCode: formData.postalCode
+        zipCode: formData.zipCode
       });
 
       // Prepare property data
@@ -233,7 +233,7 @@ export default function DeposerUneAnnonceView() {
         price: parseFloat(formData.price),
         location: formData.location,
         address: formData.address,
-        postalCode: formData.postalCode,
+        zipCode: formData.zipCode,
         city: formData.city,
         type: propertyType as any,
         transactionType: transactionType as any,
@@ -451,12 +451,12 @@ export default function DeposerUneAnnonceView() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-foreground">
                 <div>
-                  <label htmlFor="postalCode" className="block text-sm font-medium text-default-700 mb-2">Code postal</label>
+                  <label htmlFor="zipCode" className="block text-sm font-medium text-default-700 mb-2">Code postal</label>
                   <Input
-                    id="postalCode"
+                    id="zipCode"
                     placeholder="75001"
-                    value={formData.postalCode}
-                    onChange={(e) => handleInputChange('postalCode', e.target.value)}
+                    value={formData.zipCode}
+                    onChange={(e) => handleInputChange('zipCode', e.target.value)}
                     size="lg"
                     variant="bordered"
                     radius="lg"
@@ -485,7 +485,7 @@ export default function DeposerUneAnnonceView() {
                   <Select
                     selectedKeys={formData.location ? [formData.location] : []}
                     onSelectionChange={(keys) => handleInputChange('location', Array.from(keys)[0] as string)}
-                    placeholder="Sélectionner un quartier..."
+                    placeholder="Sélectionner un neighborhood..."
                     size="lg"
                     variant="bordered"
                     radius="lg"
