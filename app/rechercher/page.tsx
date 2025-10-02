@@ -41,10 +41,11 @@ import {
 } from '@heroui/react';
 import Header from '@/components/Header';
 import PropertyCard from '@/components/PropertyCard';
-import { Property } from '@/types/property';
+import { Amenity, Property } from '@/types/property';
 import { getProperties } from '@/lib/actions/property';
 import { getCachedLocations } from '@/lib/utils/location-cache';
 import { Location } from '@/types/location';
+import { getCachedAmenities } from '@/lib/utils/amenity-cache';
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
@@ -52,6 +53,7 @@ export default function SearchPage() {
   const [propertyTypes, setPropertyTypes] = useState<string[]>(searchParams.get('propertyTypes')?.split(',') || []);
   const [transactionType, setTransactionType] = useState(searchParams.get('transactionType') || '');
   const [locations, setLocations] = useState<Location[]>([]);
+  const [amenities, setAmenities] = useState<Amenity[]>([]);
   const [priceRange, setPriceRange] = useState([0, 2000000]);
   const [areaRange, setAreaRange] = useState([0, 300]);
   const [landAreaRange, setLandAreaRange] = useState([0, 1000]);
@@ -155,16 +157,25 @@ export default function SearchPage() {
 
   useEffect(() => {
     loadLocations();
+    loadAmenities();
   }, []);
 
   const loadLocations = async () => {
-    try {
-      const locations = await getCachedLocations();
+    await getCachedLocations().then(locations => {
       setLocations(locations);
-    } catch (error) {
+    }).catch((error) => {
       console.error('Error loading locations:', error);
       setLocations([]);
-    }
+    });
+  }
+
+  const loadAmenities = async () => {
+    getCachedAmenities().then(amenities => {
+      setAmenities(amenities);
+    }).catch((error) => {
+      console.error('Error loading amenities:', error);
+      setAmenities([]);
+    });
   }
 
   const handleTempPropertyTypeChange = (type: string, checked: boolean) => {
