@@ -654,113 +654,98 @@ export default function SearchPage() {
                     <Card className="p-4 bg-content1">
                       <CardBody className="p-0">
                         <div className="space-y-6">
-                          {/* Externe Group */}
-                          <div className="space-y-3">
-                            <h5 className="text-base font-semibold text-default-800 flex items-center gap-2">
-                              <GlobeAltIcon className="w-4 h-4 text-success-600" />
-                              Externe
-                            </h5>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                              {[
-                                'Parking',
-                                'Garage',
-                                'Balcon',
-                                'Terrasse',
-                                'Jardin',
-                                'Cour',
-                                'Piscine'
-                              ].map((feature) => (
-                                <div key={feature} className="flex items-center space-x-2 p-2 rounded-lg hover:border-default-300 transition-colors">
-                                  <Checkbox
-                                    size="sm"
-                                    isSelected={tempFeatures.includes(feature)}
-                                    onValueChange={(checked) => {
-                                      if (checked) {
-                                        setTempFeatures(prev => [...prev, feature]);
-                                      } else {
-                                        setTempFeatures(prev => prev.filter(f => f !== feature));
-                                      }
-                                    }}
-                                  >
-                                    <span className="text-sm font-medium">{feature}</span>
-                                  </Checkbox>
-                                </div>
-                              ))}
+                          {/* Exterieur Group */}
+                          {amenities.filter(a => a.category === 'exterieur').length > 0 && (
+                            <div className="space-y-3">
+                              <h5 className="text-base font-semibold text-default-800 flex items-center gap-2">
+                                <GlobeAltIcon className="w-4 h-4 text-success-600" />
+                                Extérieur
+                              </h5>
+                              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                                {amenities
+                                  .filter(a => a.category === 'exterieur')
+                                  .map((amenity) => (
+                                    <div key={amenity.id} className="flex items-center space-x-2 p-2 rounded-lg hover:border-default-300 transition-colors">
+                                      <Checkbox
+                                        size="sm"
+                                        isSelected={tempFeatures.includes(amenity.id)}
+                                        onValueChange={(checked) => {
+                                          if (checked) {
+                                            setTempFeatures(prev => [...prev, amenity.id]);
+                                          } else {
+                                            setTempFeatures(prev => prev.filter(f => f !== amenity.id));
+                                          }
+                                        }}
+                                      >
+                                        <span className="text-sm font-medium">{amenity.name}</span>
+                                      </Checkbox>
+                                    </div>
+                                  ))}
+                              </div>
                             </div>
-                          </div>
+                          )}
 
-                          {/* Interne Group */}
-                          <div className="space-y-3">
-                            <h5 className="text-base font-semibold text-default-800 flex items-center gap-2">
-                              <HomeIcon className="w-4 h-4 text-primary-600" />
-                              Interne
-                            </h5>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                              {[
-                                'Cave',
-                                'Entièrement meublé',
-                                'Non meublé',
-                                'Cuisine intégrée',
-                                'Grandes Fenêtres',
-                                'Salle de Sport',
-                                'Rangements',
-                                'Buanderie',
-                                'Sols Marbre',
-                                'Murs Pierre',
-                                'Cheminée'
-                              ].map((feature) => (
-                                <div key={feature} className="flex items-center space-x-2 p-2 rounded-lg hover:border-default-300 transition-colors">
-                                  <Checkbox
-                                    size="sm"
-                                    isSelected={tempFeatures.includes(feature)}
-                                    onValueChange={(checked) => {
-                                      if (checked) {
-                                        setTempFeatures(prev => [...prev, feature]);
-                                      } else {
-                                        setTempFeatures(prev => prev.filter(f => f !== feature));
-                                      }
-                                    }}
-                                  >
-                                    <span className="text-sm font-medium">{feature}</span>
-                                  </Checkbox>
-                                </div>
-                              ))}
+                          {/* Interieur Group */}
+                          {amenities.filter(a => a.category === 'interieur').length > 0 && (
+                            <div className="space-y-3">
+                              <h5 className="text-base font-semibold text-default-800 flex items-center gap-2">
+                                <HomeIcon className="w-4 h-4 text-primary-600" />
+                                Intérieur
+                              </h5>
+                              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                                {amenities
+                                  .filter(a => a.category === 'interieur')
+                                  .map((amenity) => (
+                                    <div key={amenity.id} className="flex items-center space-x-2 p-2 rounded-lg hover:border-default-300 transition-colors">
+                                      <Checkbox
+                                        size="sm"
+                                        isSelected={tempFeatures.includes(amenity.id)}
+                                        onValueChange={(checked) => {
+                                          if (checked) {
+                                            setTempFeatures(prev => [...prev, amenity.id]);
+                                          } else {
+                                            setTempFeatures(prev => prev.filter(f => f !== amenity.id));
+                                          }
+                                        }}
+                                      >
+                                        <span className="text-sm font-medium">{amenity.name}</span>
+                                      </Checkbox>
+                                    </div>
+                                  ))}
+                              </div>
                             </div>
-                          </div>
+                          )}
 
-                          {/* Accessibilité Group */}
-                          <div className="space-y-3">
-                            <h5 className="text-base font-semibold text-default-800 flex items-center gap-2">
-                              <BuildingOfficeIcon className="w-4 h-4 text-secondary-600" />
-                              Accessibilité
-                            </h5>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                              {[
-                                'Ascenseur',
-                                'Concierge',
-                                'Quartier Calme',
-                                'Caractère Historique',
-                                'Proche Écoles',
-                                'Centre Ville'
-                              ].map((feature) => (
-                                <div key={feature} className="flex items-center space-x-2 p-2 rounded-lg hover:border-default-300 transition-colors">
-                                  <Checkbox
-                                    size="sm"
-                                    isSelected={tempFeatures.includes(feature)}
-                                    onValueChange={(checked) => {
-                                      if (checked) {
-                                        setTempFeatures(prev => [...prev, feature]);
-                                      } else {
-                                        setTempFeatures(prev => prev.filter(f => f !== feature));
-                                      }
-                                    }}
-                                  >
-                                    <span className="text-sm font-medium">{feature}</span>
-                                  </Checkbox>
-                                </div>
-                              ))}
+                          {/* Equipement Group */}
+                          {amenities.filter(a => a.category === 'equipement').length > 0 && (
+                            <div className="space-y-3">
+                              <h5 className="text-base font-semibold text-default-800 flex items-center gap-2">
+                                <BuildingOfficeIcon className="w-4 h-4 text-secondary-600" />
+                                Équipement
+                              </h5>
+                              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                                {amenities
+                                  .filter(a => a.category === 'equipement')
+                                  .map((amenity) => (
+                                    <div key={amenity.id} className="flex items-center space-x-2 p-2 rounded-lg hover:border-default-300 transition-colors">
+                                      <Checkbox
+                                        size="sm"
+                                        isSelected={tempFeatures.includes(amenity.id)}
+                                        onValueChange={(checked) => {
+                                          if (checked) {
+                                            setTempFeatures(prev => [...prev, amenity.id]);
+                                          } else {
+                                            setTempFeatures(prev => prev.filter(f => f !== amenity.id));
+                                          }
+                                        }}
+                                      >
+                                        <span className="text-sm font-medium">{amenity.name}</span>
+                                      </Checkbox>
+                                    </div>
+                                  ))}
+                              </div>
                             </div>
-                          </div>
+                          )}
                         </div>
                       </CardBody>
                     </Card>
