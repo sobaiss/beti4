@@ -43,16 +43,29 @@ export const propertyStatusesConfig = [
   { value: 'unavailable', label: 'Indisponible' },
 ];
 
+export enum SortOrderEnum {
+    ASC = 'asc',
+    DESC = 'desc',
+};
+
+export enum PropertySortFieldEnum {
+    PERTINENCE = 'pertinence',
+    PRICE = 'price',
+    AREA = 'area',
+    CREATED_AT = 'createdAt',
+    ROOMS = 'rooms',
+};
+
 export const sortOptionsConfig = [
-  { value: 'pertinence', label: 'Pertinence' },
-  { value: 'createdAt_asc', label: 'Les plus récentes' },
-  { value: 'createdAt_desc', label: 'Les plus anciennes' },
-  { value: 'price_asc', label: 'Prix croissant' },
-  { value: 'price_desc', label: 'Prix décroissant' },
-  { value: 'rooms_asc', label: 'Nb pièces croissantes' },
-  { value: 'rooms_desc', label: 'Nb pièces décroissantes' },
-  { value: 'area_asc', label: 'Surface croissante' },
-  { value: 'area_desc', label: 'Surface décroissante' },
+  { value: 'pertinence', label: 'Pertinence', field: PropertySortFieldEnum.PERTINENCE, order: SortOrderEnum.ASC },
+  { value: 'createdAt_asc', label: 'Les plus récentes', field: PropertySortFieldEnum.CREATED_AT, order: SortOrderEnum.ASC },
+  { value: 'createdAt_desc', label: 'Les plus anciennes', field: PropertySortFieldEnum.CREATED_AT, order: SortOrderEnum.DESC },
+  { value: 'price_asc', label: 'Prix croissant', field: PropertySortFieldEnum.PRICE, order: SortOrderEnum.ASC },
+  { value: 'price_desc', label: 'Prix décroissant', field: PropertySortFieldEnum.PRICE, order: SortOrderEnum.DESC },
+  { value: 'rooms_asc', label: 'Nb pièces croissantes', field: PropertySortFieldEnum.ROOMS, order: SortOrderEnum.ASC },
+  { value: 'rooms_desc', label: 'Nb pièces décroissantes', field: PropertySortFieldEnum.ROOMS, order: SortOrderEnum.DESC },
+  { value: 'area_asc', label: 'Surface croissante', field: PropertySortFieldEnum.AREA, order: SortOrderEnum.ASC },
+  { value: 'area_desc', label: 'Surface décroissante', field: PropertySortFieldEnum.AREA, order: SortOrderEnum.DESC },
 ];
 
 export const ITEMS_PER_PAGE = 12;

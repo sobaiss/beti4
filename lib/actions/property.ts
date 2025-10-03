@@ -3,7 +3,7 @@
 import { PaginatedProperty, Property } from '@/types/property'
 import { cookies } from 'next/headers'
 import { CreatePropertyInput, createPropertySchema } from '../validations/property'
-import { ITEMS_PER_PAGE } from '../config'
+import { ITEMS_PER_PAGE, PropertySortFieldEnum, SortOrderEnum } from '../config'
 
 export interface PropertyFilters {
   location?: string
@@ -20,11 +20,6 @@ export interface PropertyFilters {
   status?: string
   owner?: string
   agencyId?: string
-}
-
-export interface PropertySortOptions {
-  field: 'price' | 'area' | 'createdAt'
-  direction: 'asc' | 'desc'
 }
 
 function apiUrl(): string {
@@ -72,7 +67,7 @@ export async function createProperty(data: CreatePropertyInput) {
   return responseData;
 }
 
-  export async function getProperties(filters: PropertyFilters = {}, page = 1, limit = ITEMS_PER_PAGE/* , sort: PropertySortOptions = { field: 'createdAt', direction: 'desc' } */) {
+  export async function getProperties(filters: PropertyFilters = {}, page = 1, limit = ITEMS_PER_PAGE, sortBy?: PropertySortFieldEnum, sortOrder?: SortOrderEnum) {
     const queryParams: Record<string, string> = {
       page: `${page}`,
       limit: `${limit}`,
@@ -91,6 +86,7 @@ export async function createProperty(data: CreatePropertyInput) {
       ...(filters.amenities ? { amenities: filters.amenities } : {}),
       ...(filters.availableAt ? { availableAt: filters.availableAt } : {}),
       ...(filters.agencyId ? { agencyId: filters.agencyId } : {}),
+      ...(sortBy ? { sortBy, sortOrder } : {}),
     };
 
     const response = await fetch(`${apiUrl()}/properties?` + new URLSearchParams(queryParams).toString())

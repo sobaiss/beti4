@@ -61,7 +61,8 @@ export default function SearchPage() {
   const [propertyTypes, setPropertyTypes] = useState<string[]>(searchParams.get('propertyTypes')?.split(',') || []);
   const [transactionType, setTransactionType] = useState(searchParams.get('transactionType') || '');
   const [locations, setLocations] = useState<Location[]>([]);
-  const [amenities, setAmenities] = useState<Record<string, Amenity[]>>({});
+  const [amenities, setAmenities] = useState<Amenity[]>([]);
+  const [amenitiesGroup, setAmenitiesGroup] = useState<Record<string, Amenity[]>>({});
   const [priceRange, setPriceRange] = useState([0, 0]);
   const [areaRange, setAreaRange] = useState([0, 0]);
   const [landAreaRange, setLandAreaRange] = useState([0, 0]);
@@ -117,12 +118,12 @@ export default function SearchPage() {
     const searchBedrooms = searchParams.get('bedrooms');
     if (searchBedrooms) {
       const bedroomsValue = parseInt(searchBedrooms);
-      setBedroomsRange([bedroomsValue, 10]);
+      setBedroomsRange([bedroomsValue, 0]);
     }
     const searchRooms = searchParams.get('rooms');
     if (searchRooms) {
       const roomsValue = parseInt(searchRooms);
-      setRoomsRange([roomsValue, 10]);
+      setRoomsRange([roomsValue, 0]);
     }
     
     // Initialize temp filters with current values
@@ -154,7 +155,8 @@ export default function SearchPage() {
           availableAt: availableAt !== '' ? availableAt : undefined,
         };
 
-        const response = await getProperties(filters, page, limit/* , { field: 'createdAt', direction: 'desc' } */);
+        const sortOption = sortOptionsConfig.find(option => option.value === sortBy);
+        const response = await getProperties(filters, page, limit, sortOption?.field, sortOption?.order);
 
         setProperties(response?.properties || []);
         setTotal(response?.pagination.total || 0);
@@ -184,6 +186,7 @@ export default function SearchPage() {
 
   const loadAmenities = async () => {
     getCachedAmenities().then(amenities => {
+      setAmenities(amenities);
       const amenitiesByGroup = amenities.reduce((acc: Record<string, Amenity[]>, amenity) => {
         if (!acc[amenity.category]) {
           acc[amenity.category] = [];
@@ -194,10 +197,10 @@ export default function SearchPage() {
         return acc;
       }, {});
       // Flatten the grouped amenities into a single array for setAmenities if needed
-      setAmenities(amenitiesByGroup);
+      setAmenitiesGroup(amenitiesByGroup);
     }).catch((error) => {
       console.error('Error loading amenities:', error);
-      setAmenities({});
+      setAmenitiesGroup({});
     });
   }
 
@@ -666,14 +669,14 @@ export default function SearchPage() {
                     <Card className="p-4 bg-content1">
                       <CardBody className="p-0">
                         <div className="space-y-6">
-                          {Object.keys(amenities).map((key) => (
+                          {Object.keys(amenitiesGroup).map((key) => (
                             <div className="space-y-3">
                               <h5 className="text-base font-semibold text-default-800 flex items-center gap-2">
                                 <GlobeAltIcon className="w-4 h-4 text-success-600" />
                                 {key.charAt(0).toUpperCase() + key.slice(1)}
                               </h5>
                               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                                {amenities[key]
+                                {amenitiesGroup[key]
                                   .map((amenity) => (
                                     <div key={amenity.id} className="flex items-center space-x-2 p-2 rounded-lg hover:border-default-300 transition-colors">
                                       <Checkbox
@@ -802,7 +805,8 @@ export default function SearchPage() {
               </div>
 
               <div className="flex items-center gap-4">
-                <Select 
+                <Select
+                  selectionMode='single'
                   selectedKeys={[sortBy]}
                   onSelectionChange={(keys) => setSortBy(Array.from(keys)[0] as string)}
                   className="w-48"
@@ -833,16 +837,6 @@ export default function SearchPage() {
                     <ListBulletIcon className="w-4 h-4" />
                   </Button>
                 </ButtonGroup>
-                 {availableAt && (
-                   <Chip 
-                     variant="flat" 
-                     onClose={() => setAvailableAt('')}
-                     size="sm"
-                     aria-label={`Supprimer le filtre disponible à partir de: ${availableAt}`}
-                   >
-                     Disponible: {new Date(availableAt).toLocaleDateString('fr-FR')}
-                   </Chip>
-                 )}
               </div>
             </div>
 
@@ -959,7 +953,7 @@ export default function SearchPage() {
                       size="sm"
                       aria-label={`Supprimer le filtre caractéristique: ${feature}`}
                     >
-                      Caractéristique: {feature}
+                      Caractéristique: {amenities.find(amenity => amenity.id === feature)?.name || feature}
                     </Chip>
                   ))}
                 </div>
