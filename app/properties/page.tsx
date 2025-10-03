@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect } from 'react';
 import { 
   MagnifyingGlassIcon, 
@@ -106,9 +108,9 @@ export default function PropertiesPage() {
 
                 <div className="space-y-2"> 
                   <label className="block text-sm font-medium text-default-700">Type de Bien</label>
-                  <Select 
-                    selectedKeys={propertyTypes ? [propertyTypes] : []}
-                    onSelectionChange={(keys) => setPropertyTypes(Array.from(keys) as string[] || [])}
+                  <Select
+                    selectedKeys={propertyTypes}
+                    onSelectionChange={(keys) => setPropertyTypes(Array.from(keys) as string[])}
                     placeholder="Tous les biens"
                   >
                     <SelectItem key="all">Tous les biens</SelectItem>
@@ -125,7 +127,7 @@ export default function PropertiesPage() {
                   <div className="px-2">
                     <Slider
                       value={priceRange}
-                      onChange={setPriceRange}
+                      onChange={(value) => setPriceRange(Array.isArray(value) ? value : [value])}
                       maxValue={1000000}
                       minValue={0}
                       step={10000}

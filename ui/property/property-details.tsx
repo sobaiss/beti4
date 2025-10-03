@@ -149,12 +149,6 @@ export default function PropertyDetailsView({property}: { property: Property }) 
                         <span className="font-semibold">{property.floor}</span>
                       </div>
                     )}
-                    {property.energyRating && (
-                      <div className="flex justify-between py-2 border-b border-content3">
-                        <span className="text-default-600">Classe énergétique</span>
-                        <span className="font-semibold">{property.energyRating}</span>
-                      </div>
-                    )}
                     <div className="flex justify-between py-2 border-b border-content3">
                       <span className="text-default-600">Transaction</span>
                       <span className="font-semibold">

@@ -78,7 +78,7 @@ export default function RegisterAgencyPage() {
     confirmPassword: '',
     acceptTerms: false,
     acceptMarketing: false,
-    userType: 'professionnel',
+    userType: 'professionnel' as const,
     agencyId: ''
   });
 

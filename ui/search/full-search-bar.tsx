@@ -191,7 +191,7 @@ export default function FullSearchBarHome({ totalProperties }: { totalProperties
                 <div className="px-2">
                 <Slider
                     value={priceRange}
-                    onChange={setPriceRange}
+                    onChange={(value) => setPriceRange(Array.isArray(value) ? value : [value])}
                     maxValue={2000000}
                     minValue={0}
                     step={10000}
@@ -211,7 +211,7 @@ export default function FullSearchBarHome({ totalProperties }: { totalProperties
                 <div className="px-2">
                 <Slider
                     value={areaRange}
-                    onChange={setAreaRange}
+                    onChange={(value) => setAreaRange(Array.isArray(value) ? value : [value])}
                     maxValue={300}
                     minValue={0}
                     step={5}

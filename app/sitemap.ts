@@ -3,9 +3,6 @@ import { getProperties } from '@/lib/actions/property'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://beti.com'
-  
-  // Get all properties for sitemap
-  const { properties } = await getProperties({}/* , { field: 'createdAt', direction: 'desc' } */, 1, 1000)
 
   // Static pages
   const staticPages = [
@@ -46,14 +43,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     },
   ]
-  
-  // Property pages
-  const propertyPages = properties.map((property) => ({
-    url: `${baseUrl}/property/${property.id}`,
-    lastModified: property.updatedAt || property.createdAt,
-    changeFrequency: 'weekly' as const,
-    priority: 0.8,
-  }))
-  
-  return [...staticPages, ...propertyPages]
+
+  return staticPages
 }

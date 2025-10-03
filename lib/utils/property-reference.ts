@@ -22,7 +22,7 @@ function getReferencePrefix(type: string): string {
  * Generate a unique property reference
  * Format: <PREFIX>-<YYYYMMDD>-<POSTAL_CODE>-<HHMMSS>
  */
-export async function generatePropertyReference(property: CreatePropertyInput | Property): Promise<string> {
+export async function generatePropertyReference(property: Partial<CreatePropertyInput | Property>): Promise<string> {
   const currentDate = new Date()
   const currentYearMonthDay = currentDate.getFullYear() +
     (currentDate.getMonth() + 1).toString().padStart(2, '0') +

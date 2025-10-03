@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     console.log('----- Creating property with body:', body)
     
     const response = await fetch(fullUrl(request), {
-      headers: fetchHeaderOptions(),
+      headers: await fetchHeaderOptions(),
       body: JSON.stringify(body)
     });
 

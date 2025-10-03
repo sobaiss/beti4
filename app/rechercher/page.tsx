@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { 
@@ -18,11 +20,11 @@ import {
   CalendarIcon,
   UserIcon
 } from '@heroicons/react/24/outline';
-import { 
-  Button, 
-  Select, 
+import {
+  Button,
+  Select,
   SelectItem,
-  Card, 
+  Card,
   CardBody,
   Chip,
   Checkbox,
@@ -34,7 +36,8 @@ import {
   ModalFooter,
   useDisclosure,
   Input,
-  DatePicker
+  DatePicker,
+  Pagination
 } from '@heroui/react';
 import Header from '@/components/Header';
 import PropertyCard from '@/components/PropertyCard';
@@ -986,12 +989,20 @@ export default function SearchPage() {
           </Card>
         )}
 
-        {/* Load More */}
-        {properties.length > 0 && (
-          <div className="text-center mt-12">
-            <Button variant="bordered" size="lg" className="px-8">
-              Charger Plus de Biens
-            </Button>
+        {/* Pagination */}
+        {properties.length > 0 && total > limit && (
+          <div className="flex flex-col items-center gap-4 mt-12">
+            <Pagination
+              total={Math.ceil(total / limit)}
+              page={page}
+              onChange={setPage}
+              showControls
+              color="primary"
+              size="lg"
+            />
+            <p className="text-sm text-default-500">
+              Affichage de {((page - 1) * limit) + 1} à {Math.min(page * limit, total)} sur {total} biens
+            </p>
           </div>
         )}
       </div>

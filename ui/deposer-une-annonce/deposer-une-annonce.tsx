@@ -228,8 +228,14 @@ export default function DeposerUneAnnonceView() {
 
       // Generate property reference
       const reference = await generatePropertyReference({
+        title: formData.title,
+        description: formData.description,
+        price: parseFloat(formData.price),
+        location: formData.location,
         type: propertyType as any,
-        zipCode: formData.zipCode
+        zipCode: formData.zipCode,
+        transactionType: transactionType as any,
+        status: 'brouillon' as any
       });
 
       // Prepare property data
