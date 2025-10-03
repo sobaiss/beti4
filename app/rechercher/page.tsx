@@ -46,7 +46,7 @@ import { getProperties } from '@/lib/actions/property';
 import { getCachedLocations } from '@/lib/utils/location-cache';
 import { Location } from '@/types/location';
 import { getCachedAmenities } from '@/lib/utils/amenity-cache';
-import { propertyTypesConfig, transactionsConfig } from '@/lib/config';
+import { ITEMS_PER_PAGE, propertyTypesConfig, sortOptionsConfig, transactionsConfig } from '@/lib/config';
 
 const displayRange = (range: number[], metric: string) => {
   if (range[0] === 0 && range[1] === 0) return 'Tous';
@@ -67,11 +67,13 @@ export default function SearchPage() {
   const [landAreaRange, setLandAreaRange] = useState([0, 0]);
   const [bedroomsRange, setBedroomsRange] = useState([0, 0]);
   const [roomsRange, setRoomsRange] = useState([0, 0]);
-  const [sortBy, setSortBy] = useState('relevance');
+  const [sortBy, setSortBy] = useState('pertinence');
   const [viewMode, setViewMode] = useState('grid');
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
-  const [totalProperties, setTotalProperties] = useState(0);
+  const [page, setPage] = useState(parseInt(searchParams.get('page') || '1') || 1);
+  const [limit, setLimit] = useState(parseInt(searchParams.get('limit') || ITEMS_PER_PAGE.toString()) || ITEMS_PER_PAGE);
+  const [total, setTotal] = useState(0);
 
   // Modal state for filters
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -152,10 +154,10 @@ export default function SearchPage() {
           availableAt: availableAt !== '' ? availableAt : undefined,
         };
 
-        const response = await getProperties(filters);
+        const response = await getProperties(filters, page, limit/* , { field: 'createdAt', direction: 'desc' } */);
 
         setProperties(response?.properties || []);
-        setTotalProperties(response?.pagination.total || 0);
+        setTotal(response?.pagination.total || 0);
       } catch (error) {
         console.error('Error fetching properties:', error);
       } finally {
@@ -164,7 +166,7 @@ export default function SearchPage() {
     };
 
     fetchProperties();
-  }, [searchQuery, propertyTypes, transactionType, priceRange, areaRange, landAreaRange, bedroomsRange, roomsRange, features, availableAt, proposedBy, sortBy]);
+  }, [searchQuery, page, limit, propertyTypes, transactionType, priceRange, areaRange, landAreaRange, bedroomsRange, roomsRange, features, availableAt, proposedBy, sortBy]);
 
   useEffect(() => {
     loadLocations();
@@ -794,7 +796,7 @@ export default function SearchPage() {
                   Résultats de Recherche
                 </h1>
                 <p className="text-default-600">
-                  {totalProperties} biens trouvés
+                  {total} biens trouvés
                   {searchQuery && ` dans "${searchQuery}"`}
                 </p>
               </div>
@@ -806,11 +808,9 @@ export default function SearchPage() {
                   className="w-48"
                   aria-label="Trier par"
                 >
-                  <SelectItem key="relevance">Plus Pertinent</SelectItem>
-                  <SelectItem key="price-asc">Prix: Croissant</SelectItem>
-                  <SelectItem key="price-desc">Prix: Décroissant</SelectItem>
-                  <SelectItem key="area-desc">Surface: Plus Grande</SelectItem>
-                  <SelectItem key="newest">Plus Récent</SelectItem>
+                  {sortOptionsConfig.map(option => (
+                    <SelectItem key={option.value}>{option.label}</SelectItem>
+                  ))}
                 </Select>
 
                 <ButtonGroup>
@@ -831,15 +831,6 @@ export default function SearchPage() {
                     aria-label="Vue en liste"
                   >
                     <ListBulletIcon className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    variant={viewMode === 'map' ? 'solid' : 'bordered'}
-                    size="sm"
-                    onClick={() => setViewMode('map')}
-                    isIconOnly
-                    aria-label="Vue carte"
-                  >
-                    <MapIcon className="w-4 h-4" />
                   </Button>
                 </ButtonGroup>
                  {availableAt && (

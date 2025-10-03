@@ -3,6 +3,7 @@
 import { PaginatedProperty, Property } from '@/types/property'
 import { cookies } from 'next/headers'
 import { CreatePropertyInput, createPropertySchema } from '../validations/property'
+import { ITEMS_PER_PAGE } from '../config'
 
 export interface PropertyFilters {
   location?: string
@@ -71,7 +72,7 @@ export async function createProperty(data: CreatePropertyInput) {
   return responseData;
 }
 
-  export async function getProperties(filters: PropertyFilters = {}, page = 1, limit = 12/* , sort: PropertySortOptions = { field: 'createdAt', direction: 'desc' } */) {
+  export async function getProperties(filters: PropertyFilters = {}, page = 1, limit = ITEMS_PER_PAGE/* , sort: PropertySortOptions = { field: 'createdAt', direction: 'desc' } */) {
     const queryParams: Record<string, string> = {
       page: `${page}`,
       limit: `${limit}`,
