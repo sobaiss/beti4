@@ -5,12 +5,15 @@ export type PropertyStatusEnum = 'disponible' | 'vendu' | 'loue' | 'desactive' |
 export type PropertyTypeEnum = 'appartement' | 'maison' | 'villa' | 'bureau_commerce' | 'terrain' | 'terrain_agricole';
 export type PropertyTransactionTypeEnum = 'achat' | 'location';
 export type PropertyAmenityCategoryEnum = 'interieur' | 'exterieur' | 'equipement';
+export type OwnerTypeEnum = 'particulier' | 'professionnel';
+export type RateTypeEnum = 'jour' | 'semaine' | 'mois' | 'an' | 'heure' | 'trimestre' | 'semestre' | 'unique';
 
 export interface Property {
   id: string;
   title: string;
   description: string;
   price: number;
+  rate?: RateTypeEnum;
   location: string;
   address?: string;
   zipCode?: string;

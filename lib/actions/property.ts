@@ -8,11 +8,17 @@ export interface PropertyFilters {
   location?: string
   propertyTypes?: string
   transactionType?: string
-  // priceRange?: [number, number]
-  // areaRange?: [number, number]
-  bedrooms?: number
+  price?: string
+  area?: string
+  landArea?: string
+  rooms?: string
+  bedrooms?: string
+  ownerType?: string
+  amenities?: string
+  availableAt?: string
   status?: string
   owner?: string
+  agencyId?: string
 }
 
 export interface PropertySortOptions {
@@ -74,7 +80,16 @@ export async function createProperty(data: CreatePropertyInput) {
       ...(filters.transactionType ? { transactionType: filters.transactionType } : {}),
       ...(filters.bedrooms !== undefined ? { bedrooms: String(filters.bedrooms) } : {}),
       ...(filters.status ? { status: filters.status } : {}),
-      ...(filters.owner ? { owner: filters.owner } : {})
+      ...(filters.owner ? { owner: filters.owner } : {}),
+      ...(filters.price ? { price: filters.price } : {}),
+      ...(filters.area ? { area: filters.area } : {}),
+      ...(filters.landArea ? { landArea: filters.landArea } : {}),
+      ...(filters.rooms ? { rooms: filters.rooms } : {}),
+      ...(filters.bedrooms ? { bedrooms: filters.bedrooms } : {}),
+      ...(filters.ownerType ? { ownerType: filters.ownerType } : {}),
+      ...(filters.amenities ? { amenities: filters.amenities } : {}),
+      ...(filters.availableAt ? { availableAt: filters.availableAt } : {}),
+      ...(filters.agencyId ? { agencyId: filters.agencyId } : {}),
     };
 
     const response = await fetch(`${apiUrl()}/properties?` + new URLSearchParams(queryParams).toString())
