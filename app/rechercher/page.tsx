@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { 
   MagnifyingGlassIcon,
-  MapPinIcon,
   AdjustmentsHorizontalIcon, 
   Squares2X2Icon, 
   ListBulletIcon,
@@ -28,8 +27,6 @@ import {
   Chip,
   Checkbox,
   ButtonGroup,
-  Autocomplete,
-  AutocompleteItem,
   Modal,
   ModalContent,
   ModalHeader,
@@ -47,6 +44,8 @@ import { getCachedLocations } from '@/lib/utils/location-cache';
 import { Location } from '@/types/location';
 import { getCachedAmenities } from '@/lib/utils/amenity-cache';
 import { ITEMS_PER_PAGE, propertyTypesConfig, sortOptionsConfig, transactionsConfig } from '@/lib/config';
+import AutocompleteLocation from '@/ui/components/AutocompleteLocation';
+import SelectTransaction from '@/ui/components/SelectTransaction';
 
 const displayRange = (range: number[], metric: string) => {
   if (range[0] === 0 && range[1] === 0) return 'Tous';
@@ -304,39 +303,15 @@ export default function SearchPage() {
           <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center text-foreground">
             {/* Search Bar */}
             <div className="flex-1 flex gap-2">
-              <Autocomplete
-                label="Localisation"
-                allowsCustomValue
-                onSelectionChange={(key) => setSearchQuery(key as string)}
-                className="flex-1"
-                defaultItems={locations}
-                defaultSelectedKey={searchQuery}
-                startContent={<MapPinIcon className="w-5 h-5 text-default-400" />}
-                variant="bordered"
-                radius="full"
-                size="lg"
-                isClearable
-                aria-label="Rechercher une localisation"
-                >
-                {(locationItem) => <AutocompleteItem key={locationItem.displayName} endContent={`(${locationItem.divisionName})`}>{locationItem.name}</AutocompleteItem>}
-              </Autocomplete>
-            <Select
-                label="Transaction"
-                selectedKeys={[transactionType]}
-                onSelectionChange={(keys) => setTransactionType(Array.from(keys)[0] as string)}
-                className="w-full sm:w-32"
-                size="lg"
-                variant="bordered"
-                radius="full"
-                aria-label="Sélectionner le type de transaction"
-            >
-                <SelectItem key="">Tous</SelectItem>
-                <>
-                  {transactionsConfig.map((transaction) => (
-                    <SelectItem key={transaction.value}>{transaction.label}</SelectItem>
-                  ))}
-                </>
-            </Select>
+              <AutocompleteLocation
+                locations={locations}
+                selectedLocation={searchQuery}
+                setSelectedLocation={setSearchQuery}
+              />
+              <SelectTransaction
+                transactionType={transactionType}
+                setTransactionType={setTransactionType}
+              />
             </div>
 
             {/* Filter Toggle */}

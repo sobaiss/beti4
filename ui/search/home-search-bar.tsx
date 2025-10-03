@@ -5,6 +5,9 @@ import { MagnifyingGlassIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import { Autocomplete, AutocompleteItem, Button, Card, CardBody, Link, Select, SelectItem } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import AutocompleteLocation from "../components/AutocompleteLocation";
+import SelectTransaction from "../components/SelectTransaction";
+import SelectPropertyType from "../components/SelectPropertyType";
 
 export default function HomeSearchBarHome({ locations }: { locations: Location[] }) {
     const { replace } = useRouter();
@@ -43,61 +46,30 @@ export default function HomeSearchBarHome({ locations }: { locations: Location[]
     <CardBody className="p-6 text-foreground">
         <div className="flex flex-col lg:flex-row gap-4 items-end">
         <div className="flex-1 space-y-2">
-            <Autocomplete
-                label="Localisation"
-                allowsCustomValue
-                onSelectionChange={(key) => setSearchLocation(key as string)}
-                className="max-w-xs"
-                defaultItems={locations}
-                defaultSelectedKey=""
-                startContent={<MapPinIcon className="w-5 h-5 text-default-400" />}
-                variant="bordered"
-                radius="full"
-                size="lg"
-                isClearable
-                aria-label="Rechercher une localisation"
-                >
-                {(locationItem) => <AutocompleteItem key={locationItem.displayName} endContent={`(${locationItem.divisionName})`}>{locationItem.name}</AutocompleteItem>}
-            </Autocomplete>
+            <AutocompleteLocation
+                locations={locations}
+                selectedLocation={searchLocation}
+                setSelectedLocation={setSearchLocation}
+            />
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
             <div className="space-y-2">
-            <Select
+            <SelectTransaction
                 label="Transaction"
-                selectedKeys={[transactionType]}
-                onSelectionChange={(keys) => setTransactionType(Array.from(keys)[0] as string)}
-                className="w-full sm:w-32"
-                size="lg"
-                variant="bordered"
-                radius="full"
-                aria-label="Sélectionner le type de transaction"
-            >
-                <SelectItem key="">Tous</SelectItem>
-                <SelectItem key="achat">Acheter</SelectItem>
-                <SelectItem key="location">Louer</SelectItem>
-            </Select>
+                placeholder=""
+                transactionType={transactionType}
+                setTransactionType={setTransactionType}
+            />
             </div>
 
             <div className="space-y-2">
-            <Select
-                label="Type de bien"
-                selectedKeys={propertyTypes.length > 0 ? propertyTypes : []}
-                onSelectionChange={(keys) => setPropertyTypes(Array.from(keys) as string[])}
-                placeholder="Tous types"
-                className="w-full sm:w-40"
-                size="lg"
-                variant="bordered"
-                radius="full"
-                aria-label="Sélectionner le type de bien"
-            >
-                <SelectItem key="">Tous</SelectItem>
-                <SelectItem key="appartement">Appartement</SelectItem>
-                <SelectItem key="maison">Maison</SelectItem>
-                <SelectItem key="villa">Villa</SelectItem>
-                <SelectItem key="terrain">Terrain</SelectItem>
-                <SelectItem key="bureau_commerce">Bureau/Commerce</SelectItem>
-            </Select>
+            <SelectPropertyType
+                label="Type de bien" 
+                placeholder=""
+                propertyTypes={propertyTypes}
+                setPropertyTypes={setPropertyTypes}
+            />
             </div>
         </div>
 

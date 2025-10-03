@@ -59,11 +59,17 @@ export default function DeposerUneAnnonceView() {
     title: '',
     description: '',
     price: '',
+    rate: 'unique',
     location: '',
     address: '',
     zipCode: '',
+    borough: '',
+    neighborhood: '',
+    department: '',
     city: '',
+    region: '',
     area: '',
+    landArea: '',
     rooms: '',
     bedrooms: '',
     bathrooms: '',
@@ -330,7 +336,7 @@ export default function DeposerUneAnnonceView() {
                   <Button
                     onPress={() => setTransactionType('achat')}
                     size="lg"
-                    radius="xl"
+                    radius="lg"
                     variant={transactionType === 'achat'
                       ? 'solid'
                       : 'faded'
@@ -356,7 +362,7 @@ export default function DeposerUneAnnonceView() {
                   <Button
                     onPress={() => setTransactionType('location')}
                     size="lg"
-                    radius="xl"
+                    radius="lg"
                     variant={transactionType === 'location'
                       ? 'solid'
                       : 'faded'
