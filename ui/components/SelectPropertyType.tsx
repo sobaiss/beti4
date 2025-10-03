@@ -6,6 +6,7 @@ export default function SelectPropertyType({label, placeholder, propertyTypes, s
         <Select
             label={label}
             placeholder={placeholder}
+            selectionMode="multiple"
             selectedKeys={propertyTypes.length > 0 ? propertyTypes : []}
             onSelectionChange={(keys) => setPropertyTypes(Array.from(keys) as string[])}
             className="w-full sm:w-40"

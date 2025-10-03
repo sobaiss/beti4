@@ -307,11 +307,14 @@ export default function SearchPage() {
             {/* Search Bar */}
             <div className="flex-1 flex gap-2">
               <AutocompleteLocation
+                label="Localisation"
                 locations={locations}
                 selectedLocation={searchQuery}
                 setSelectedLocation={setSearchQuery}
               />
               <SelectTransaction
+                label='Type de transaction'
+                placeholder='Sélectionner'
                 transactionType={transactionType}
                 setTransactionType={setTransactionType}
               />

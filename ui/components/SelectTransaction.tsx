@@ -6,10 +6,9 @@ export default function SelectTransaction({ label, placeholder, transactionType,
     <Select
         label={label}
         placeholder={placeholder}
-        multiple={false}
         selectedKeys={[transactionType]}
         onSelectionChange={(keys) => setTransactionType(Array.from(keys)[0] as string)}
-        className="w-full sm:w-32"
+        className="max-w-xs"
         size="lg"
         variant="bordered"
         radius="full"

@@ -5,8 +5,8 @@ import { Location } from '@/types/location';
 export default function AutocompleteLocation({ locations, selectedLocation, setSelectedLocation: setSearchQuery, label, placeholder }: { label?: string, placeholder?: string, locations: Location[], selectedLocation: string, setSelectedLocation: (value: string) => void }) {
   return (
     <Autocomplete
-        label={label || "Localisation"}
-        placeholder={placeholder || ""}
+        label={label}
+        placeholder={placeholder}
         allowsCustomValue
         onSelectionChange={(key) => setSearchQuery(key as string)}
         className="flex-1"

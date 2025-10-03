@@ -68,4 +68,4 @@ export const sortOptionsConfig = [
   { value: 'area_desc', label: 'Surface décroissante', field: PropertySortFieldEnum.AREA, order: SortOrderEnum.DESC },
 ];
 
-export const ITEMS_PER_PAGE = 12;
+export const ITEMS_PER_PAGE = 3;

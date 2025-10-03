@@ -30,8 +30,6 @@ import {
   Select, 
   SelectItem, 
   Checkbox,
-  Autocomplete,
-  AutocompleteItem,
 } from '@heroui/react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -40,6 +38,7 @@ import { getCachedLocations } from '@/lib/utils/location-cache';
 import { convertFileToBase64 } from '@/lib/files/files';
 import { createProperty } from '@/lib/actions/property';
 import { generatePropertyReference } from '@/lib/utils/property-reference';
+import AutocompleteLocation from '@/ui/components/AutocompleteLocation';
 
 export default function DeposerUneAnnonceView() {
   const { data: session, status } = useSession();
@@ -461,53 +460,81 @@ export default function DeposerUneAnnonceView() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-foreground">
+              <div className="space-y-4">
                 <div>
-                  <label htmlFor="zipCode" className="block text-sm font-medium text-default-700 mb-2">Code postal</label>
-                  <Input
-                    id="zipCode"
-                    placeholder="75001"
-                    value={formData.zipCode}
-                    onChange={(e) => handleInputChange('zipCode', e.target.value)}
-                    size="lg"
-                    variant="bordered"
-                    radius="lg"
+                  <AutocompleteLocation
+                    locations={cityMap}
+                    selectedLocation={formData.location}
+                    setSelectedLocation={(value) => handleInputChange('location', value)}
+                    label="Localisation *"
+                    placeholder="Rechercher une localisation"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-default-700 mb-2">Ville *</label>
-                  <Autocomplete
-                    allowsCustomValue
-                    className="w-full"
-                    defaultItems={cityMap}
-                    defaultSelectedKey=""
-                    placeholder="Ville"
-                    startContent={<MapPinIcon className="w-5 h-5 text-default-400" />}
-                    variant="bordered"
-                    radius="lg"
-                    size="lg"
-                    isClearable
-                    onSelectionChange={(item) => handleInputChange('city', item ? item.toString() : '')}
-                    >
-                    {(locationItem) => <AutocompleteItem key={locationItem.sk}>{locationItem.name}</AutocompleteItem>}
-                </Autocomplete>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div>
+                    <label htmlFor="region" className="block text-sm font-medium text-default-700 mb-2">Région</label>
+                    <Input
+                      id="region"
+                      placeholder="Région"
+                      value={formData.region}
+                      onChange={(e) => handleInputChange('region', e.target.value)}
+                      size="lg"
+                      variant="bordered"
+                      radius="lg"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="department" className="block text-sm font-medium text-default-700 mb-2">Département</label>
+                    <Input
+                      id="department"
+                      placeholder="Département"
+                      value={formData.department}
+                      onChange={(e) => handleInputChange('department', e.target.value)}
+                      size="lg"
+                      variant="bordered"
+                      radius="lg"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="borough" className="block text-sm font-medium text-default-700 mb-2">Arrondissement</label>
+                    <Input
+                      id="borough"
+                      placeholder="Arrondissement"
+                      value={formData.borough}
+                      onChange={(e) => handleInputChange('borough', e.target.value)}
+                      size="lg"
+                      variant="bordered"
+                      radius="lg"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-default-700 mb-2">Quartier / Secteur</label>
-                  <Select
-                    selectedKeys={formData.location ? [formData.location] : []}
-                    onSelectionChange={(keys) => handleInputChange('location', Array.from(keys)[0] as string)}
-                    placeholder="Sélectionner un neighborhood..."
-                    size="lg"
-                    variant="bordered"
-                    radius="lg"
-                  >
-                    {locationOptions.map((location) => (
-                      <SelectItem key={location.value}>
-                        {location.label}
-                      </SelectItem>
-                    ))}
-                  </Select>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="zipCode" className="block text-sm font-medium text-default-700 mb-2">Code postal</label>
+                    <Input
+                      id="zipCode"
+                      placeholder="75001"
+                      value={formData.zipCode}
+                      onChange={(e) => handleInputChange('zipCode', e.target.value)}
+                      size="lg"
+                      variant="bordered"
+                      radius="lg"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="city" className="block text-sm font-medium text-default-700 mb-2">Ville *</label>
+                    <Input
+                      id="city"
+                      placeholder="Ville"
+                      value={formData.city}
+                      onChange={(e) => handleInputChange('city', e.target.value)}
+                      size="lg"
+                      variant="bordered"
+                      radius="lg"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
