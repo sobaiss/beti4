@@ -458,43 +458,43 @@ export default function DeposerUneAnnonceView() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div>
-                    <label htmlFor="region" className="block text-sm font-medium text-default-700 mb-2">Région</label>
-                    <Input
-                      isDisabled
-                      id="region"
-                      value={formData.region}
-                      onChange={(e) => handleInputChange('region', e.target.value)}
-                      size="lg"
-                      variant="bordered"
-                      radius="lg"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="department" className="block text-sm font-medium text-default-700 mb-2">Département</label>
-                    <Input
-                      isDisabled
-                      id="department"
-                      value={formData.department}
-                      onChange={(e) => handleInputChange('department', e.target.value)}
-                      size="lg"
-                      variant="bordered"
-                      radius="lg"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="borough" className="block text-sm font-medium text-default-700 mb-2">Arrondissement</label>
-                    <Input
-                      isDisabled={!!locationHierarchy?.borough}
-                      id="borough"
-                      value={formData.borough}
-                      onChange={(e) => handleInputChange('borough', e.target.value)}
-                      size="lg"
-                      variant="bordered"
-                      radius="lg"
-                    />
-                  </div>
+                <div>
+                  <label htmlFor="region" className="block text-sm font-medium text-default-700 mb-2">Région</label>
+                  <Input
+                    isDisabled
+                    id="region"
+                    value={formData.region}
+                    onChange={(e) => handleInputChange('region', e.target.value)}
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="department" className="block text-sm font-medium text-default-700 mb-2">Département</label>
+                  <Input
+                    isDisabled
+                    id="department"
+                    value={formData.department}
+                    onChange={(e) => handleInputChange('department', e.target.value)}
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="borough" className="block text-sm font-medium text-default-700 mb-2">Arrondissement</label>
+                  <Input
+                    isDisabled={!!locationHierarchy?.borough}
+                    id="borough"
+                    value={formData.borough}
+                    onChange={(e) => handleInputChange('borough', e.target.value)}
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
