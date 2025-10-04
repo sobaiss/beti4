@@ -497,43 +497,43 @@ export default function DeposerUneAnnonceView() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div>
-                    <label htmlFor="zipCode" className="block text-sm font-medium text-default-700 mb-2">Code postal</label>
-                    <Input
-                      isDisabled
-                      id="zipCode"
-                      value={formData.zipCode}
-                      onChange={(e) => handleInputChange('zipCode', e.target.value)}
-                      size="lg"
-                      variant="bordered"
-                      radius="lg"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="city" className="block text-sm font-medium text-default-700 mb-2">Ville *</label>
-                    <Input
-                      isDisabled
-                      id="city"
-                      value={formData.city}
-                      onChange={(e) => handleInputChange('city', e.target.value)}
-                      size="lg"
-                      variant="bordered"
-                      radius="lg"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="neighborhood" className="block text-sm font-medium text-default-700 mb-2">Quartier *</label>
-                    <Input
-                      isDisabled={!!locationHierarchy?.neighborhood}
-                      id="neighborhood"
-                      value={formData.neighborhood}
-                      onChange={(e) => handleInputChange('neighborhood', e.target.value)}
-                      size="lg"
-                      variant="bordered"
-                      radius="lg"
-                    />
-                  </div>
+                <div>
+                  <label htmlFor="zipCode" className="block text-sm font-medium text-default-700 mb-2">Code postal</label>
+                  <Input
+                    isDisabled
+                    id="zipCode"
+                    value={formData.zipCode}
+                    onChange={(e) => handleInputChange('zipCode', e.target.value)}
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="city" className="block text-sm font-medium text-default-700 mb-2">Ville *</label>
+                  <Input
+                    isDisabled
+                    id="city"
+                    value={formData.city}
+                    onChange={(e) => handleInputChange('city', e.target.value)}
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="neighborhood" className="block text-sm font-medium text-default-700 mb-2">Quartier *</label>
+                  <Input
+                    isDisabled={!!locationHierarchy?.neighborhood}
+                    id="neighborhood"
+                    value={formData.neighborhood}
+                    onChange={(e) => handleInputChange('neighborhood', e.target.value)}
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
+                  />
                 </div>
               </div>
               <div>

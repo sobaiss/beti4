@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { 
   MagnifyingGlassIcon, 
   AdjustmentsHorizontalIcon, 
@@ -27,7 +27,7 @@ import { Property } from '@/types/property';
 import { getProperties } from '@/lib/actions/property';
 import { useSearchParams } from 'next/navigation';
 
-export default function PropertiesPage() {
+function PropertiesContent() {
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get('location') || '');
   const [propertyTypes, setPropertyTypes] = useState<string[]>(searchParams.get('propertyTypes')?.split(',') || []);
@@ -234,7 +234,15 @@ export default function PropertiesPage() {
             )}
           </div>
         </div>
-      </div> 
+      </div>
     </div>
+  );
+}
+
+export default function PropertiesPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>}>
+      <PropertiesContent />
+    </Suspense>
   );
 }

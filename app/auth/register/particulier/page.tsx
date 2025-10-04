@@ -65,9 +65,11 @@ export default function RegisterPage() {
     setErrorMessages(emptyErrorMessages);
 
     try {
-      const response = await createUser({
-          ...formData,
+      const formDataObj = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        formDataObj.append(key, String(value));
       });
+      const response = await createUser(formDataObj);
 
       if ('errors' in response) {
         const errors = {
