@@ -41,6 +41,9 @@ import { generatePropertyReference } from '@/lib/utils/property-reference';
 import AutocompleteLocation from '@/ui/components/AutocompleteLocation';
 import { getLocationHierarchy } from '@/lib/utils/location-filter';
 import { set } from 'zod';
+import { Amenity } from '@/types/property';
+import { getCachedAmenities } from '@/lib/utils/amenity-cache';
+import { GlobeAltIcon } from '@heroicons/react/24/outline';
 
 export default function DeposerUneAnnonceView() {
   const { data: session, status } = useSession();
@@ -56,6 +59,9 @@ export default function DeposerUneAnnonceView() {
   const [submitError, setSubmitError] = useState('');
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [locationHierarchy, setLocationHierarchy] = useState<LocationHierarchy | null>(null);
+  const [amenities, setAmenities] = useState<Amenity[]>([]);
+  const [amenitiesGroup, setAmenitiesGroup] = useState<Record<string, Amenity[]>>({});
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -116,6 +122,17 @@ export default function DeposerUneAnnonceView() {
       const locations = await getCachedLocations();
       const cities = locations.filter(location => location.divisionLevel >= 3);
       setCityMap(cities);
+
+      const amenitiesData = await getCachedAmenities();
+      setAmenities(amenitiesData);
+      const amenitiesByGroup = amenitiesData.reduce((acc: Record<string, Amenity[]>, amenity) => {
+        if (!acc[amenity.category]) {
+          acc[amenity.category] = [];
+        }
+        acc[amenity.category].push({ id: amenity.id, name: amenity.name, category: amenity.category });
+        return acc;
+      }, {});
+      setAmenitiesGroup(amenitiesByGroup);
     })();
   }, []);
 
@@ -236,15 +253,7 @@ export default function DeposerUneAnnonceView() {
         yearBuilt: formData.yearBuilt ? parseInt(formData.yearBuilt) : undefined,
         reference,
         images: images.length > 0 ? images : undefined,
-        amenities: [
-          ...(formData.furnished ? [{ amenityId: 'furnished', amenityCount: 1 }] : []),
-          ...(formData.balcony ? [{ amenityId: 'balcony', amenityCount: 1 }] : []),
-          ...(formData.terrace ? [{ amenityId: 'terrace', amenityCount: 1 }] : []),
-          ...(formData.garden ? [{ amenityId: 'garden', amenityCount: 1 }] : []),
-          ...(formData.parking ? [{ amenityId: 'parking', amenityCount: 1 }] : []),
-          ...(formData.elevator ? [{ amenityId: 'elevator', amenityCount: 1 }] : []),
-          ...(formData.cellar ? [{ amenityId: 'cellar', amenityCount: 1 }] : []),
-        ]
+        amenities: selectedAmenities.map(amenityId => ({ amenityId, amenityCount: 1 }))
       };
 
       const response = await createProperty(propertyData);
@@ -694,29 +703,44 @@ export default function DeposerUneAnnonceView() {
                 </div>
               </div>
 
-              <div>
-                <label className="text-base font-medium text-default-900 mb-4 block">Équipements et caractéristiques</label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                  {[
-                    { key: 'furnished', label: 'Meublé' },
-                    { key: 'balcony', label: 'Balcon' },
-                    { key: 'terrace', label: 'Terrasse' },
-                    { key: 'garden', label: 'Jardin' },
-                    { key: 'parking', label: 'Parking' },
-                    { key: 'elevator', label: 'Ascenseur' },
-                    { key: 'cellar', label: 'Cave' }
-                  ].map((item) => (
-                    <div key={item.key} className="flex items-center space-x-2 p-3 border border-default-200 rounded-lg hover:border-default-300 transition-colors">
-                      <Checkbox
-                        id={item.key}
-                        isSelected={formData[item.key as keyof typeof formData] as boolean}
-                        onValueChange={(checked) => handleInputChange(item.key, checked)} // Changed from checked to checked
-                      >
-                        <span className="text-sm font-medium">{item.label}</span>
-                      </Checkbox>
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
+                  <CheckIcon className="w-5 h-5 text-primary-600" />
+                  Caractéristiques
+                </h4>
+                <Card className="p-4 bg-content1">
+                  <CardBody className="p-0">
+                    <div className="space-y-6">
+                      {Object.keys(amenitiesGroup).map((category) => (
+                        <div key={category} className="space-y-3">
+                          <h5 className="text-base font-semibold text-default-800 flex items-center gap-2">
+                            <GlobeAltIcon className="w-4 h-4 text-success-600" />
+                            {category.charAt(0).toUpperCase() + category.slice(1)}
+                          </h5>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                            {amenitiesGroup[category].map((amenity) => (
+                              <div key={amenity.id} className="flex items-center space-x-2 p-2 rounded-lg hover:border-default-300 transition-colors">
+                                <Checkbox
+                                  size="sm"
+                                  isSelected={selectedAmenities.includes(amenity.id)}
+                                  onValueChange={(checked) => {
+                                    if (checked) {
+                                      setSelectedAmenities(prev => [...prev, amenity.id]);
+                                    } else {
+                                      setSelectedAmenities(prev => prev.filter(id => id !== amenity.id));
+                                    }
+                                  }}
+                                >
+                                  <span className="text-sm font-medium">{amenity.name}</span>
+                                </Checkbox>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </CardBody>
+                </Card>
               </div>
             </div>
           </div>
