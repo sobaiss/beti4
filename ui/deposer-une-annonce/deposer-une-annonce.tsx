@@ -561,6 +561,21 @@ export default function DeposerUneAnnonceView() {
             </div>
 
             <div className="space-y-8 max-w-5xl">
+              <div>
+                <Input
+                  id="title"
+                  label="Titre de l'annonce *"
+                  labelPlacement="outside"
+                  placeholder="Ex: Bel appartement lumineux avec balcon"
+                  value={formData.title}
+                  onChange={(e) => handleInputChange('title', e.target.value)}
+                  size="lg"
+                  variant="bordered"
+                  radius="lg"
+                  isRequired
+                />
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 <div>
                   <Input
@@ -577,42 +592,32 @@ export default function DeposerUneAnnonceView() {
                   />
                 </div>
                 <div>
-                  <Select 
-                    selectedKeys={formData.rooms ? [formData.rooms] : []}
-                    onSelectionChange={(keys) => handleInputChange('rooms', Array.from(keys)[0] as string)}
-                    placeholder="Sélectionner"
+                  <Input
+                    id="rooms"
                     label="Nombre de pièces"
                     labelPlacement="outside"
+                    type="number"
+                    placeholder="3"
+                    value={formData.rooms}
+                    onChange={(e) => handleInputChange('rooms', e.target.value)}
                     size="lg"
                     variant="bordered"
                     radius="lg"
-                  >
-                    <SelectItem key="1">1 pièce</SelectItem>
-                    <SelectItem key="2">2 pièces</SelectItem>
-                    <SelectItem key="3">3 pièces</SelectItem>
-                    <SelectItem key="4">4 pièces</SelectItem>
-                    <SelectItem key="5">5 pièces</SelectItem>
-                    <SelectItem key="6+">6+ pièces</SelectItem>
-                  </Select>
+                  />
                 </div>
                 <div>
-                  <Select 
-                    selectedKeys={formData.bedrooms ? [formData.bedrooms] : []}
-                    onSelectionChange={(keys) => handleInputChange('bedrooms', Array.from(keys)[0] as string)}
-                    placeholder="Sélectionner"
+                  <Input
+                    id="bedrooms"
                     label="Chambres"
                     labelPlacement="outside"
+                    type="number"
+                    placeholder="2"
+                    value={formData.bedrooms}
+                    onChange={(e) => handleInputChange('bedrooms', e.target.value)}
                     size="lg"
                     variant="bordered"
                     radius="lg"
-                  >
-                    <SelectItem key="0">0 chambre</SelectItem>
-                    <SelectItem key="1">1 chambre</SelectItem>
-                    <SelectItem key="2">2 chambres</SelectItem>
-                    <SelectItem key="3">3 chambres</SelectItem>
-                    <SelectItem key="4">4 chambres</SelectItem>
-                    <SelectItem key="5+">5+ chambres</SelectItem>
-                  </Select>
+                  />
                 </div>
                 <div>
                   <Select 
