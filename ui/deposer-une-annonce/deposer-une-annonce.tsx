@@ -576,6 +576,21 @@ export default function DeposerUneAnnonceView() {
                 />
               </div>
 
+              <div>
+                <Textarea
+                  id="description"
+                  label="Description du bien"
+                  labelPlacement="outside"
+                  placeholder="Décrivez votre bien, ses atouts, son environnement..."
+                  minRows={6}
+                  value={formData.description}
+                  onChange={(e) => handleInputChange('description', e.target.value)}
+                  size="lg"
+                  variant="bordered"
+                  radius="lg"
+                />
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 <div>
                   <Input
@@ -589,6 +604,7 @@ export default function DeposerUneAnnonceView() {
                     size="lg"
                     variant="bordered"
                     radius="lg"
+                    min={0}
                   />
                 </div>
                 <div>
@@ -603,6 +619,7 @@ export default function DeposerUneAnnonceView() {
                     size="lg"
                     variant="bordered"
                     radius="lg"
+                    min={0}
                   />
                 </div>
                 <div>
@@ -617,6 +634,7 @@ export default function DeposerUneAnnonceView() {
                     size="lg"
                     variant="bordered"
                     radius="lg"
+                    min={0}
                   />
                 </div>
                 <div>
@@ -631,6 +649,7 @@ export default function DeposerUneAnnonceView() {
                     size="lg"
                     variant="bordered"
                     radius="lg"
+                    min={0}
                   />
                 </div>
               </div>
@@ -648,6 +667,7 @@ export default function DeposerUneAnnonceView() {
                     size="lg"
                     variant="bordered"
                     radius="lg"
+                    min={0}
                   />
                 </div>
                 <div>
@@ -655,12 +675,14 @@ export default function DeposerUneAnnonceView() {
                     id="floor"
                     label="Étage"
                     labelPlacement="outside"
+                    type="number"
                     placeholder="2"
                     value={formData.floor}
                     onChange={(e) => handleInputChange('floor', e.target.value)}
                     size="lg"
                     variant="bordered"
                     radius="lg"
+                    min={0}
                   />
                 </div>
                 <div>
@@ -702,21 +724,6 @@ export default function DeposerUneAnnonceView() {
                     </div>
                   ))}
                 </div>
-              </div>
-
-              <div>
-                <Textarea
-                  id="description"
-                  label="Description du bien"
-                  labelPlacement="outside"
-                  placeholder="Décrivez votre bien, ses atouts, son environnement..."
-                  minRows={6}
-                  value={formData.description}
-                  onChange={(e) => handleInputChange('description', e.target.value)}
-                  size="lg"
-                  variant="bordered"
-                  radius="lg"
-                />
               </div>
             </div>
           </div>
@@ -1184,7 +1191,7 @@ export default function DeposerUneAnnonceView() {
                 isDisabled={
                   (currentStep === 1 && (!propertyType || !transactionType)) ||
                   (currentStep === 2 && (!formData.city)) ||
-                  (currentStep === 3 && (!formData.area || !formData.description)) ||
+                  (currentStep === 3 && (!formData.title || !formData.description)) ||
                   (currentStep === 4 && !formData.price) ||
                   (currentStep === 6 && (!formData.contactFirstName || !formData.contactEmail || !formData.contactPhone))
                 }
