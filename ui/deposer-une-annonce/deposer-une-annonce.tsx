@@ -562,10 +562,9 @@ export default function DeposerUneAnnonceView() {
 
             <div className="space-y-8 max-w-5xl">
               <div>
+                <label htmlFor="title" className="text-sm font-medium text-default-700 mb-2">Titre de l'annonce *</label>
                 <Input
                   id="title"
-                  label="Titre de l'annonce *"
-                  labelPlacement="outside"
                   placeholder="Ex: Bel appartement lumineux avec balcon"
                   value={formData.title}
                   onChange={(e) => handleInputChange('title', e.target.value)}
@@ -577,10 +576,9 @@ export default function DeposerUneAnnonceView() {
               </div>
 
               <div>
+                <label htmlFor="description" className="text-sm font-medium text-default-700 mb-2">Description du bien *</label>
                 <Textarea
                   id="description"
-                  label="Description du bien"
-                  labelPlacement="outside"
                   placeholder="Décrivez votre bien, ses atouts, son environnement..."
                   minRows={6}
                   value={formData.description}
@@ -593,93 +591,10 @@ export default function DeposerUneAnnonceView() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <Input
-                    id="area"
-                    label="Surface (m²)"
-                    labelPlacement="outside"
-                    type="number"
-                    placeholder="85"
-                    value={formData.area}
-                    onChange={(e) => handleInputChange('area', e.target.value)}
-                    size="lg"
-                    variant="bordered"
-                    radius="lg"
-                    min={0}
-                  />
-                </div>
-                <div>
-                  <Input
-                    id="landArea"
-                    label="Surface du terrain (m²)"
-                    labelPlacement="outside"
-                    type="number"
-                    placeholder="500"
-                    value={formData.landArea}
-                    onChange={(e) => handleInputChange('landArea', e.target.value)}
-                    size="lg"
-                    variant="bordered"
-                    radius="lg"
-                    min={0}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                <div>
-                  <Input
-                    id="rooms"
-                    label="Nombre de pièces"
-                    labelPlacement="outside"
-                    type="number"
-                    placeholder="3"
-                    value={formData.rooms}
-                    onChange={(e) => handleInputChange('rooms', e.target.value)}
-                    size="lg"
-                    variant="bordered"
-                    radius="lg"
-                    min={0}
-                  />
-                </div>
-                <div>
-                  <Input
-                    id="bedrooms"
-                    label="Chambres"
-                    labelPlacement="outside"
-                    type="number"
-                    placeholder="2"
-                    value={formData.bedrooms}
-                    onChange={(e) => handleInputChange('bedrooms', e.target.value)}
-                    size="lg"
-                    variant="bordered"
-                    radius="lg"
-                    min={0}
-                  />
-                </div>
-                <div>
-                  <Input
-                    id="bathrooms"
-                    label="Salles de bain"
-                    labelPlacement="outside"
-                    type="number"
-                    placeholder="1"
-                    value={formData.bathrooms}
-                    onChange={(e) => handleInputChange('bathrooms', e.target.value)}
-                    size="lg"
-                    variant="bordered"
-                    radius="lg"
-                    min={0}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
+                  <label htmlFor="floor" className="text-sm font-medium text-default-700 mb-2">Étage</label>
                   <Input
                     id="floor"
-                    label="Étage"
-                    labelPlacement="outside"
                     type="number"
-                    placeholder="2"
                     value={formData.floor}
                     onChange={(e) => handleInputChange('floor', e.target.value)}
                     size="lg"
@@ -689,17 +604,92 @@ export default function DeposerUneAnnonceView() {
                   />
                 </div>
                 <div>
+                  <label htmlFor="yearBuilt" className="text-sm font-medium text-default-700 mb-2">Année de construction</label>
                   <Input
                     id="yearBuilt"
-                    label="Année de construction"
-                    labelPlacement="outside"
                     type="number"
-                    placeholder="2010"
                     value={formData.yearBuilt}
                     onChange={(e) => handleInputChange('yearBuilt', e.target.value)}
                     size="lg"
                     variant="bordered"
                     radius="lg"
+                    min={1900}
+                    max={new Date().getFullYear()}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="area" className="text-sm font-medium text-default-700 mb-2">Surface (m²)</label>
+                  <Input
+                    id="area"
+                    type="number"
+                    value={formData.area}
+                    onChange={(e) => handleInputChange('area', e.target.value)}
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
+                    min={0}
+                    endContent={<span className="text-default-400">m²</span>}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="landArea" className="text-sm font-medium text-default-700 mb-2">Surface du terrain (m²)</label>
+                  <Input
+                    id="landArea"
+                    type="number"
+                    value={formData.landArea}
+                    onChange={(e) => handleInputChange('landArea', e.target.value)}
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
+                    min={0}
+                    endContent={<span className="text-default-400">m²</span>}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div>
+                  <label htmlFor="rooms" className="text-sm font-medium text-default-700 mb-2">Nombre de pièces</label>
+                  <Input
+                    id="rooms"
+                    type="number"
+                    value={formData.rooms}
+                    onChange={(e) => handleInputChange('rooms', e.target.value)}
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
+                    min={0}
+                    startContent={<HomeIcon className="w-4 h-4 text-default-400" />}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="bedrooms" className="text-sm font-medium text-default-700 mb-2">Nombre de chambres</label>
+                  <Input
+                    id="bedrooms"
+                    type="number"
+                    value={formData.bedrooms}
+                    onChange={(e) => handleInputChange('bedrooms', e.target.value)}
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
+                    min={0}
+                    startContent={<BuildingOfficeIcon className="w-4 h-4 text-default-400" />}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="bathrooms" className="text-sm font-medium text-default-700 mb-2">Nombre de salles de bain</label>
+                  <Input
+                    id="bathrooms"
+                    type="number"
+                    value={formData.bathrooms}
+                    onChange={(e) => handleInputChange('bathrooms', e.target.value)}
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
+                    min={0}
                   />
                 </div>
               </div>
