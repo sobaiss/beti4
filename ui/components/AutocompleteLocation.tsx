@@ -2,12 +2,12 @@ import { MapPinIcon } from "@heroicons/react/24/outline";
 import { Autocomplete, AutocompleteItem } from "@heroui/react";
 import { Location } from '@/types/location';
 
-export default function AutocompleteLocation({ locations, selectedLocation, setSelectedLocation: setSearchQuery, label, placeholder }: { label?: string, placeholder?: string, locations: Location[], selectedLocation: string, setSelectedLocation: (value: string) => void }) {
+export default function AutocompleteLocation({ locations, selectedLocation, setSelectedLocation: setSearchQuery, label, placeholder, allowsCustomValue }: { label?: string, placeholder?: string, locations: Location[], selectedLocation: string, setSelectedLocation: (value: string) => void, allowsCustomValue?: boolean }) {
   return (
     <Autocomplete
         label={label}
         placeholder={placeholder}
-        allowsCustomValue
+        allowsCustomValue={allowsCustomValue || true}
         onSelectionChange={(key) => setSearchQuery(key as string)}
         className="flex-1"
         defaultItems={locations}

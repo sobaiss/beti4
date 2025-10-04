@@ -33,12 +33,14 @@ import {
 } from '@heroui/react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Location } from '@/types/location';
+import { Location, LocationHierarchy } from '@/types/location';
 import { getCachedLocations } from '@/lib/utils/location-cache';
 import { convertFileToBase64 } from '@/lib/files/files';
 import { createProperty } from '@/lib/actions/property';
 import { generatePropertyReference } from '@/lib/utils/property-reference';
 import AutocompleteLocation from '@/ui/components/AutocompleteLocation';
+import { getLocationHierarchy } from '@/lib/utils/location-filter';
+import { set } from 'zod';
 
 export default function DeposerUneAnnonceView() {
   const { data: session, status } = useSession();
@@ -53,6 +55,7 @@ export default function DeposerUneAnnonceView() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [locationHierarchy, setLocationHierarchy] = useState<LocationHierarchy | null>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -89,31 +92,6 @@ export default function DeposerUneAnnonceView() {
     useUserContact: true
   });
 
-  const locations = [
-    // N'Djamena neighborhoods
-    'Chagoua',
-    'Moursal',
-    'Farcha',
-    'Klemat',
-    'Diguel',
-    'Kabalaye',
-    'Gassi',
-    'Ridina',
-    'Madjorio',
-    'Gardolé',
-    'Amriguébé',
-    'Walia',
-    'Sabangali',
-    'Dembé',
-    'Goudji',
-    // Other areas
-    'Centre-ville',
-    'Zone industrielle',
-    'Zone résidentielle',
-    'Quartier administratif',
-    'Zone commerciale'
-  ];
-
   // Redirect if not authenticated
   useEffect(() => {
     if (status === 'loading') return;
@@ -135,10 +113,13 @@ export default function DeposerUneAnnonceView() {
     // Track property view on component mount
   useEffect(() => {
     (async () => {
-      const cities = await getCachedLocations();
+      const locations = await getCachedLocations();
+      const cities = locations.filter(location => location.divisionLevel >= 3);
       setCityMap(cities);
     })();
   }, []);
+
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     const newErrors: string[] = [];
@@ -299,6 +280,29 @@ export default function DeposerUneAnnonceView() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleLocationInputChange = (field: string, value: string | boolean) => {
+    console.log(`Field changed: ${field}, New value: ${value}`);
+    getLocationHierarchy(value as string).then(hierarchy => {
+      setLocationHierarchy(hierarchy);
+      if (!hierarchy) {
+        return;
+      }
+
+      console.log('Location hierarchy:', hierarchy);
+
+      setFormData(prev => ({
+        ...prev,
+        region: hierarchy.region?.displayName || '',
+        department: hierarchy.department?.displayName || '',
+        city: hierarchy.city?.displayName || '',
+        borough: hierarchy.borough?.displayName || '',
+        neighborhood: hierarchy.neighborhood?.displayName || '',
+        zipCode: hierarchy.selected?.zip || '',
+        location: value as string
+      }));
+    });
+  };
+
   const nextStep = () => {
     if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
@@ -310,11 +314,6 @@ export default function DeposerUneAnnonceView() {
       setCurrentStep(currentStep - 1);
     }
   };
-
-  const locationOptions = locations.map(location => ({
-    value: location,
-    label: location
-  }));
 
   const renderStepContent = () => {
     switch (currentStep) {
@@ -447,27 +446,15 @@ export default function DeposerUneAnnonceView() {
             </div>
 
             <div className="space-y-6 max-w-4xl">
-              <div>
-                <label htmlFor="address" className="block text-sm font-medium text-default-700 mb-2">Adresse complète</label>
-                <Input
-                  id="address"
-                  placeholder="Numéro et nom de rue"
-                  value={formData.address}
-                  onChange={(e) => handleInputChange('address', e.target.value)}
-                  size="lg"
-                  variant="bordered"
-                  radius="lg"
-                />
-              </div>
-
               <div className="space-y-4">
                 <div>
                   <AutocompleteLocation
+                    allowsCustomValue={false}
                     locations={cityMap}
                     selectedLocation={formData.location}
-                    setSelectedLocation={(value) => handleInputChange('location', value)}
+                    setSelectedLocation={(value) => handleLocationInputChange('location', value)}
                     label="Localisation *"
-                    placeholder="Rechercher une localisation"
+                    placeholder="Rechercher une ville, un quartier, un arrondissement..."
                   />
                 </div>
 
@@ -475,8 +462,8 @@ export default function DeposerUneAnnonceView() {
                   <div>
                     <label htmlFor="region" className="block text-sm font-medium text-default-700 mb-2">Région</label>
                     <Input
+                      isDisabled
                       id="region"
-                      placeholder="Région"
                       value={formData.region}
                       onChange={(e) => handleInputChange('region', e.target.value)}
                       size="lg"
@@ -487,8 +474,8 @@ export default function DeposerUneAnnonceView() {
                   <div>
                     <label htmlFor="department" className="block text-sm font-medium text-default-700 mb-2">Département</label>
                     <Input
+                      isDisabled
                       id="department"
-                      placeholder="Département"
                       value={formData.department}
                       onChange={(e) => handleInputChange('department', e.target.value)}
                       size="lg"
@@ -499,8 +486,8 @@ export default function DeposerUneAnnonceView() {
                   <div>
                     <label htmlFor="borough" className="block text-sm font-medium text-default-700 mb-2">Arrondissement</label>
                     <Input
+                      isDisabled={!!locationHierarchy?.borough}
                       id="borough"
-                      placeholder="Arrondissement"
                       value={formData.borough}
                       onChange={(e) => handleInputChange('borough', e.target.value)}
                       size="lg"
@@ -510,12 +497,12 @@ export default function DeposerUneAnnonceView() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
                     <label htmlFor="zipCode" className="block text-sm font-medium text-default-700 mb-2">Code postal</label>
                     <Input
+                      isDisabled
                       id="zipCode"
-                      placeholder="75001"
                       value={formData.zipCode}
                       onChange={(e) => handleInputChange('zipCode', e.target.value)}
                       size="lg"
@@ -526,8 +513,8 @@ export default function DeposerUneAnnonceView() {
                   <div>
                     <label htmlFor="city" className="block text-sm font-medium text-default-700 mb-2">Ville *</label>
                     <Input
+                      isDisabled
                       id="city"
-                      placeholder="Ville"
                       value={formData.city}
                       onChange={(e) => handleInputChange('city', e.target.value)}
                       size="lg"
@@ -535,7 +522,31 @@ export default function DeposerUneAnnonceView() {
                       radius="lg"
                     />
                   </div>
+                  <div>
+                    <label htmlFor="neighborhood" className="block text-sm font-medium text-default-700 mb-2">Quartier *</label>
+                    <Input
+                      isDisabled={!!locationHierarchy?.neighborhood}
+                      id="neighborhood"
+                      value={formData.neighborhood}
+                      onChange={(e) => handleInputChange('neighborhood', e.target.value)}
+                      size="lg"
+                      variant="bordered"
+                      radius="lg"
+                    />
+                  </div>
                 </div>
+              </div>
+              <div>
+                <label htmlFor="address" className="block text-sm font-medium text-default-700 mb-2">Adresse / indications (optionnelle)</label>
+                <Input
+                  id="address"
+                  placeholder="Près rond-point, à côté de..."
+                  value={formData.address}
+                  onChange={(e) => handleInputChange('address', e.target.value)}
+                  size="lg"
+                  variant="bordered"
+                  radius="lg"
+                />
               </div>
             </div>
           </div>

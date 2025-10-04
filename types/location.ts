@@ -5,6 +5,15 @@ export type Location = {
   displayName: string; // Display name of the city
   zip: string; // Postal code of the city
   gmap?: string; // Google Maps link for the city
-  divisionLevel?: number; // Administrative division level
-  divisionName?: string; // Name of the administrative division
+  divisionLevel: number; // Administrative division level
+  divisionName: string; // Name of the administrative division
+};
+
+export type LocationHierarchy = {
+  city?: Location;
+  borough?: Location;
+  neighborhood?: Location;
+  department?: Location;
+  region?: Location;
+  selected?: Location;
 };
