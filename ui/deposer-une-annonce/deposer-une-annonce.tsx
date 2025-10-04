@@ -620,25 +620,36 @@ export default function DeposerUneAnnonceView() {
                   />
                 </div>
                 <div>
-                  <Select 
-                    selectedKeys={formData.bathrooms ? [formData.bathrooms] : []}
-                    onSelectionChange={(keys) => handleInputChange('bathrooms', Array.from(keys)[0] as string)}
-                    placeholder="Sélectionner"
+                  <Input
+                    id="bathrooms"
                     label="Salles de bain"
                     labelPlacement="outside"
+                    type="number"
+                    placeholder="1"
+                    value={formData.bathrooms}
+                    onChange={(e) => handleInputChange('bathrooms', e.target.value)}
                     size="lg"
                     variant="bordered"
                     radius="lg"
-                  >
-                    <SelectItem key="1">1 salle de bain</SelectItem>
-                    <SelectItem key="2">2 salles de bain</SelectItem>
-                    <SelectItem key="3">3 salles de bain</SelectItem>
-                    <SelectItem key="4+">4+ salles de bain</SelectItem>
-                  </Select>
+                  />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div>
+                  <Input
+                    id="landArea"
+                    label="Surface du terrain (m²)"
+                    labelPlacement="outside"
+                    type="number"
+                    placeholder="500"
+                    value={formData.landArea}
+                    onChange={(e) => handleInputChange('landArea', e.target.value)}
+                    size="lg"
+                    variant="bordered"
+                    radius="lg"
+                  />
+                </div>
                 <div>
                   <Input
                     id="floor"
