@@ -43,7 +43,6 @@
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^15.4.7",
-    "@types/bcrypt": "^6.0.0",
     "@types/node": "^24.1.0",
     "@types/react": "^18.3.23",
     "tsx": "^4.20.3"
