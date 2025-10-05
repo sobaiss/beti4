@@ -31,6 +31,8 @@ import {
   SelectItem,
   Checkbox,
   DatePicker,
+  RadioGroup,
+  Radio,
 } from '@heroui/react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -959,14 +961,19 @@ export default function DeposerUneAnnonceView() {
             </div>
 
             <div className="space-y-6 max-w-2xl">
-              <div className="flex items-center space-x-2 mb-4">
-                <Checkbox
-                  isSelected={formData.useUserContact}
-                  onValueChange={(checked) => handleInputChange('useUserContact', checked)}
-                > 
+              <RadioGroup
+                value={formData.useUserContact ? 'user' : 'new'}
+                onValueChange={(value) => handleInputChange('useUserContact', value === 'user')}
+                label="Informations de contact"
+                className="mb-6"
+              >
+                <Radio value="user" size="lg">
                   Utiliser mes informations de contact
-                </Checkbox>
-              </div>
+                </Radio>
+                <Radio value="new" size="lg">
+                  Utiliser un nouveau contact
+                </Radio>
+              </RadioGroup>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
