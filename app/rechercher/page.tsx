@@ -46,7 +46,7 @@ import { getProperties } from '@/lib/actions/property';
 import { getCachedLocations } from '@/lib/utils/location-cache';
 import { Location } from '@/types/location';
 import { getCachedAmenities } from '@/lib/utils/amenity-cache';
-import { ITEMS_PER_PAGE, propertyTypesConfig, sortOptionsConfig, transactionsConfig } from '@/lib/config';
+import { CURRENCY, ITEMS_PER_PAGE, propertyTypesConfig, sortOptionsConfig, transactionsConfig } from '@/lib/config';
 import AutocompleteLocation from '@/ui/components/AutocompleteLocation';
 import SelectTransaction from '@/ui/components/SelectTransaction';
 
@@ -405,7 +405,7 @@ function SearchContent() {
                   {/* Price Range */}
                   <div className="space-y-4">
                     <h4 className="text-lg font-semibold text-default-900 flex items-center gap-2">
-                      <span className="text-primary-600">€</span>
+                      <span className="text-primary-600">{CURRENCY}</span>
                       Fourchette de Prix
                     </h4>
                     <Card className="p-4 bg-content1">
@@ -422,7 +422,7 @@ function SearchContent() {
                                   const value = parseInt(e.target.value) || 0;
                                   setTempPriceRange([value, tempPriceRange[1]]);
                                 }}
-                                startContent={<span className="text-default-400">€</span>}
+                                startContent={<span className="text-default-400">{CURRENCY}</span>}
                                 variant="bordered"
                                 size="lg"
                                 aria-label="Prix minimum"
@@ -438,7 +438,7 @@ function SearchContent() {
                                   const value = parseInt(e.target.value) || 0;
                                   setTempPriceRange([tempPriceRange[0], value]);
                                 }}
-                                startContent={<span className="text-default-400">€</span>}
+                                startContent={<span className="text-default-400">{CURRENCY}</span>}
                                 variant="bordered"
                                 size="lg"
                                 aria-label="Prix maximum"
@@ -861,9 +861,9 @@ function SearchContent() {
                       variant="flat" 
                       onClose={() => setPriceRange([0, 0])}
                       size="sm"
-                      aria-label={`Supprimer le filtre prix: ${displayRange(priceRange, '€')}`}
+                      aria-label={`Supprimer le filtre prix: ${displayRange(priceRange, `${CURRENCY}`)}`}
                     >
-                      Prix: {displayRange(priceRange, '€')}
+                      Prix: {displayRange(priceRange, `${CURRENCY}`)}
                     </Chip>
                   )}
                   {(areaRange[0] > 0 || areaRange[1] > 0) && (

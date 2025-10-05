@@ -10,6 +10,7 @@ import {
 import { Button, Modal, ModalContent, ModalBody } from '@heroui/react';
 import Image from 'next/image';
 import { Property, PropertyImage } from '@/types/property';
+import { CURRENCY } from '@/lib/config';
 
 interface PropertyImageGalleryProps {
   property: Property;
@@ -74,7 +75,7 @@ export default function PropertyImageGallery({
     "contentUrl": propertyImages[0]?.url,
     "description": `${property.title} - ${property.location}`,
     "name": property.title,
-    "caption": `${property.type} à ${property.location} - ${property.price}€`
+    "caption": `${property.type} à ${property.location} - ${property.price}${CURRENCY}`
   };
 
   return (

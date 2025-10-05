@@ -69,3 +69,5 @@ export const sortOptionsConfig = [
 ];
 
 export const ITEMS_PER_PAGE = 3;
+
+export const CURRENCY = 'FCFA';

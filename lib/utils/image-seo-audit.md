@@ -65,7 +65,7 @@ generateSrcSet(baseUrl, [320, 640, 768, 1024, 1280, 1920])
   "contentUrl": "image-url",
   "description": "Property title - location",
   "name": "Property title",
-  "caption": "Type à location - price€",
+  "caption": "Type à location - price",
   "representativeOfPage": true
 }
 ```

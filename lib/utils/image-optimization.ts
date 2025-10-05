@@ -1,5 +1,7 @@
 // Image optimization utilities for SEO and performance
 
+import { CURRENCY } from "../config";
+
 export interface ImageSEOConfig {
   alt: string;
   title?: string;
@@ -113,7 +115,7 @@ export function generateImageStructuredData(property: any, images: any[]) {
     "copyrightNotice": "© Beti",
     "description": `${property.title} - ${property.location}`,
     "name": property.title,
-    "caption": `${property.type} à ${property.location} - ${property.price}€`,
+    "caption": `${property.type} à ${property.location} - ${property.price}${CURRENCY}`,
     "representativeOfPage": true,
     "isPartOf": {
       "@type": "RealEstateListing",

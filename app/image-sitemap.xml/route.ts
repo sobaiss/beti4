@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getProperties } from '@/lib/actions/property'
+import { CURRENCY } from '@/lib/config'
 
 export async function GET() {
   const baseUrl = 'https://beti.com'
@@ -21,7 +22,7 @@ export async function GET() {
       <image:image>
         <image:loc>${image.url}</image:loc>
         <image:title>${property.title} - ${imageType}</image:title>
-        <image:caption>${property.title} à ${property.location} - ${property.transactionType === 'achat' ? 'À vendre' : 'À louer'} ${property.price}€</image:caption>
+        <image:caption>${property.title} à ${property.location} - ${property.transactionType === 'achat' ? 'À vendre' : 'À louer'} ${property.price}${CURRENCY}</image:caption>
         <image:geo_location>${property.location}</image:geo_location>
         <image:license>https://beti.com/license</image:license>
       </image:image>

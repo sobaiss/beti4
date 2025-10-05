@@ -45,6 +45,7 @@ import { set } from 'zod';
 import { Amenity } from '@/types/property';
 import { getCachedAmenities } from '@/lib/utils/amenity-cache';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
+import { CURRENCY, rateTypesConfig } from '@/lib/config';
 
 export default function DeposerUneAnnonceView() {
   const { data: session, status } = useSession();
@@ -537,7 +538,7 @@ export default function DeposerUneAnnonceView() {
                 </div>
 
                 <div>
-                  <label htmlFor="neighborhood" className="block text-sm font-medium text-default-700 mb-2">Quartier *</label>
+                  <label htmlFor="neighborhood" className="block text-sm font-medium text-default-700 mb-2">Quartier</label>
                   <Input
                     isDisabled={!!locationHierarchy?.neighborhood}
                     id="neighborhood"
@@ -773,7 +774,6 @@ export default function DeposerUneAnnonceView() {
                     <Input
                       id="price"
                       type="number"
-                      placeholder={transactionType === 'achat' ? '450000' : '1200'}
                       value={formData.price}
                       onChange={(e) => handleInputChange('price', e.target.value)}
                       size="lg"
@@ -782,10 +782,9 @@ export default function DeposerUneAnnonceView() {
                       classNames={{
                         input: "text-xl font-semibold"
                       }}
+                      min={0}
+                      endContent={<span className="text-default-400">{CURRENCY}</span>}
                     />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-default-500 font-medium text-lg">
-                      €
-                    </div>
                   </div>
                 </div>
 
@@ -795,7 +794,7 @@ export default function DeposerUneAnnonceView() {
                   </label>
                   <Select
                     id="rate"
-                    selectedKeys={formData.rate ? [formData.rate] : []}
+                    selectedKeys={formData.rate ? [formData.rate] : [transactionType === 'achat' ? 'unique' : 'mois']}
                     onSelectionChange={(keys) => handleInputChange('rate', Array.from(keys)[0] as string)}
                     placeholder="Sélectionner"
                     label=""
@@ -803,15 +802,19 @@ export default function DeposerUneAnnonceView() {
                     size="lg"
                     variant="bordered"
                     radius="lg"
+                    aria-label='Sélectionner la période'
                   >
-                    <SelectItem key="heure">Heure</SelectItem>
-                    <SelectItem key="jour">Jour</SelectItem>
-                    <SelectItem key="semaine">Semaine</SelectItem>
-                    <SelectItem key="mois">Mois</SelectItem>
-                    <SelectItem key="trimestre">Trimestre</SelectItem>
-                    <SelectItem key="semestre">Semestre</SelectItem>
-                    <SelectItem key="an">Année</SelectItem>
-                    <SelectItem key="unique">Unique</SelectItem>
+                    {transactionType === 'location' ? (
+                      <>
+                        {rateTypesConfig.map((rate) => (
+                          <SelectItem key={rate.value}>{rate.label}</SelectItem>
+                        ))}
+                      </>
+                    ) : (
+                      <>
+                        <SelectItem key="unique">Unique</SelectItem>
+                      </>
+                    )}
                   </Select>
                 </div>
               </div>
@@ -829,35 +832,8 @@ export default function DeposerUneAnnonceView() {
                   label=""
                   labelPlacement="outside"
                   showMonthAndYearPickers
+                  aria-label='Sélectionner une date de disponibilité'
                 />
-              </div>
-
-              {transactionType === 'location' && (
-                <div className="bg-primary-50 p-6 rounded-xl border border-primary-200">
-                  <h3 className="font-medium text-primary-900 mb-2">Charges et frais supplémentaires</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox>
-                        Charges comprises dans le loyer
-                      </Checkbox>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox>
-                        Dépôt de garantie demandé
-                      </Checkbox>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div className="bg-content2 p-6 rounded-xl border border-content3">
-                <h3 className="font-medium text-default-900 mb-2">Estimation automatique</h3>
-                <p className="text-sm text-default-600">
-                  Basée sur les biens similaires dans votre secteur, nous estimons votre bien entre{' '} 
-                  <span className="font-medium text-primary-900">
-                    {transactionType === 'achat' ? '420 000€ et 480 000€' : '1 100€ et 1 400€/mois'}
-                  </span>
-                </p>
               </div>
             </div>
           </div>
