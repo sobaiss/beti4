@@ -20,16 +20,17 @@ import {
   XMarkIcon,
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
-import { 
-  Button, 
-  Input, 
-  Textarea, 
-  Card, 
-  CardBody, 
-  CardHeader, 
-  Select, 
-  SelectItem, 
+import {
+  Button,
+  Input,
+  Textarea,
+  Card,
+  CardBody,
+  CardHeader,
+  Select,
+  SelectItem,
   Checkbox,
+  DatePicker,
 } from '@heroui/react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -68,6 +69,7 @@ export default function DeposerUneAnnonceView() {
     description: '',
     price: '',
     rate: 'unique',
+    availableAt: '',
     location: '',
     address: '',
     zipCode: '',
@@ -240,6 +242,8 @@ export default function DeposerUneAnnonceView() {
         title: formData.title,
         description: formData.description,
         price: parseFloat(formData.price),
+        rate: formData.rate as any,
+        availableAt: formData.availableAt ? new Date(formData.availableAt) : undefined,
         location: formData.location,
         address: formData.address,
         zipCode: formData.zipCode,
@@ -760,28 +764,72 @@ export default function DeposerUneAnnonceView() {
             </div>
 
             <div className="space-y-6 max-w-2xl">
-              <div className="space-y-4">
-                <label htmlFor="price" className="text-lg font-medium block mb-2">
-                  {transactionType === 'achat' ? 'Prix de vente' : 'Loyer mensuel'}
-                </label>
-                <div className="relative mt-2">
-                  <Input
-                    id="price"
-                    type="number"
-                    placeholder={transactionType === 'achat' ? '450000' : '1200'}
-                    value={formData.price}
-                    onChange={(e) => handleInputChange('price', e.target.value)}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <label htmlFor="price" className="text-lg font-medium block mb-2">
+                    {transactionType === 'achat' ? 'Prix de vente' : 'Loyer'}
+                  </label>
+                  <div className="relative mt-2">
+                    <Input
+                      id="price"
+                      type="number"
+                      placeholder={transactionType === 'achat' ? '450000' : '1200'}
+                      value={formData.price}
+                      onChange={(e) => handleInputChange('price', e.target.value)}
+                      size="lg"
+                      variant="bordered"
+                      radius="lg"
+                      classNames={{
+                        input: "text-xl font-semibold"
+                      }}
+                    />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-default-500 font-medium text-lg">
+                      €
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <label htmlFor="rate" className="text-lg font-medium block mb-2">
+                    Période
+                  </label>
+                  <Select
+                    id="rate"
+                    selectedKeys={formData.rate ? [formData.rate] : []}
+                    onSelectionChange={(keys) => handleInputChange('rate', Array.from(keys)[0] as string)}
+                    placeholder="Sélectionner"
+                    label=""
+                    labelPlacement="outside"
                     size="lg"
                     variant="bordered"
                     radius="lg"
-                    classNames={{
-                      input: "text-xl font-semibold"
-                    }}
-                  />
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 text-default-500 font-medium text-lg">
-                    €{transactionType === 'location' ? '/mois' : ''}
-                  </div>
+                  >
+                    <SelectItem key="heure">Heure</SelectItem>
+                    <SelectItem key="jour">Jour</SelectItem>
+                    <SelectItem key="semaine">Semaine</SelectItem>
+                    <SelectItem key="mois">Mois</SelectItem>
+                    <SelectItem key="trimestre">Trimestre</SelectItem>
+                    <SelectItem key="semestre">Semestre</SelectItem>
+                    <SelectItem key="an">Année</SelectItem>
+                    <SelectItem key="unique">Unique</SelectItem>
+                  </Select>
                 </div>
+              </div>
+
+              <div className="space-y-4">
+                <label htmlFor="availableAt" className="text-lg font-medium block mb-2">
+                  Disponible à partir de
+                </label>
+                <DatePicker
+                  id="availableAt"
+                  onChange={(date) => handleInputChange('availableAt', date ? date.toString().split('T')[0] : '')}
+                  variant="bordered"
+                  size="lg"
+                  radius="lg"
+                  label=""
+                  labelPlacement="outside"
+                  showMonthAndYearPickers
+                />
               </div>
 
               {transactionType === 'location' && (
