@@ -48,6 +48,7 @@ import { Amenity } from '@/types/property';
 import { getCachedAmenities } from '@/lib/utils/amenity-cache';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
 import { CURRENCY, rateTypesConfig } from '@/lib/config';
+import { de } from 'zod/v4/locales';
 
 export default function DeposerUneAnnonceView() {
   const { data: session, status } = useSession();
@@ -245,17 +246,23 @@ export default function DeposerUneAnnonceView() {
         title: formData.title,
         description: formData.description,
         price: parseFloat(formData.price),
-        rate: formData.rate as any,
         availableAt: formData.availableAt ? new Date(formData.availableAt) : undefined,
         location: formData.location,
         address: formData.address,
         zipCode: formData.zipCode,
         city: formData.city,
+        region: formData.region,
+        department: formData.department,
+        borough: formData.borough,
+        neighborhood: formData.neighborhood,
+        area: formData.area ? parseFloat(formData.area) : undefined,
+        landArea: formData.landArea ? parseFloat(formData.landArea) : undefined,
+        rooms: formData.rooms ? parseInt(formData.rooms) : undefined,
+        bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : undefined,
+        bathrooms: formData.bathrooms ? parseInt(formData.bathrooms) : undefined,
+        rate: formData.rate,
         type: propertyType as any,
         transactionType: transactionType as any,
-        bedrooms: parseInt(formData.bedrooms) || 0,
-        bathrooms: parseInt(formData.bathrooms) || 0,
-        area: parseFloat(formData.area),
         floor: formData.floor ? parseInt(formData.floor) : undefined,
         yearBuilt: formData.yearBuilt ? parseInt(formData.yearBuilt) : undefined,
         reference,
@@ -981,7 +988,6 @@ export default function DeposerUneAnnonceView() {
                     id="contactFirstName"
                     label="Prénom"
                     labelPlacement="outside"
-                    placeholder="Prénom"
                     size="lg"
                     variant="bordered"
                     radius="lg"
@@ -995,7 +1001,6 @@ export default function DeposerUneAnnonceView() {
                     id="contactLastName"
                     label="Nom"
                     labelPlacement="outside"
-                    placeholder="Nom"
                     size="lg"
                     variant="bordered"
                     radius="lg"
@@ -1009,13 +1014,12 @@ export default function DeposerUneAnnonceView() {
               <div>
                 <Input
                   id="contactEmail"
-                  label="Adresse email"
+                  label="Adresse email *"
                   labelPlacement="outside"
                   variant="bordered"
                   radius="lg"
                   size="lg"
                   type="email"
-                  placeholder="Email"
                   value={formData.contactEmail}
                   onChange={(e) => handleInputChange('contactEmail', e.target.value)}
                   isDisabled={formData.useUserContact}
@@ -1025,13 +1029,12 @@ export default function DeposerUneAnnonceView() {
               <div>
                 <Input
                   id="contactPhone"
-                  label="Numéro de téléphone"
+                  label="Numéro de téléphone *"
                   labelPlacement="outside"
                   variant="bordered"
                   radius="lg"
                   size="lg"
                   type="tel"
-                  placeholder="66000000"
                   value={formData.contactPhone}
                   onChange={(e) => handleInputChange('contactPhone', e.target.value)}
                   isDisabled={formData.useUserContact}
@@ -1230,7 +1233,7 @@ export default function DeposerUneAnnonceView() {
                   isLoading={isSubmitting}
                   isDisabled={isSubmitting || submitSuccess}
                 >
-                  {isSubmitting ? 'Publication en cours...' : submitSuccess ? 'Annonce publiée !' : 'Publier l\'annonce'}
+                  {isSubmitting ? 'Publication en cours...' : submitSuccess ? 'Annonce envoyée !' : 'Envoyer l\'annonce'}
                 </Button>
               </Button>
             ) : (

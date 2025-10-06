@@ -1,12 +1,48 @@
 import { Agency } from "@/types/agency";
 import { User } from "@/types/user";
 
-export type PropertyStatusEnum = 'disponible' | 'vendu' | 'loue' | 'desactive' | 'brouillon';
-export type PropertyTypeEnum = 'appartement' | 'maison' | 'villa' | 'bureau_commerce' | 'terrain' | 'terrain_agricole';
-export type PropertyTransactionTypeEnum = 'achat' | 'location';
-export type PropertyAmenityCategoryEnum = 'interieur' | 'exterieur' | 'equipement';
-export type OwnerTypeEnum = 'particulier' | 'professionnel';
-export type RateTypeEnum = 'jour' | 'semaine' | 'mois' | 'an' | 'heure' | 'trimestre' | 'semestre' | 'unique';
+export enum PropertyStatusEnum {
+  disponible = 'disponible',
+  vendu = 'vendu',
+  loue = 'loue',
+  desactive = 'desactive',
+  brouillon = 'brouillon'
+};
+
+export enum PropertyTransactionTypeEnum {
+  achat = 'achat',
+  location = 'location'
+};
+export enum PropertyAmenityCategoryEnum {
+  interieur = 'interieur',
+  exterieur = 'exterieur',
+  equipement = 'equipement',
+};
+
+export enum OwnerTypeEnum {
+  particulier = 'particulier',
+  professionnel = 'professionnel'
+};
+export enum RateTypeEnum {
+  jour = 'jour',
+  semaine = 'semaine',
+  mois = 'mois',
+  an = 'an',
+  heure = 'heure',
+  trimestre = 'trimestre',
+  semestre = 'semestre',
+  unique = 'unique'
+};
+
+export enum PropertyTypeEnum {
+  appartement = 'appartement',
+  maison = 'maison',
+  terrain = 'terrain',
+  bureau = 'bureau',
+  commerce = 'commerce',
+  parking = 'parking',
+  autre = 'autre'
+};
 
 export interface Property {
   id: string;
@@ -42,10 +78,12 @@ export interface Property {
   ownerId: string
   owner?: User;
   agencyId?: string;
+  useUserContact?: boolean;
   agency?: Agency;
   images?: PropertyImage[];
   amenities?: PropertyAmenity[];
   favorites?: PropertyFavorite[];
+  contact?: PropertyContact;
   _count?: {
     favorites: number;
   };
@@ -97,4 +135,14 @@ export type PaginatedProperty = {
     pages: number;
     limit: number;
   };
+}
+
+export type PropertyContact = {
+  id: string;
+  phone?: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  propertyId: string;
+  property?: Property;
 }
