@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { 
   MagnifyingGlassIcon,
   AdjustmentsHorizontalIcon, 
@@ -59,6 +59,9 @@ const displayRange = (range: number[], metric: string) => {
 
 function SearchContent() {
   const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+
   const [searchQuery, setSearchQuery] = useState(searchParams.get('location') || '');
   const [propertyTypes, setPropertyTypes] = useState<string[]>(searchParams.get('propertyTypes')?.split(',') || []);
   const [transactionType, setTransactionType] = useState(searchParams.get('transactionType') || '');
@@ -193,40 +196,56 @@ function SearchContent() {
     setTempFeatures(features);
     setTempAvailableAt(availableAt);
     setTempProposedBy(proposedBy);
+
+    fetchProperties();
   }, [searchParams]);
+
+  const createQueryString = () => {
+      const params = new URLSearchParams();
+      params.set('page', page.toString());
+      params.set('limit', limit.toString());
+      params.set('sortBy', sortBy);
+      params.set('viewMode', viewMode);
+      if (searchQuery) {
+        params.set('location', searchQuery);
+      }
+      if (propertyTypes.length > 0) {
+        params.set('propertyTypes', propertyTypes.join(','));
+      }
+      if (transactionType) {
+        params.set('transactionType', transactionType);
+      }
+      if (priceRange.filter(Boolean).length > 0) {
+        params.set('price', priceRange.join(','));
+      }
+      if (areaRange.filter(Boolean).length > 0) {
+        params.set('area', areaRange.join(','));
+      }
+      if (landAreaRange.filter(Boolean).length > 0) {
+        params.set('landArea', landAreaRange.join(','));
+      }
+      if (bedroomsRange.filter(Boolean).length > 0) {
+        params.set('bedrooms', bedroomsRange.join(','));
+      }
+      if (roomsRange.filter(Boolean).length > 0) {
+        params.set('rooms', roomsRange.join(','));
+      }
+      if (features.length > 0) {
+        params.set('amenities', features.join(','));
+      }
+      if (availableAt) {
+        params.set('availableAt', availableAt);
+      }
+      if (proposedBy) {
+        params.set('owner', proposedBy);
+      }
+
+      return params.toString();
+  };
 
   // Fetch properties from API
   useEffect(() => {
-    const fetchProperties = async () => {
-      setLoading(true);
-      try {
-        const filters = {
-          location: searchQuery !== '' ? searchQuery : undefined,
-          propertyTypes: propertyTypes.length > 0 ? propertyTypes.join(',') : undefined,
-          transactionType: transactionType !== '' ? transactionType : undefined,
-          price: priceRange.filter(Boolean).length > 0 ? priceRange.join(',') : undefined,
-          area: areaRange.filter(Boolean).length > 0 ? areaRange.join(',') : undefined,
-          landArea: landAreaRange.filter(Boolean).length > 0 ? landAreaRange.join(',') : undefined,
-          rooms: roomsRange.filter(Boolean).length > 0 ? roomsRange.join(',') : undefined,
-          bedrooms: bedroomsRange.filter(Boolean).length > 0 ? bedroomsRange.join(',') : undefined,
-          ownerType: proposedBy !== '' ? proposedBy : undefined,
-          amenities: features.length > 0 ? features.join(',') : undefined,
-          availableAt: availableAt !== '' ? availableAt : undefined,
-        };
-
-        const sortOption = sortOptionsConfig.find(option => option.value === sortBy);
-        const response = await getProperties(filters, page, limit, sortOption?.field, sortOption?.order);
-
-        setProperties(response?.properties || []);
-        setTotal(response?.pagination.total || 0);
-      } catch (error) {
-        console.error('Error fetching properties:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProperties();
+    router.push(pathname + '?' + createQueryString());
   }, [searchQuery, page, limit, propertyTypes, transactionType, priceRange, areaRange, landAreaRange, bedroomsRange, roomsRange, features, availableAt, proposedBy, sortBy]);
 
   useEffect(() => {
@@ -262,6 +281,35 @@ function SearchContent() {
       setAmenitiesGroup({});
     });
   }
+
+  const fetchProperties = async () => {
+    setLoading(true);
+    try {
+      const filters = {
+        location: searchQuery !== '' ? searchQuery : undefined,
+        propertyTypes: propertyTypes.length > 0 ? propertyTypes.join(',') : undefined,
+        transactionType: transactionType !== '' ? transactionType : undefined,
+        price: priceRange.filter(Boolean).length > 0 ? priceRange.join(',') : undefined,
+        area: areaRange.filter(Boolean).length > 0 ? areaRange.join(',') : undefined,
+        landArea: landAreaRange.filter(Boolean).length > 0 ? landAreaRange.join(',') : undefined,
+        rooms: roomsRange.filter(Boolean).length > 0 ? roomsRange.join(',') : undefined,
+        bedrooms: bedroomsRange.filter(Boolean).length > 0 ? bedroomsRange.join(',') : undefined,
+        ownerType: proposedBy !== '' ? proposedBy : undefined,
+        amenities: features.length > 0 ? features.join(',') : undefined,
+        availableAt: availableAt !== '' ? availableAt : undefined,
+      };
+
+      const sortOption = sortOptionsConfig.find(option => option.value === sortBy);
+      const response = await getProperties(filters, page, limit, sortOption?.field, sortOption?.order);
+
+      setProperties(response?.properties || []);
+      setTotal(response?.pagination.total || 0);
+    } catch (error) {
+      console.error('Error fetching properties:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleTempPropertyTypeChange = (type: string, checked: boolean) => {
     if (checked) {
