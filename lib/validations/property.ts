@@ -13,11 +13,12 @@ export const createPropertySchema = z.object({
   department: z.string().optional(),
   borough: z.string().optional(),
   neighborhood: z.string().optional(),
-  area: z.number().min(1, 'La surface doit être supérieure à 0'),
+  area: z.number().min(1, 'La surface doit être supérieure à 0').optional(),
   landArea: z.number().min(0, 'La surface du terrain ne peut pas être négative').optional(),
   rate: z.enum(RateTypeEnum).optional(),
   type: z.enum(PropertyTypeEnum),
   transactionType: z.enum(PropertyTransactionTypeEnum),
+  rooms: z.number().min(0, 'Le nombre de pièces ne peut pas être négatif').optional(),
   bedrooms: z.number().min(0, 'Le nombre de chambres ne peut pas être négatif').optional(),
   bathrooms: z.number().min(0, 'Le nombre de salles de bain ne peut pas être négatif').optional(),
   floor: z.number().optional(),
@@ -38,11 +39,13 @@ export const createPropertySchema = z.object({
     order: z.number().default(0)
   })).optional(),
   useUserContact: z.boolean().optional(),
-  contactFirstName: z.string().optional(),
-  contactLastName: z.string().optional(),
-  contactEmail: z.string().email('Email de contact invalide').optional(),
-  contactPhone: z.string().optional(),
-  ownerType: z.enum(OwnerTypeEnum).optional()
+  ownerType: z.enum(OwnerTypeEnum).optional(),
+  contact: z.object({
+    firstName: z.string().min(1, 'Le prénom est requis'),
+    lastName: z.string().min(1, 'Le nom est requis'),
+    email: z.string().email('Email de contact invalide'),
+    phone: z.string().optional()
+  }).optional()
 })
 
 export const updatePropertySchema = createPropertySchema.partial()

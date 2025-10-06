@@ -31,6 +31,11 @@ const nextConfig = {
     dangerouslyAllowSVG: false,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '5mb',
+    }
+  },
 };
 
 module.exports = nextConfig;

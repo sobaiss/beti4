@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { 
@@ -44,7 +44,7 @@ import { generatePropertyReference } from '@/lib/utils/property-reference';
 import AutocompleteLocation from '@/ui/components/AutocompleteLocation';
 import { getLocationHierarchy } from '@/lib/utils/location-filter';
 import { set } from 'zod';
-import { Amenity } from '@/types/property';
+import { Amenity, RateTypeEnum } from '@/types/property';
 import { getCachedAmenities } from '@/lib/utils/amenity-cache';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
 import { CURRENCY, rateTypesConfig } from '@/lib/config';
@@ -72,7 +72,7 @@ export default function DeposerUneAnnonceView() {
     title: '',
     description: '',
     price: '',
-    rate: 'unique',
+    rate: RateTypeEnum.unique,
     availableAt: '',
     location: '',
     address: '',
@@ -255,8 +255,8 @@ export default function DeposerUneAnnonceView() {
         department: formData.department,
         borough: formData.borough,
         neighborhood: formData.neighborhood,
-        area: formData.area ? parseFloat(formData.area) : undefined,
-        landArea: formData.landArea ? parseFloat(formData.landArea) : undefined,
+        area: formData.area ? parseInt(formData.area) : undefined,
+        landArea: formData.landArea ? parseInt(formData.landArea) : undefined,
         rooms: formData.rooms ? parseInt(formData.rooms) : undefined,
         bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : undefined,
         bathrooms: formData.bathrooms ? parseInt(formData.bathrooms) : undefined,
@@ -267,12 +267,20 @@ export default function DeposerUneAnnonceView() {
         yearBuilt: formData.yearBuilt ? parseInt(formData.yearBuilt) : undefined,
         reference,
         images: images.length > 0 ? images : undefined,
-        amenities: selectedAmenities.map(amenityId => ({ amenityId, amenityCount: 1 }))
+        amenities: selectedAmenities.map(amenityId => ({ amenityId, amenityCount: 1 })),
+        userUserContact: formData.useUserContact,
+        contact: formData.useUserContact ? undefined : {
+          email: formData.contactEmail,
+          phone: formData.contactPhone,
+          firstName: formData.contactFirstName,
+          lastName: formData.contactLastName
+        },
       };
 
       const response = await createProperty(propertyData);
 
       if ('errors' in response) {
+        console.error('Validation errors:', response.errors);
         setSubmitError(response.message || 'Erreur lors de la création de l\'annonce');
       } else {
         setSubmitSuccess(true);
@@ -310,8 +318,6 @@ export default function DeposerUneAnnonceView() {
       if (!hierarchy) {
         return;
       }
-
-      console.log('Location hierarchy:', hierarchy);
 
       setFormData(prev => ({
         ...prev,
