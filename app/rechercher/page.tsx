@@ -117,17 +117,72 @@ function SearchContent() {
     if (searchLocations) {
       setSearchQuery(searchLocations);
     }
+    const searchPage = searchParams.get('page');
+    if (searchPage) {
+      setPage(parseInt(searchPage) || 1);
+    }
+    const searchLimit = searchParams.get('limit');
+    if (searchLimit) {
+      setLimit(parseInt(searchLimit) || ITEMS_PER_PAGE);
+    }
+    const searchSortBy = searchParams.get('sortBy');
+    if (searchSortBy) {
+      setSortBy(searchSortBy);
+    }
+    const searchViewMode = searchParams.get('viewMode');
+    if (searchViewMode) {
+      setViewMode(searchViewMode);
+    }
+    const searchPrice = searchParams.get('price');
+    if (searchPrice) {
+      const priceValues = searchPrice.split(',').map(value => parseInt(value)).filter(value => !isNaN(value));
+      if (priceValues.length >= 1) {
+        setPriceRange([priceValues[0], priceValues[1] || 0]);
+      }
+    }
+    const searchArea = searchParams.get('area');
+    if (searchArea) {
+      const areaValues = searchArea.split(',').map(value => parseInt(value)).filter(value => !isNaN(value));
+      if (areaValues.length >= 1) {
+        setAreaRange([areaValues[0], areaValues[1] || 0]);
+      }
+    }
+    const searchLandArea = searchParams.get('landArea');
+    if (searchLandArea) {
+      const landAreaValues = searchLandArea.split(',').map(value => parseInt(value)).filter(value => !isNaN(value));
+      if (landAreaValues.length >= 1) {
+        setLandAreaRange([landAreaValues[0], landAreaValues[1] || 0]);
+      }
+    }
     const searchBedrooms = searchParams.get('bedrooms');
     if (searchBedrooms) {
-      const bedroomsValue = parseInt(searchBedrooms);
-      setBedroomsRange([bedroomsValue, 0]);
+      const bedroomsValues = searchBedrooms.split(',').map(value => parseInt(value)).filter(value => !isNaN(value));
+      if (bedroomsValues.length >= 1) {
+        setBedroomsRange([bedroomsValues[0], bedroomsValues[1] || 0]);
+      }
     }
     const searchRooms = searchParams.get('rooms');
     if (searchRooms) {
-      const roomsValue = parseInt(searchRooms);
-      setRoomsRange([roomsValue, 0]);
+      const roomsValues = searchRooms.split(',').map(value => parseInt(value)).filter(value => !isNaN(value));
+      if (roomsValues.length >= 1) {
+        setRoomsRange([roomsValues[0], roomsValues[1] || 0]);
+      }
     }
-    
+
+    const searchFeatures = searchParams.get('amenities');
+    if (searchFeatures) {
+      setFeatures(searchFeatures.split(','));
+    }
+    const searchAvailableAt = searchParams.get('availableAt');
+    if (searchAvailableAt) {
+      setAvailableAt(searchAvailableAt);
+    }
+    const searchProposedBy = searchParams.get('owner');
+    if (searchProposedBy) {
+      setProposedBy(searchProposedBy);
+    }
+
+
     // Initialize temp filters with current values
     setTempPropertyTypes(propertyTypes);
     setTempPriceRange(priceRange);
@@ -136,6 +191,8 @@ function SearchContent() {
     setTempBedroomsRange(bedroomsRange);
     setTempRoomsRange(roomsRange);
     setTempFeatures(features);
+    setTempAvailableAt(availableAt);
+    setTempProposedBy(proposedBy);
   }, [searchParams]);
 
   // Fetch properties from API
@@ -262,6 +319,11 @@ function SearchContent() {
     }
   };
 
+  const handleLocationChange = (location: string) => {
+    setPage(1);
+    setSearchQuery(location);
+  };
+
   const clearAllFilters = () => {
     setSearchQuery('');
     setPropertyTypes([]);
@@ -310,7 +372,7 @@ function SearchContent() {
                 label="Localisation"
                 locations={locations}
                 selectedLocation={searchQuery}
-                setSelectedLocation={setSearchQuery}
+                setSelectedLocation={handleLocationChange}
               />
               <SelectTransaction
                 label='Type de transaction'
