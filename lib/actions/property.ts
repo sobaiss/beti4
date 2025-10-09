@@ -100,7 +100,7 @@ export async function createProperty(data: CreatePropertyInput) {
   }
 
   export async function getPropertyById(id: string): Promise<Property | null> {
-    const response = await fetch(`${apiUrl()}/properties/id/${id}`)
+    const response = await fetch(`${apiUrl()}/properties/${id}`)
 
     if (!response.ok) {
       return null;

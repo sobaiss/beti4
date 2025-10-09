@@ -22,6 +22,10 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'betiapp.s3.eu-north-1.amazonaws.com',
       }
     ],
     //: ['image/webp', 'image/avif'],
