@@ -4,6 +4,7 @@ import { PaginatedProperty, Property } from '@/types/property'
 import { cookies } from 'next/headers'
 import { CreatePropertyInput, createPropertySchema } from '../validations/property'
 import { ITEMS_PER_PAGE, PropertySortFieldEnum, SortOrderEnum } from '../config'
+import z from 'zod';
 
 export interface PropertyFilters {
   location?: string
@@ -44,7 +45,7 @@ export async function createProperty(data: CreatePropertyInput) {
 
   if (!validatedFields.success) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
+      errors: z.flattenError(validatedFields.error).fieldErrors,
       message: 'Corriger les erreurs ci-dessous.',
     };
   }

@@ -2,9 +2,10 @@ import { MapPinIcon } from "@heroicons/react/24/outline";
 import { Autocomplete, AutocompleteItem } from "@heroui/react";
 import { Location } from '@/types/location';
 
-export default function AutocompleteLocation({ locations, selectedLocation, setSelectedLocation: setSearchQuery, label, placeholder, allowsCustomValue }: { label?: string, placeholder?: string, locations: Location[], selectedLocation: string, setSelectedLocation: (value: string) => void, allowsCustomValue?: boolean }) {
+export default function AutocompleteLocation({ locations, selectedLocation, setSelectedLocation: setSearchQuery, label, placeholder, allowsCustomValue, isRequired, errorMessage, isInvalid }: { label?: string, placeholder?: string, locations: Location[], selectedLocation: string, setSelectedLocation: (value: string) => void, allowsCustomValue?: boolean, isRequired?: boolean, errorMessage?: string, isInvalid?: boolean }) {
   return (
     <Autocomplete
+        isRequired={isRequired || false}
         label={label}
         placeholder={placeholder}
         allowsCustomValue={allowsCustomValue || true}
@@ -17,6 +18,8 @@ export default function AutocompleteLocation({ locations, selectedLocation, setS
         radius="full"
         size="lg"
         isClearable
+        isInvalid={isInvalid}
+        errorMessage={errorMessage}
         aria-label="Rechercher une localisation"
     >
         {(locationItem) => <AutocompleteItem key={locationItem.displayName} endContent={`(${locationItem.divisionName})`}>{locationItem.name}</AutocompleteItem>}

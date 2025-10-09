@@ -82,7 +82,7 @@ export default function PropertyDetailsView({property}: { property: Property }) 
                   )}
                   <div className="flex items-center">
                     <HomeIcon className="w-5 h-5 mr-2 text-primary-900" />
-                    <span className="font-semibold text-lg capitalize">{property.type.toLowerCase()}</span>
+                    <span className="font-semibold text-lg capitalize">{property.propertyType.toLowerCase()}</span>
                   </div>
                   {property.yearBuilt && (
                     <div className="flex items-center">
@@ -133,7 +133,7 @@ export default function PropertyDetailsView({property}: { property: Property }) 
                     )}
                     <div className="flex justify-between py-2 border-b border-content3">
                       <span className="text-default-600">Type de bien</span>
-                      <span className="font-semibold capitalize">{property.type.toLowerCase()}</span>
+                      <span className="font-semibold capitalize">{property.propertyType.toLowerCase()}</span>
                     </div>
                   </div>
                   <div className="space-y-4">

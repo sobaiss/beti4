@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { 
@@ -36,6 +36,7 @@ import {
 } from '@heroui/react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { CalendarDate, getLocalTimeZone, parseDate, today } from '@internationalized/date';
 import { Location, LocationHierarchy } from '@/types/location';
 import { getCachedLocations } from '@/lib/utils/location-cache';
 import { convertFileToBase64 } from '@/lib/files/files';
@@ -43,19 +44,90 @@ import { createProperty } from '@/lib/actions/property';
 import { generatePropertyReference } from '@/lib/utils/property-reference';
 import AutocompleteLocation from '@/ui/components/AutocompleteLocation';
 import { getLocationHierarchy } from '@/lib/utils/location-filter';
-import { set } from 'zod';
-import { Amenity, RateTypeEnum } from '@/types/property';
+import { Amenity, PropertyTransactionTypeEnum, PropertyTypeEnum, RateTypeEnum } from '@/types/property';
 import { getCachedAmenities } from '@/lib/utils/amenity-cache';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
-import { CURRENCY, rateTypesConfig } from '@/lib/config';
-import { de } from 'zod/v4/locales';
+import { CURRENCY, MAX_FILE_SIZE, MAX_IMAGE_COUNT, rateTypesConfig } from '@/lib/config';
+import { createPropertyContactSchema, createPropertyImagesSchema, updatePropertyCaracteristicsSchema, updatePropertyLocationSchema, updatePropertyPriceSchema, updatePropertyTypeSchema } from '@/lib/validations/property';
+import z from 'zod';
+
+enum formFieldEnum {
+  address = 'address',
+  area = 'area',
+  availableAt = 'availableAt',
+  bathrooms = 'bathrooms',
+  bedrooms = 'bedrooms',
+  borough = 'borough',
+  city = 'city',
+  contactEmail = 'contactEmail',
+  contactFirstName = 'contactFirstName',
+  contactLastName = 'contactLastName',
+  contactPhone = 'contactPhone',
+  department = 'department',
+  description = 'description',
+  email = 'email',
+  firstName = 'firstName',
+  floor = 'floor',
+  landArea = 'landArea',
+  lastName = 'lastName',
+  location = 'location',
+  neighborhood = 'neighborhood',
+  phone = 'phone',
+  price = 'price',
+  propertyType = 'propertyType',
+  rate = 'rate',
+  region = 'region',
+  rooms = 'rooms',
+  title = 'title',
+  totalFloors = 'totalFloors',
+  transactionType = 'transactionType',
+  yearBuilt = 'yearBuilt',
+  zipCode = 'zipCode',
+}
+
+const emptyErrorMessages: Record<formFieldEnum, string> = {
+  address: '',
+  area: '',
+  availableAt: '',
+  bathrooms: '',
+  bedrooms: '',
+  borough: '',
+  city: '',
+  contactEmail: '',
+  contactFirstName: '',
+  contactLastName: '',
+  contactPhone: '',
+  department: '',
+  description: '',
+  email: '',
+  firstName: '', 
+  floor: '',
+  landArea: '',
+  lastName: '',
+  location: '',
+  neighborhood: '',
+  phone: '',
+  price: '',
+  propertyType: '',
+  rate: '',
+  region: '',
+  rooms: '',
+  title: '',
+  totalFloors: '',
+  transactionType: '',
+  yearBuilt: '',
+  zipCode: '',
+};
+
+const toIntegerOrUndefined = (value: string): number | undefined => {
+  const parsed = parseInt(value, 10);
+  return isNaN(parsed) ? undefined : parsed;
+};
 
 export default function DeposerUneAnnonceView() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
-  const [propertyType, setPropertyType] = useState('');
-  const [transactionType, setTransactionType] = useState('');
   const [cityMap, setCityMap] = useState<Location[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<{ file: File, previewUrl: string }[]>([]);
@@ -67,41 +139,37 @@ export default function DeposerUneAnnonceView() {
   const [amenities, setAmenities] = useState<Amenity[]>([]);
   const [amenitiesGroup, setAmenitiesGroup] = useState<Record<string, Amenity[]>>({});
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const [errorMessages, setErrorMessages] = useState(emptyErrorMessages);
 
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    price: '',
-    rate: RateTypeEnum.unique,
-    availableAt: '',
-    location: '',
     address: '',
-    zipCode: '',
+    area: undefined,
+    availableAt: parseDate(today(getLocalTimeZone()).toString()),
+    bathrooms: undefined,
+    bedrooms: undefined,
     borough: '',
-    neighborhood: '',
-    department: '',
     city: '',
-    region: '',
-    area: '',
-    landArea: '',
-    rooms: '',
-    bedrooms: '',
-    bathrooms: '',
-    floor: '',
-    totalFloors: '',
-    yearBuilt: '',
-    furnished: false,
-    balcony: false,
-    terrace: false,
-    garden: false,
-    parking: false,
-    elevator: false,
-    cellar: false,
+    contactEmail: '',
     contactFirstName: '',
     contactLastName: '',
-    contactEmail: '',
     contactPhone: '',
-    useUserContact: true
+    department: '',
+    description: '',
+    floor: undefined,
+    landArea: undefined,
+    location: '',
+    neighborhood: '',
+    price: undefined,
+    propertyType: undefined,
+    rate: RateTypeEnum.unique,
+    region: '',
+    rooms: undefined,
+    title: '',
+    totalFloors: undefined,
+    transactionType: undefined,
+    useUserContact: true,
+    yearBuilt: undefined,
+    zipCode: '',
   });
 
   // Redirect if not authenticated
@@ -148,10 +216,11 @@ export default function DeposerUneAnnonceView() {
     const newErrors: string[] = [];
     const validFiles: File[] = [];
     const newPreviews: { file: File, previewUrl: string }[] = [];
+    setErrorMessages(emptyErrorMessages);
 
     // Check if adding new files would exceed the limit
-    if (selectedFiles.length + files.length > 4) {
-      newErrors.push('Vous ne pouvez ajouter que 4 images maximum');
+    if (selectedFiles.length + files.length > MAX_IMAGE_COUNT) {
+      newErrors.push(`Vous ne pouvez ajouter que ${MAX_IMAGE_COUNT} images maximum`);
       setImageErrors(newErrors);
       return;
     }
@@ -163,8 +232,8 @@ export default function DeposerUneAnnonceView() {
         return;
       }
 
-      // Check file size (5MB = 5 * 1024 * 1024 bytes)
-      if (file.size > 5 * 1024 * 1024) {
+      // Check file size
+      if (file.size > MAX_FILE_SIZE) {
         newErrors.push(`${file.name}: La taille ne peut pas dépasser 5MB`);
         return;
       }
@@ -198,6 +267,7 @@ export default function DeposerUneAnnonceView() {
   };
 
   const handleRemoveImage = (index: number) => {
+    setErrorMessages(emptyErrorMessages);
     const previewToRemove = imagePreviews[index];
     
     // Revoke the object URL to free up memory
@@ -212,9 +282,15 @@ export default function DeposerUneAnnonceView() {
   };
 
   const handleSubmit = async () => {
+    if (!validateStep()) {
+      setIsSubmitting(false);
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitError('');
     setSubmitSuccess(false);
+    setErrorMessages(emptyErrorMessages);
 
     try {
       // Convert images to base64
@@ -231,50 +307,44 @@ export default function DeposerUneAnnonceView() {
 
       // Generate property reference
       const reference = await generatePropertyReference({
-        title: formData.title,
-        description: formData.description,
-        price: parseFloat(formData.price),
-        location: formData.location,
-        type: propertyType as any,
+        propertyType: formData.propertyType,
         zipCode: formData.zipCode,
-        transactionType: transactionType as any,
-        status: 'brouillon' as any
       });
 
       // Prepare property data
       const propertyData = {
-        title: formData.title,
-        description: formData.description,
-        price: parseFloat(formData.price),
-        availableAt: formData.availableAt ? new Date(formData.availableAt) : undefined,
-        location: formData.location,
         address: formData.address,
-        zipCode: formData.zipCode,
-        city: formData.city,
-        region: formData.region,
-        department: formData.department,
-        borough: formData.borough,
-        neighborhood: formData.neighborhood,
-        area: formData.area ? parseInt(formData.area) : undefined,
-        landArea: formData.landArea ? parseInt(formData.landArea) : undefined,
-        rooms: formData.rooms ? parseInt(formData.rooms) : undefined,
-        bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : undefined,
-        bathrooms: formData.bathrooms ? parseInt(formData.bathrooms) : undefined,
-        rate: formData.rate,
-        type: propertyType as any,
-        transactionType: transactionType as any,
-        floor: formData.floor ? parseInt(formData.floor) : undefined,
-        yearBuilt: formData.yearBuilt ? parseInt(formData.yearBuilt) : undefined,
-        reference,
-        images: images.length > 0 ? images : undefined,
         amenities: selectedAmenities.map(amenityId => ({ amenityId, amenityCount: 1 })),
-        userUserContact: formData.useUserContact,
+        area: formData.area ? parseInt(formData.area) : undefined,
+        availableAt: formData.availableAt.toDate(getLocalTimeZone()),
+        bathrooms: formData.bathrooms ? parseInt(formData.bathrooms) : undefined,
+        bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : undefined,
+        borough: formData.borough,
+        city: formData.city,
         contact: formData.useUserContact ? undefined : {
-          email: formData.contactEmail,
-          phone: formData.contactPhone,
           firstName: formData.contactFirstName,
-          lastName: formData.contactLastName
+          email: formData.contactEmail,
+          lastName: formData.contactLastName,
+          phone: formData.contactPhone,
         },
+        department: formData.department,
+        description: formData.description,
+        floor: formData.floor ? parseInt(formData.floor) : undefined,
+        images: images.length > 0 ? images : undefined,
+        landArea: formData.landArea ? parseInt(formData.landArea) : undefined,
+        location: formData.location,
+        neighborhood: formData.neighborhood,
+        price: toIntegerOrUndefined(formData.price ?? '') || 0,
+        rate: formData.rate,
+        reference,
+        region: formData.region,
+        rooms: formData.rooms ? parseInt(formData.rooms) : undefined,
+        title: formData.title,
+        transactionType: formData.transactionType as unknown as PropertyTransactionTypeEnum,
+        propertyType: formData.propertyType as unknown as PropertyTypeEnum,
+        userUserContact: formData.useUserContact,
+        yearBuilt: formData.yearBuilt ? parseInt(formData.yearBuilt) : undefined,
+        zipCode: formData.zipCode,
       };
 
       const response = await createProperty(propertyData);
@@ -282,6 +352,17 @@ export default function DeposerUneAnnonceView() {
       if ('errors' in response) {
         console.error('Validation errors:', response.errors);
         setSubmitError(response.message || 'Erreur lors de la création de l\'annonce');
+        const errors = { ...emptyErrorMessages };
+
+        for (const [field, messages] of Object.entries(response.errors)) {
+          if (Array.isArray(messages)) {
+            errors[field as keyof typeof emptyErrorMessages] = messages[0];
+          }
+        }
+
+        setErrorMessages(errors);
+
+        return;
       } else {
         setSubmitSuccess(true);
         // Redirect to the new property page after a short delay
@@ -306,13 +387,22 @@ export default function DeposerUneAnnonceView() {
     { id: 6, title: 'Contact', icon: CheckIcon }
   ];
 
-  const handleInputChange = (field: string, value: string | boolean) => {
+  const handleInputChange = (field: string, value: string | boolean | number | undefined) => {
     console.log(`Field changed: ${field}, New value: ${value}`);
     setFormData(prev => ({ ...prev, [field]: value }));
+    setErrorMessages(emptyErrorMessages);
   };
 
   const handleLocationInputChange = (field: string, value: string | boolean) => {
     console.log(`Field changed: ${field}, New value: ${value}`);
+    setFormData(prev => ({ ...prev, region: '', department: '', city: '', borough: '', neighborhood: '', zipCode: '', location: '' }));
+
+    if (!value) {
+      setLocationHierarchy(null);
+
+      return;
+    }
+
     getLocationHierarchy(value as string).then(hierarchy => {
       setLocationHierarchy(hierarchy);
       if (!hierarchy) {
@@ -329,12 +419,127 @@ export default function DeposerUneAnnonceView() {
         zipCode: hierarchy.selected?.zip || '',
         location: value as string
       }));
+
+      setErrorMessages(emptyErrorMessages);
     });
+  };
+
+  const handleAvailabilityDateChange = (date: CalendarDate | null) => {
+    setFormData(prev => ({ ...prev, availableAt: date ? date : parseDate(today(getLocalTimeZone()).toString()) }));
+    setErrorMessages(emptyErrorMessages);
+  };
+
+  const handleUseUserContactChange = (value: boolean) => {
+    console.log(`Field changed: useUserContact, New value: ${value}`);
+    setFormData(prev => ({
+      ...prev,
+      useUserContact: value,
+      contactFirstName: value ? (session?.user.firstName || prev.contactFirstName) : prev.contactFirstName,
+      contactLastName: value ? (session?.user.lastName || prev.contactLastName) : prev.contactLastName,
+      contactEmail: value ? (session?.user.email || prev.contactEmail) : prev.contactEmail,
+      contactPhone: value ? (session?.user.phone || prev.contactPhone) : prev.contactPhone,
+    }));
+
+    setErrorMessages(emptyErrorMessages);
+  };
+
+  const validateStep = (): boolean => {
+    console.log('Validating step', currentStep);
+    let validatedFields, fieldErrors;
+    setSubmitError('');
+
+    switch (currentStep) {
+      case 1:
+        validatedFields = updatePropertyTypeSchema.safeParse({
+          propertyType: formData.propertyType,
+          transactionType: formData.transactionType
+        });
+        fieldErrors = validatedFields.error ? z.flattenError(validatedFields.error).fieldErrors : {};
+
+        break;
+      case 2:
+        validatedFields = updatePropertyLocationSchema.safeParse({
+          city: formData.city,
+          location: formData.location,
+        });
+        fieldErrors = validatedFields.error ? z.flattenError(validatedFields.error).fieldErrors : {};
+
+        break;
+      case 3:
+        validatedFields = updatePropertyCaracteristicsSchema.safeParse({
+          area: formData.area,
+          bathrooms: formData.bathrooms,
+          bedrooms: formData.bedrooms,
+          description: formData.description,
+          floor: formData.floor,
+          landArea: formData.landArea,
+          room: formData.rooms,
+          title: formData.title,
+          yearBuilt: formData.yearBuilt,
+        });
+        fieldErrors = validatedFields.error ? z.flattenError(validatedFields.error).fieldErrors : {};
+        break;
+      case 4:
+        validatedFields = updatePropertyPriceSchema.safeParse({
+          price: formData.price,
+          rate: formData.rate,
+          availableAt: formData.availableAt.toDate(getLocalTimeZone()),
+        });
+        fieldErrors = validatedFields.error ? z.flattenError(validatedFields.error).fieldErrors : {};
+        break;
+      case 5:
+        validatedFields = createPropertyImagesSchema.safeParse({
+          images: selectedFiles
+        });
+        fieldErrors = validatedFields.error ? z.flattenError(validatedFields.error).fieldErrors : {};
+        break;
+      case 6:
+        validatedFields = createPropertyContactSchema.safeParse({
+          contactLastName: formData.contactLastName,
+          contactFirstName: formData.contactFirstName,
+          contactEmail: formData.contactEmail,
+          contactPhone: formData.contactPhone
+        });
+        fieldErrors = validatedFields.error ? z.flattenError(validatedFields.error).fieldErrors : {};
+        break;
+      default:
+        return false;
+    }
+
+    if (!validatedFields.success && fieldErrors) {
+      console.log('Validation errors on step', currentStep);
+      console.log('Input data:', formData);
+      console.log('Field errors:', fieldErrors);
+      // Map fieldErrors to errorMessages structure
+      const errors = { ...emptyErrorMessages };
+
+      for (const [field, messages] of Object.entries(fieldErrors)) {
+        if (Array.isArray(messages)) {
+          if (field === 'images') {
+            setImageErrors(messages);
+          } else {
+            errors[field as keyof typeof emptyErrorMessages] = messages[0];
+          }
+        }
+      }
+
+      // Or, if you want to keep the original structure, just remove this line and rely on fieldErrors directly.
+      setErrorMessages(errors);
+      setSubmitError('Corrigez les erreurs avant de continuer.');
+
+      return false;
+    }
+
+    console.log('Step', currentStep, 'validated successfully');
+
+    return true;
   };
 
   const nextStep = () => {
     if (currentStep < steps.length) {
-      setCurrentStep(currentStep + 1);
+      if (validateStep()) {
+        setCurrentStep(currentStep + 1);
+      }
     }
   };
 
@@ -367,19 +572,45 @@ export default function DeposerUneAnnonceView() {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
                   <Button
-                    onPress={() => setTransactionType('achat')}
+                    onPress={() => handleInputChange('transactionType', PropertyTransactionTypeEnum.location)}
                     size="lg"
                     radius="lg"
-                    variant={transactionType === 'achat'
+                    variant={formData.transactionType === PropertyTransactionTypeEnum.location
                       ? 'solid'
                       : 'faded'
                     }
-                    color={transactionType === 'achat'
+                    color={formData.transactionType === PropertyTransactionTypeEnum.location
                       ? 'primary'
                       : 'default'
                     }
                     className={`h-auto p-6 transition-all duration-300 ${
-                      transactionType === 'achat' 
+                      formData.transactionType === PropertyTransactionTypeEnum.location
+                        ? 'shadow-lg scale-105 border-2 border-primary-300' 
+                        : 'hover:shadow-md hover:scale-102 border border-default-200'
+                    }`}
+                  >
+                    <div className="text-center">
+                      <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                        <HomeIcon className="w-6 h-6 text-blue-600" />
+                      </div>
+                      <span className="font-bold text-xl block mb-2">Louer</span>
+                      <span className="text-sm opacity-90 font-medium">Je souhaite mettre en location mon bien</span>
+                    </div>
+                  </Button>
+                  <Button
+                    onPress={() => handleInputChange('transactionType', PropertyTransactionTypeEnum.achat)}
+                    size="lg"
+                    radius="lg"
+                    variant={formData.transactionType === PropertyTransactionTypeEnum.achat
+                      ? 'solid'
+                      : 'faded'
+                    }
+                    color={formData.transactionType === PropertyTransactionTypeEnum.achat
+                      ? 'primary'
+                      : 'default'
+                    }
+                    className={`h-auto p-6 transition-all duration-300 ${
+                      formData.transactionType === PropertyTransactionTypeEnum.achat
                         ? 'shadow-lg scale-105 border-2 border-primary-300' 
                         : 'hover:shadow-md hover:scale-102 border border-default-200'
                     }`}
@@ -390,32 +621,6 @@ export default function DeposerUneAnnonceView() {
                       </div>
                       <span className="font-bold text-xl block mb-2">Vendre</span>
                       <span className="text-sm opacity-90 font-medium">Je souhaite vendre mon bien</span>
-                    </div>
-                  </Button>
-                  <Button
-                    onPress={() => setTransactionType('location')}
-                    size="lg"
-                    radius="lg"
-                    variant={transactionType === 'location'
-                      ? 'solid'
-                      : 'faded'
-                    }
-                    color={transactionType === 'location'
-                      ? 'primary'
-                      : 'default'
-                    }
-                    className={`h-auto p-6 transition-all duration-300 ${
-                      transactionType === 'location' 
-                        ? 'shadow-lg scale-105 border-2 border-primary-300' 
-                        : 'hover:shadow-md hover:scale-102 border border-default-200'
-                    }`}
-                  >
-                    <div className="text-center">
-                      <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-                        <HomeIcon className="w-6 h-6 text-blue-600" />
-                      </div>
-                      <span className="font-bold text-xl block mb-2">Louer</span>
-                      <span className="text-sm opacity-90 font-medium">Je souhaite louer mon bien</span>
                     </div>
                   </Button>
                 </div>
@@ -436,23 +641,23 @@ export default function DeposerUneAnnonceView() {
                     { value: 'terrain_agricole', label: 'Terrain Agricole', icon: <PhotoIcon className="w-8 h-8" />, color: 'from-yellow-100 to-yellow-200', iconColor: 'text-yellow-600' },
                     { value: 'immeuble', label: 'Immeuble', icon: <BuildingOfficeIcon className="w-8 h-8" />, color: 'from-gray-100 to-gray-200', iconColor: 'text-gray-600' },
                     { value: 'bureau_commerce', label: 'Bureaux & Commerces', icon: <BriefcaseIcon className="w-8 h-8" />, color: 'from-orange-100 to-orange-200', iconColor: 'text-orange-600' }
-                  ].map((type) => (
+                  ].map((propertyType) => (
                     <Card
-                      key={type.value}
+                      key={propertyType.value}
                       isPressable
-                      onPress={() => setPropertyType(type.value)}
+                      onPress={() => handleInputChange('propertyType', propertyType.value)}
                       className={`transition-all duration-300 cursor-pointer ${
-                        propertyType === type.value 
-                          ? 'scale-105 shadow-lg border-2 border-primary-300 bg-gradient-to-br from-primary-50 to-primary-100' 
+                        formData.propertyType === propertyType.value
+                          ? 'scale-105 shadow-lg border-2 border-primary-300 bg-gradient-to-br from-primary-50 to-primary-100'
                           : 'hover:scale-102 hover:shadow-md border border-default-200 bg-white hover:bg-default-50'
                       }`}
                     >
                       <CardBody className="p-6 text-center">
-                        <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${type.color} flex items-center justify-center shadow-sm`}>
-                          <div className={type.iconColor}>{type.icon}</div>
+                        <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${propertyType.color} flex items-center justify-center shadow-sm`}>
+                          <div className={propertyType.iconColor}>{propertyType.icon}</div>
                         </div>
-                        <div className="font-semibold text-sm text-default-900 leading-tight">{type.label}</div>
-                        {propertyType === type.value && (
+                        <div className="font-semibold text-sm text-default-900 leading-tight">{propertyType.label}</div>
+                        {formData.propertyType === propertyType.value && (
                           <div className="mt-2">
                             <CheckIcon className="w-5 h-5 text-primary-600 mx-auto" />
                           </div>
@@ -478,12 +683,15 @@ export default function DeposerUneAnnonceView() {
               <div className="space-y-4">
                 <div>
                   <AutocompleteLocation
+                    isRequired={true}
                     allowsCustomValue={false}
                     locations={cityMap}
                     selectedLocation={formData.location}
                     setSelectedLocation={(value) => handleLocationInputChange('location', value)}
-                    label="Localisation *"
+                    label="Localisation"
                     placeholder="Rechercher une ville, un quartier, un arrondissement..."
+                    errorMessage={errorMessages.location}
+                    isInvalid={errorMessages.location !== ''}
                   />
                 </div>
 
@@ -497,6 +705,8 @@ export default function DeposerUneAnnonceView() {
                     size="lg"
                     variant="bordered"
                     radius="lg"
+                    errorMessage={errorMessages.region}
+                    isInvalid={errorMessages.region !== ''}
                   />
                 </div>
 
@@ -510,6 +720,8 @@ export default function DeposerUneAnnonceView() {
                     size="lg"
                     variant="bordered"
                     radius="lg"
+                    errorMessage={errorMessages.department}
+                    isInvalid={errorMessages.department !== ''}
                   />
                 </div>
 
@@ -523,6 +735,8 @@ export default function DeposerUneAnnonceView() {
                     size="lg"
                     variant="bordered"
                     radius="lg"
+                    errorMessage={errorMessages.borough}
+                    isInvalid={errorMessages.borough !== ''}
                   />
                 </div>
 
@@ -536,12 +750,15 @@ export default function DeposerUneAnnonceView() {
                     size="lg"
                     variant="bordered"
                     radius="lg"
+                    errorMessage={errorMessages.zipCode}
+                    isInvalid={errorMessages.zipCode !== ''}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="city" className="block text-sm font-medium text-default-700 mb-2">Ville *</label>
+                  <label htmlFor="city" className="block text-sm font-medium text-default-700 mb-2">Ville</label>
                   <Input
+                    isRequired={true}
                     isDisabled
                     id="city"
                     value={formData.city}
@@ -549,6 +766,8 @@ export default function DeposerUneAnnonceView() {
                     size="lg"
                     variant="bordered"
                     radius="lg"
+                    errorMessage={errorMessages.city}
+                    isInvalid={errorMessages.city !== ''}
                   />
                 </div>
 
@@ -562,6 +781,8 @@ export default function DeposerUneAnnonceView() {
                     size="lg"
                     variant="bordered"
                     radius="lg"
+                    errorMessage={errorMessages.neighborhood}
+                    isInvalid={errorMessages.neighborhood !== ''}
                   />
                 </div>
               </div>
@@ -575,6 +796,8 @@ export default function DeposerUneAnnonceView() {
                   size="lg"
                   variant="bordered"
                   radius="lg"
+                  errorMessage={errorMessages.address}
+                  isInvalid={errorMessages.address !== ''}
                 />
               </div>
             </div>
@@ -596,11 +819,13 @@ export default function DeposerUneAnnonceView() {
                   id="title"
                   placeholder="Ex: Bel appartement lumineux avec balcon"
                   value={formData.title}
-                  onChange={(e) => handleInputChange('title', e.target.value)}
+                  onValueChange={(value) => handleInputChange('title', value)}
                   size="lg"
                   variant="bordered"
                   radius="lg"
                   isRequired
+                  errorMessage={errorMessages.title}
+                  isInvalid={errorMessages.title !== ''}
                 />
               </div>
 
@@ -611,10 +836,13 @@ export default function DeposerUneAnnonceView() {
                   placeholder="Décrivez votre bien, ses atouts, son environnement..."
                   minRows={6}
                   value={formData.description}
-                  onChange={(e) => handleInputChange('description', e.target.value)}
+                  onValueChange={(value) => handleInputChange('description', value)}
                   size="lg"
                   variant="bordered"
                   radius="lg"
+                  isRequired
+                  errorMessage={errorMessages.description}
+                  isInvalid={errorMessages.description !== ''}
                 />
               </div>
 
@@ -625,11 +853,13 @@ export default function DeposerUneAnnonceView() {
                     id="floor"
                     type="number"
                     value={formData.floor}
-                    onChange={(e) => handleInputChange('floor', e.target.value)}
+                    onValueChange={(value) => handleInputChange('floor', toIntegerOrUndefined(value))}
                     size="lg"
                     variant="bordered"
                     radius="lg"
                     min={0}
+                    errorMessage={errorMessages.floor}
+                    isInvalid={errorMessages.floor !== ''}
                   />
                 </div>
                 <div>
@@ -638,29 +868,33 @@ export default function DeposerUneAnnonceView() {
                     id="yearBuilt"
                     type="number"
                     value={formData.yearBuilt}
-                    onChange={(e) => handleInputChange('yearBuilt', e.target.value)}
+                    onValueChange={(value) => handleInputChange('yearBuilt', toIntegerOrUndefined(value))}
                     size="lg"
                     variant="bordered"
                     radius="lg"
                     min={1900}
                     max={new Date().getFullYear()}
+                    errorMessage={errorMessages.yearBuilt}
+                    isInvalid={errorMessages.yearBuilt !== ''}
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="area" className="text-sm font-medium text-default-700 mb-2">Surface (m²)</label>
+                  <label htmlFor="area" className="text-sm font-medium text-default-700 mb-2">Surface habitable (m²)</label>
                   <Input
                     id="area"
                     type="number"
                     value={formData.area}
-                    onChange={(e) => handleInputChange('area', e.target.value)}
+                    onValueChange={(value) => handleInputChange('area', toIntegerOrUndefined(value))}
                     size="lg"
                     variant="bordered"
                     radius="lg"
                     min={0}
                     endContent={<span className="text-default-400">m²</span>}
+                    errorMessage={errorMessages.area}
+                    isInvalid={errorMessages.area !== ''}
                   />
                 </div>
                 <div>
@@ -669,12 +903,14 @@ export default function DeposerUneAnnonceView() {
                     id="landArea"
                     type="number"
                     value={formData.landArea}
-                    onChange={(e) => handleInputChange('landArea', e.target.value)}
+                    onValueChange={(value) => handleInputChange('landArea', toIntegerOrUndefined(value))}
                     size="lg"
                     variant="bordered"
                     radius="lg"
                     min={0}
                     endContent={<span className="text-default-400">m²</span>}
+                    errorMessage={errorMessages.landArea}
+                    isInvalid={errorMessages.landArea !== ''}
                   />
                 </div>
               </div>
@@ -686,26 +922,31 @@ export default function DeposerUneAnnonceView() {
                     id="rooms"
                     type="number"
                     value={formData.rooms}
-                    onChange={(e) => handleInputChange('rooms', e.target.value)}
+                    onValueChange={(value) => handleInputChange('rooms', toIntegerOrUndefined(value))}
                     size="lg"
                     variant="bordered"
                     radius="lg"
                     min={0}
                     startContent={<HomeIcon className="w-4 h-4 text-default-400" />}
+                    errorMessage={errorMessages.rooms}
+                    isInvalid={errorMessages.rooms !== ''}
                   />
                 </div>
                 <div>
                   <label htmlFor="bedrooms" className="text-sm font-medium text-default-700 mb-2">Nombre de chambres</label>
+                  <span>Comptez toutes les pièces sauf la cuisine, les salles d’eau et de bain ainsi que les toilettes.</span>
                   <Input
                     id="bedrooms"
                     type="number"
                     value={formData.bedrooms}
-                    onChange={(e) => handleInputChange('bedrooms', e.target.value)}
+                    onValueChange={(value) => handleInputChange('bedrooms', toIntegerOrUndefined(value))}
                     size="lg"
                     variant="bordered"
                     radius="lg"
                     min={0}
                     startContent={<BuildingOfficeIcon className="w-4 h-4 text-default-400" />}
+                    errorMessage={errorMessages.bedrooms}
+                    isInvalid={errorMessages.bedrooms !== ''}
                   />
                 </div>
                 <div>
@@ -714,11 +955,13 @@ export default function DeposerUneAnnonceView() {
                     id="bathrooms"
                     type="number"
                     value={formData.bathrooms}
-                    onChange={(e) => handleInputChange('bathrooms', e.target.value)}
+                    onValueChange={(value) => handleInputChange('bathrooms', toIntegerOrUndefined(value))}
                     size="lg"
                     variant="bordered"
                     radius="lg"
                     min={0}
+                    errorMessage={errorMessages.bathrooms}
+                    isInvalid={errorMessages.bathrooms !== ''}
                   />
                 </div>
               </div>
@@ -772,7 +1015,7 @@ export default function DeposerUneAnnonceView() {
             <div> 
               <h2 className="text-2xl font-bold text-default-900 mb-4">Quel est le prix de votre bien ?</h2>
               <p className="text-default-600 mb-6">
-                {transactionType === 'achat' 
+                {formData.transactionType === 'achat' 
                   ? 'Indiquez le prix de vente souhaité' 
                   : 'Indiquez le loyer mensuel souhaité'
                 }
@@ -783,14 +1026,14 @@ export default function DeposerUneAnnonceView() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <label htmlFor="price" className="text-lg font-medium block mb-2">
-                    {transactionType === 'achat' ? 'Prix de vente' : 'Loyer'}
+                    {formData.transactionType === 'achat' ? 'Prix de vente' : 'Loyer'}
                   </label>
                   <div className="relative mt-2">
                     <Input
                       id="price"
                       type="number"
                       value={formData.price}
-                      onChange={(e) => handleInputChange('price', e.target.value)}
+                      onValueChange={(value) => handleInputChange('price', toIntegerOrUndefined(value))}
                       size="lg"
                       variant="bordered"
                       radius="lg"
@@ -799,6 +1042,11 @@ export default function DeposerUneAnnonceView() {
                       }}
                       min={0}
                       endContent={<span className="text-default-400">{CURRENCY}</span>}
+                      errorMessage={errorMessages.price}
+                      isInvalid={errorMessages.price !== ''}
+                      isRequired
+                      aria-required="true"
+                      aria-label={formData.transactionType === PropertyTransactionTypeEnum.achat ? 'Prix de vente' : 'Loyer'}
                     />
                   </div>
                 </div>
@@ -809,7 +1057,15 @@ export default function DeposerUneAnnonceView() {
                   </label>
                   <Select
                     id="rate"
-                    selectedKeys={formData.rate ? [formData.rate] : [transactionType === 'achat' ? 'unique' : 'mois']}
+                    selectedKeys={
+                      formData.rate
+                        ? [formData.rate]
+                        : [
+                            formData.transactionType === PropertyTransactionTypeEnum.achat
+                              ? RateTypeEnum.unique
+                              : RateTypeEnum.mois
+                          ]
+                    }
                     onSelectionChange={(keys) => handleInputChange('rate', Array.from(keys)[0] as string)}
                     placeholder="Sélectionner"
                     label=""
@@ -818,8 +1074,10 @@ export default function DeposerUneAnnonceView() {
                     variant="bordered"
                     radius="lg"
                     aria-label='Sélectionner la période'
+                    errorMessage={errorMessages.rate}
+                    isInvalid={errorMessages.rate !== ''}
                   >
-                    {transactionType === 'location' ? (
+                    {formData.transactionType === PropertyTransactionTypeEnum.location ? (
                       <>
                         {rateTypesConfig.map((rate) => (
                           <SelectItem key={rate.value}>{rate.label}</SelectItem>
@@ -827,7 +1085,7 @@ export default function DeposerUneAnnonceView() {
                       </>
                     ) : (
                       <>
-                        <SelectItem key="unique">Unique</SelectItem>
+                        <SelectItem key={RateTypeEnum.unique}>Unique</SelectItem>
                       </>
                     )}
                   </Select>
@@ -840,7 +1098,9 @@ export default function DeposerUneAnnonceView() {
                 </label>
                 <DatePicker
                   id="availableAt"
-                  onChange={(date) => handleInputChange('availableAt', date ? date.toString().split('T')[0] : '')}
+                  minValue={today(getLocalTimeZone())}
+                  onChange={handleAvailabilityDateChange}
+                  value={formData.availableAt}
                   variant="bordered"
                   size="lg"
                   radius="lg"
@@ -848,6 +1108,9 @@ export default function DeposerUneAnnonceView() {
                   labelPlacement="outside"
                   showMonthAndYearPickers
                   aria-label='Sélectionner une date de disponibilité'
+                  errorMessage={errorMessages.availableAt}
+                  isInvalid={errorMessages.availableAt !== ''}
+                  isRequired
                 />
               </div>
             </div>
@@ -976,7 +1239,7 @@ export default function DeposerUneAnnonceView() {
             <div className="space-y-6 max-w-2xl">
               <RadioGroup
                 value={formData.useUserContact ? 'user' : 'new'}
-                onValueChange={(value) => handleInputChange('useUserContact', value === 'user')}
+                onValueChange={(value) => handleUseUserContactChange(value === 'user')}
                 label="Informations de contact"
                 className="mb-6"
               >
@@ -990,38 +1253,40 @@ export default function DeposerUneAnnonceView() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
+                  <label htmlFor="contactFirstName" className="text-sm font-medium text-default-700 mb-2">Prénom</label>
                   <Input
                     id="contactFirstName"
-                    label="Prénom"
-                    labelPlacement="outside"
                     size="lg"
                     variant="bordered"
                     radius="lg"
                     value={formData.contactFirstName}
                     onChange={(e) => handleInputChange('contactFirstName', e.target.value)}
                     isDisabled={formData.useUserContact}
+                    errorMessage={errorMessages.contactFirstName}
+                    isInvalid={errorMessages.contactFirstName !== ''}
                   />
                 </div>
                 <div>
+                  <label htmlFor="contactLastName" className="text-sm font-medium text-default-700 mb-2">Nom</label>
                   <Input
                     id="contactLastName"
-                    label="Nom"
-                    labelPlacement="outside"
                     size="lg"
                     variant="bordered"
                     radius="lg"
                     value={formData.contactLastName}
                     onChange={(e) => handleInputChange('contactLastName', e.target.value)}
                     isDisabled={formData.useUserContact}
+                    errorMessage={errorMessages.contactLastName}
+                    isInvalid={errorMessages.contactLastName !== ''}
+                    isRequired
                   />
                 </div>
               </div>
 
               <div>
+                <label htmlFor="contactEmail" className="text-sm font-medium text-default-700 mb-2">Adresse email</label>
                 <Input
                   id="contactEmail"
-                  label="Adresse email *"
-                  labelPlacement="outside"
                   variant="bordered"
                   radius="lg"
                   size="lg"
@@ -1029,14 +1294,16 @@ export default function DeposerUneAnnonceView() {
                   value={formData.contactEmail}
                   onChange={(e) => handleInputChange('contactEmail', e.target.value)}
                   isDisabled={formData.useUserContact}
+                  errorMessage={errorMessages.contactEmail}
+                  isInvalid={errorMessages.contactEmail !== ''}
+                  isRequired
                 />
               </div>
 
               <div>
+                <label htmlFor="contactPhone" className="text-sm font-medium text-default-700 mb-2">Numéro de téléphone</label>
                 <Input
                   id="contactPhone"
-                  label="Numéro de téléphone *"
-                  labelPlacement="outside"
                   variant="bordered"
                   radius="lg"
                   size="lg"
@@ -1044,6 +1311,9 @@ export default function DeposerUneAnnonceView() {
                   value={formData.contactPhone}
                   onChange={(e) => handleInputChange('contactPhone', e.target.value)}
                   isDisabled={formData.useUserContact}
+                  errorMessage={errorMessages.contactPhone}
+                  isInvalid={errorMessages.contactPhone !== ''}
+                  isRequired
                 />
               </div>
 
@@ -1246,11 +1516,11 @@ export default function DeposerUneAnnonceView() {
               <Button
                 onClick={nextStep}
                 isDisabled={
-                  (currentStep === 1 && (!propertyType || !transactionType)) ||
-                  (currentStep === 2 && (!formData.city)) ||
-                  (currentStep === 3 && (!formData.title || !formData.description)) ||
-                  (currentStep === 4 && !formData.price) ||
-                  (currentStep === 6 && (!formData.contactFirstName || !formData.contactEmail || !formData.contactPhone))
+                  (currentStep === 1 && (errorMessages.propertyType !== '' || errorMessages.transactionType !== '')) ||
+                  (currentStep === 2 && (errorMessages.location !== '' || errorMessages.city !== '')) ||
+                  (currentStep === 3 && (errorMessages.title !== '' || errorMessages.description !== '')) ||
+                  (currentStep === 4 && errorMessages.price !== '') ||
+                  (currentStep === 6 && (errorMessages.contactFirstName !== '' || errorMessages.contactEmail !== '' || errorMessages.contactPhone !== ''))
                 }
                 color="primary"
                 className="px-8 py-3"

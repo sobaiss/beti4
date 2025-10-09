@@ -17,8 +17,8 @@ export default function SelectPropertyType({label, placeholder, propertyTypes, s
         >
             <SelectItem key="">Tous</SelectItem>
             <>
-                {propertyTypesConfig.map((type) => (
-                    <SelectItem key={type.value}>{type.label}</SelectItem>
+                {propertyTypesConfig.map((propertyType) => (
+                    <SelectItem key={propertyType.value}>{propertyType.label}</SelectItem>
                 ))}
             </>
         </Select>

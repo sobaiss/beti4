@@ -12,7 +12,8 @@ function getReferencePrefix(type: string): string {
     appartement: 'APP',
     maison: 'MAI',
     villa: 'VIL',
-    bureau_commerce: 'BURE',
+    immeuble: 'IMM',
+    bureau_commerce: 'BCO',
     terrain: 'TER',
     terrain_agricole: 'TERA'
   }[type] || 'PROP' // Default prefix if type is unknown
@@ -33,5 +34,5 @@ export async function generatePropertyReference(property: Partial<CreateProperty
     currentDate.getSeconds().toString().padStart(2, '0');
   const zipCode = property.zipCode ?? '00000'
 
-  return getReferencePrefix(property.type || 'appartement') + `-${currentYearMonthDay}-${zipCode}-${currentHourMinuteSecond}`;
+  return getReferencePrefix(property.propertyType || 'appartement') + `-${currentYearMonthDay}-${zipCode}-${currentHourMinuteSecond}`;
 }

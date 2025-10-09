@@ -311,11 +311,11 @@ function SearchContent() {
     }
   };
 
-  const handleTempPropertyTypeChange = (type: string, checked: boolean) => {
+  const handleTempPropertyTypeChange = (propertyType: string, checked: boolean) => {
     if (checked) {
-      setTempPropertyTypes(prev => [...prev, type]);
+      setTempPropertyTypes(prev => [...prev, propertyType]);
     } else {
-      setTempPropertyTypes(prev => prev.filter(t => t !== type));
+      setTempPropertyTypes(prev => prev.filter(t => t !== propertyType));
     }
   };
 
@@ -359,11 +359,11 @@ function SearchContent() {
     setTempProposedBy('');
   };
 
-  const handlePropertyTypeChange = (type: string, checked: boolean) => {
+  const handlePropertyTypeChange = (propertyType: string, checked: boolean) => {
     if (checked) {
-      setPropertyTypes(prev => [...prev, type]);
+      setPropertyTypes(prev => [...prev, propertyType]);
     } else {
-      setPropertyTypes(prev => prev.filter(t => t !== type));
+      setPropertyTypes(prev => prev.filter(t => t !== propertyType));
     }
   };
 
@@ -393,8 +393,8 @@ function SearchContent() {
     proposedBy.length > 0
   ].filter(Boolean).length;
 
-  const getPropertyTypeIcon = (type: string) => {
-    switch (type) {
+  const getPropertyTypeIcon = (propertyType: string) => {
+    switch (propertyType) {
       case 'appartement': return <BuildingOfficeIcon className="w-4 h-4" />;
       case 'maison': return <HomeIcon className="w-4 h-4" />;
       case 'immeuble': return <BuildingOfficeIcon className="w-4 h-4" />;
@@ -955,15 +955,15 @@ function SearchContent() {
                       {transactionType === 'achat' ? 'À Vendre' : 'À Louer'}
                     </Chip>
                   )}
-                  {propertyTypes.map(type => (
+                  {propertyTypes.map(propertyType => (
                     <Chip 
-                      key={type} 
+                      key={propertyType} 
                       variant="flat" 
-                      onClose={() => handlePropertyTypeChange(type, false)}
+                      onClose={() => handlePropertyTypeChange(propertyType, false)}
                       size="sm"
-                      aria-label={`Supprimer le filtre type: ${type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}`}
+                      aria-label={`Supprimer le filtre type: ${propertyType.charAt(0).toUpperCase() + propertyType.slice(1).toLowerCase()}`}
                     >
-                      {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
+                      {propertyType.charAt(0).toUpperCase() + propertyType.slice(1).toLowerCase()}
                     </Chip>
                   ))}
                   {(priceRange[0] > 0 || priceRange[1] > 0) && (

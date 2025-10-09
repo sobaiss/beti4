@@ -2,11 +2,11 @@ import { Agency } from "@/types/agency";
 import { User } from "@/types/user";
 
 export enum PropertyStatusEnum {
-  disponible = 'disponible',
-  vendu = 'vendu',
-  loue = 'loue',
+  brouillon = 'brouillon',
   desactive = 'desactive',
-  brouillon = 'brouillon'
+  disponible = 'disponible',
+  loue = 'loue',
+  vendu = 'vendu',
 };
 
 export enum PropertyTransactionTypeEnum {
@@ -14,9 +14,9 @@ export enum PropertyTransactionTypeEnum {
   location = 'location'
 };
 export enum PropertyAmenityCategoryEnum {
-  interieur = 'interieur',
-  exterieur = 'exterieur',
   equipement = 'equipement',
+  exterieur = 'exterieur',
+  interieur = 'interieur',
 };
 
 export enum OwnerTypeEnum {
@@ -24,24 +24,24 @@ export enum OwnerTypeEnum {
   professionnel = 'professionnel'
 };
 export enum RateTypeEnum {
-  jour = 'jour',
-  semaine = 'semaine',
-  mois = 'mois',
   an = 'an',
   heure = 'heure',
-  trimestre = 'trimestre',
+  jour = 'jour',
+  mois = 'mois',
+  semaine = 'semaine',
   semestre = 'semestre',
+  trimestre = 'trimestre',
   unique = 'unique'
 };
 
 export enum PropertyTypeEnum {
   appartement = 'appartement',
+  bureau_commerce = 'bureau_commerce',
+  immeuble = 'immeuble',
   maison = 'maison',
   terrain = 'terrain',
-  bureau = 'bureau',
-  commerce = 'commerce',
-  parking = 'parking',
-  autre = 'autre'
+  terrain_agricole = 'terrain_agricole',
+  villa = 'villa',
 };
 
 export interface Property {
@@ -56,7 +56,7 @@ export interface Property {
   city?: string;
   borough?: string;
   neighborhood?: string;
-  type: PropertyTypeEnum;
+  propertyType: PropertyTypeEnum;
   transactionType: PropertyTransactionTypeEnum;
   rooms?: number;
   bedrooms?: number;

@@ -115,7 +115,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
           <div className="flex items-center text-xs text-default-500">
             <HomeIcon className="w-3 h-3 mr-1" />
-            <span className="capitalize">{property.type.toLowerCase()}</span>
+            <span className="capitalize">{property.propertyType.toLowerCase()}</span>
           </div>
 
           <Button color="primary" className="w-full mt-4" radius="full">

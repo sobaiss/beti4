@@ -75,7 +75,7 @@ export default function PropertyImageGallery({
     "contentUrl": propertyImages[0]?.url,
     "description": `${property.title} - ${property.location}`,
     "name": property.title,
-    "caption": `${property.type} à ${property.location} - ${property.price}${CURRENCY}`
+    "caption": `${property.propertyType} à ${property.location} - ${property.price}${CURRENCY}`
   };
 
   return (
