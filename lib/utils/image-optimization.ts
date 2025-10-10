@@ -120,7 +120,7 @@ export function generateImageStructuredData(property: any, images: any[]) {
     "isPartOf": {
       "@type": "RealEstateListing",
       "name": property.title,
-      "url": `https://beti.com/property/${property.id}`
+      "url": `https://beti.com/annonce/${property.id}`
     }
   };
 }

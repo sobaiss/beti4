@@ -333,7 +333,7 @@ export default function DeposerUneAnnonceView() {
         setSubmitSuccess(true);
         // Redirect to the new property page after a short delay
         setTimeout(() => {
-          router.push(`/property/${response.id}`);
+          router.push(`/annonce/${response.id}`);
         }, 2000);
       }
     } catch (error) {

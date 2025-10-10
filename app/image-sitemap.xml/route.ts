@@ -18,7 +18,7 @@ export async function GET() {
       
       return `
     <url>
-      <loc>${baseUrl}/property/${property.id}</loc>
+      <loc>${baseUrl}/annonce/${property.id}</loc>
       <image:image>
         <image:loc>${image.url}</image:loc>
         <image:title>${property.title} - ${imageType}</image:title>

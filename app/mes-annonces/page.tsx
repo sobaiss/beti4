@@ -251,7 +251,7 @@ export default function MesAnnoncesPage() {
                         </DropdownTrigger>
                         <DropdownMenu>
                           <DropdownItem key="view">
-                            <Link href={`/property/${property.id}`} className="flex items-center w-full">
+                            <Link href={`/annonce/${property.id}`} className="flex items-center w-full">
                               <EyeIcon className="w-4 h-4 mr-2" />
                               Voir l'annonce
                             </Link>
@@ -340,7 +340,7 @@ export default function MesAnnoncesPage() {
                       {/* Quick Actions */}
                       <div className="flex gap-2 pt-2">
                         <Button variant="bordered" size="sm" className="flex-1">
-                          <Link href={`/property/${property.id}`}>
+                          <Link href={`/annonce/${property.id}`}>
                             <EyeIcon className="w-4 h-4 mr-1" />
                             Voir
                           </Link>

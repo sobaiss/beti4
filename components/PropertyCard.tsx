@@ -119,7 +119,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           </div>
 
           <Button color="primary" className="w-full mt-4" radius="full">
-            <Link href={`/property/${property.id}`}>Voir les Détails</Link>
+            <Link href={`/annonce/${property.id}`}>Voir les Détails</Link>
           </Button>
         </div>
       </CardBody>
