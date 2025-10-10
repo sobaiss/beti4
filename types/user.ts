@@ -1,8 +1,19 @@
 import { PropertyFavorite } from "@/types/property";
 import { Agency } from "./agency";
 
-export type UserTypeEnum = 'particulier' | 'professionnel' | 'interne' | 'admin';
-export type UserStatusEnum = 'attente_validation' | 'valide' | 'verifie' | 'bloque';
+export enum UserTypeEnum {
+  particulier = 'particulier',
+  professionnel = 'professionnel',
+  interne = 'interne',
+  admin = 'admin'
+}
+
+export enum UserStatusEnum {
+  attente_validation = 'attente_validation',
+  valide = 'valide',
+  verifie = 'verifie',
+  bloque = 'bloque'
+}
 
 export interface User {
   id: string;

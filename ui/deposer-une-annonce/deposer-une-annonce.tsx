@@ -51,41 +51,7 @@ import { CURRENCY, MAX_FILE_SIZE, MAX_IMAGE_COUNT, rateTypesConfig } from '@/lib
 import { createPropertyContactSchema, createPropertyImagesSchema, updatePropertyCaracteristicsSchema, updatePropertyLocationSchema, updatePropertyPriceSchema, updatePropertyTypeSchema } from '@/lib/validations/property';
 import z from 'zod';
 
-enum formFieldEnum {
-  address = 'address',
-  area = 'area',
-  availableAt = 'availableAt',
-  bathrooms = 'bathrooms',
-  bedrooms = 'bedrooms',
-  borough = 'borough',
-  city = 'city',
-  contactEmail = 'contactEmail',
-  contactFirstName = 'contactFirstName',
-  contactLastName = 'contactLastName',
-  contactPhone = 'contactPhone',
-  department = 'department',
-  description = 'description',
-  email = 'email',
-  firstName = 'firstName',
-  floor = 'floor',
-  landArea = 'landArea',
-  lastName = 'lastName',
-  location = 'location',
-  neighborhood = 'neighborhood',
-  phone = 'phone',
-  price = 'price',
-  propertyType = 'propertyType',
-  rate = 'rate',
-  region = 'region',
-  rooms = 'rooms',
-  title = 'title',
-  totalFloors = 'totalFloors',
-  transactionType = 'transactionType',
-  yearBuilt = 'yearBuilt',
-  zipCode = 'zipCode',
-}
-
-const emptyErrorMessages: Record<formFieldEnum, string> = {
+const emptyErrorMessages = {
   address: '',
   area: '',
   availableAt: '',

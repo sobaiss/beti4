@@ -2,7 +2,8 @@
 
 import { User } from "@/types/user";
 import { cookies } from 'next/headers'
-import { ChangeUserPasswordInput, changeUserPasswordSchema, createUserSchema, UpdateUserInput, updateUserSchema, UpdateUserSettingsInput } from "../validations/user";
+import { ChangeUserPasswordInput, changeUserPasswordSchema, CreateUserInput, createUserSchema, UpdateUserInput, updateUserSchema, UpdateUserSettingsInput } from "../validations/user";
+import { z } from 'zod';
 
 function apiUrl(): string {
   const url = process.env.NEXT_PUBLIC_API_URL;
@@ -22,113 +23,113 @@ async function fetchHeaderOptions() {
 }
 
 export async function login(email: string, password: string) {
-    return await fetch(`${apiUrl()}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username: email, password })
-    });
+  return await fetch(`${apiUrl()}/auth/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ username: email, password })
+  });
 }
 
 export async function getUserProfile(): Promise<User | null> {
-    const response = await fetch(`${apiUrl()}/users/profile`, {
-      method: 'GET',
-      headers: await fetchHeaderOptions()
-    });
+  const response = await fetch(`${apiUrl()}/users/profile`, {
+    method: 'GET',
+    headers: await fetchHeaderOptions()
+  });
 
-    if (!response.ok) {
-        console.error('Erreur lors de la récupération du profil utilisateur:', await response.json());
-      return null;
-    }
-
-    return await response.json() as User;
+  if (!response.ok) {
+      console.error('Erreur lors de la récupération du profil utilisateur:', await response.json());
+    return null;
   }
 
-export async function createUser(data: FormData) {
-    const validatedFields = createUserSchema.safeParse(data);
+  return await response.json() as User;
+}
 
-    if (!validatedFields.success) {
+export async function createUser(data: CreateUserInput) {
+  const validatedFields = createUserSchema.safeParse(data);
+
+  if (!validatedFields.success) {
+    return {
+      errors: z.flattenError(validatedFields.error).fieldErrors,
+      message: 'Corriger les erreurs ci-dessous.',
+    };
+  }
+
+  const response = await fetch(`${apiUrl()}/users`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(validatedFields.data)
+  });
+
+  console.log('Create user response:', response);
+  const responseData = await response.json();
+
+  if (!response.ok) {
       return {
-        errors: validatedFields.error.flatten().fieldErrors,
-        message: 'Corriger les erreurs ci-dessous.',
-      };
-    }
-
-    const response = await fetch(`${apiUrl()}/users`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(validatedFields.data)
-    });
-
-    console.log('Create user response:', response);
-    const responseData = await response.json();
-
-    if (!response.ok) {
-        return {
-            errors: responseData.errors || {},
-            message: 'Erreur lors de la mise à jour des informations utilisateur.',
-        }
-    }
-
-    return responseData;
+          errors: responseData.errors || {},
+          message: 'Erreur lors de la mise à jour des informations utilisateur.',
+      }
   }
 
-  export async function updateUserAvatar(id: string, avatar: string) {
-    const response = await fetch(`${apiUrl()}/users/avatar/${id}`, {
-      method: 'POST',
-      headers: await fetchHeaderOptions(),
-      body: JSON.stringify({ avatar })
-    });
+  return responseData;
+}
 
-    if (!response.ok) {
-      throw new Error('Erreur lors de la mise à jour de l\'avatar');
-    }
+export async function updateUserAvatar(id: string, avatar: string) {
+  const response = await fetch(`${apiUrl()}/users/avatar/${id}`, {
+    method: 'POST',
+    headers: await fetchHeaderOptions(),
+    body: JSON.stringify({ avatar })
+  });
 
-    return await response.json() as User;
+  if (!response.ok) {
+    throw new Error('Erreur lors de la mise à jour de l\'avatar');
   }
+
+  return await response.json() as User;
+}
 
 export async function deleteUserAvatar(id: string) {
-    const response = await fetch(`${apiUrl()}/users/avatar/${id}`, {
-        method: 'DELETE',
-        headers: await fetchHeaderOptions()
-    });
+  const response = await fetch(`${apiUrl()}/users/avatar/${id}`, {
+      method: 'DELETE',
+      headers: await fetchHeaderOptions()
+  });
 
-    if (!response.ok) {
-        throw new Error('Erreur lors de la suppression de l\'avatar');
-    }
+  if (!response.ok) {
+      throw new Error('Erreur lors de la suppression de l\'avatar');
+  }
 
-    return await response.json() as User;
+  return await response.json() as User;
 }
 
 export async function updateUserInfos(id: string, data: UpdateUserInput) {
-    const validatedFields = updateUserSchema.safeParse(data);
+  const validatedFields = updateUserSchema.safeParse(data);
 
-    if (!validatedFields.success) {
-    return {
-        errors: validatedFields.error.flatten().fieldErrors,
-        message: 'Corriger les erreurs ci-dessous.',
-    };
-    }
+  if (!validatedFields.success) {
+  return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Corriger les erreurs ci-dessous.',
+  };
+  }
 
-    const response = await fetch(`${apiUrl()}/users/${id}`, {
-    method: 'PATCH',
-    headers: await fetchHeaderOptions(),
-        body: JSON.stringify(validatedFields.data)
-    });
+  const response = await fetch(`${apiUrl()}/users/${id}`, {
+  method: 'PATCH',
+  headers: await fetchHeaderOptions(),
+      body: JSON.stringify(validatedFields.data)
+  });
 
-    const responseData = await response.json();
+  const responseData = await response.json();
 
-    if (!response.ok) {
-        return {
-            errors: responseData.errors || {},
-            message: 'Erreur lors de la mise à jour des informations utilisateur.',
-        }
-    }
+  if (!response.ok) {
+      return {
+          errors: responseData.errors || {},
+          message: 'Erreur lors de la mise à jour des informations utilisateur.',
+      }
+  }
 
-    return responseData;
+  return responseData;
 }
 
 export async function updateUserSettings(id: string, data: UpdateUserSettingsInput) {

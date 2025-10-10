@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
@@ -20,6 +20,11 @@ import {
 } from '@heroui/react';
 import Header from '@/components/Header';
 import { createUser } from '@/lib/actions/user';
+import AutocompleteLocation from '@/ui/components/AutocompleteLocation';
+import { getCachedLocations } from '@/lib/utils/location-cache';
+import { Location } from '@/types/location';
+import { UserTypeEnum } from '@/types/user';
+import { getLocationHierarchy } from '@/lib/utils/location-filter';
 
 export default function RegisterPage() {
   const emptyErrorMessages = {
@@ -27,6 +32,8 @@ export default function RegisterPage() {
     lastName: '',
     email: '',
     phone: '',
+    location: '',
+    city: '',
     password: '',
     confirmPassword: '',
   };
@@ -37,23 +44,55 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessages, setErrorMessages] = useState(emptyErrorMessages);
   const router = useRouter();
+  const [cityMap, setCityMap] = useState<Location[]>([]);
   
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
+    location: '',
+    city: '',
     password: '',
     confirmPassword: '',
     agentLicense: '',
     acceptTerms: false,
     acceptMarketing: false,
-    userType: 'particulier'
+    userType: UserTypeEnum.particulier,
   });
+
+  useEffect(() => {
+    (async () => {
+      const locations = await getCachedLocations();
+      const cities = locations.filter(location => location.divisionLevel >= 3);
+      setCityMap(cities);
+
+    })();
+  }, []);
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     setErrorMessages(emptyErrorMessages);
+  };
+
+
+  const handleLocationInputChange = (field: string, value: string | boolean) => {
+    console.log(`Field changed: ${field}, New value: ${value}`);
+    setFormData(prev => ({ ...prev, city: '', location: '' }));
+
+    getLocationHierarchy(value as string).then(hierarchy => {
+      if (!hierarchy) {
+        return;
+      }
+
+      setFormData(prev => ({
+        ...prev,
+        city: hierarchy.city?.displayName || '',
+        location: value as string
+      }));
+
+      setErrorMessages(emptyErrorMessages);
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -65,20 +104,16 @@ export default function RegisterPage() {
     setErrorMessages(emptyErrorMessages);
 
     try {
-      const formDataObj = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        formDataObj.append(key, String(value));
-      });
-      const response = await createUser(formDataObj);
+      const response = await createUser(formData);
 
       if ('errors' in response) {
-        const errors = {
-          firstName: response.errors.firstName?.[0] || '',
-          lastName: response.errors.lastName?.[0] || '',
-          email: response.errors.email?.[0] || '',
-          phone: response.errors.phone?.[0] || '',
-          password: response.errors.password?.[0] || '',
-          confirmPassword: response.errors.confirmPassword?.[0] || '',
+        console.log('Validation errors:', response.errors);
+
+        const errors = { ...emptyErrorMessages };
+        for (const [field, messages] of Object.entries(response.errors)) {
+          if (Array.isArray(messages)) {
+            errors[field as keyof typeof emptyErrorMessages] = messages[0];
+          }
         }
 
         setErrorMessages(errors);
@@ -168,7 +203,35 @@ export default function RegisterPage() {
                   />
                 </div>
               </div>
-
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-default-700">Adresse</label>
+                <AutocompleteLocation
+                  isRequired={false}
+                  allowsCustomValue={false}
+                  locations={cityMap}
+                  selectedLocation={formData.location}
+                  setSelectedLocation={(value) => handleLocationInputChange('location', value)}
+                  label=""
+                  placeholder="Rechercher une ville, un quartier, un arrondissement..."
+                  errorMessage={errorMessages.location}
+                  isInvalid={errorMessages.location !== ''}
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="city" className="block text-sm font-medium text-default-700 mb-2">Ville</label>
+                <Input
+                  isRequired={true}
+                  isDisabled
+                  id="city"
+                  value={formData.city}
+                  onChange={(e) => handleInputChange('city', e.target.value)}
+                  size="lg"
+                  variant="bordered"
+                  radius="lg"
+                  errorMessage={errorMessages.city}
+                  isInvalid={errorMessages.city !== ''}
+                />
+              </div>
               <div className="space-y-2"> 
                 <label className="block text-sm font-medium text-default-700">Adresse Email *</label>
                 <Input

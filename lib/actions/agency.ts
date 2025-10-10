@@ -1,7 +1,8 @@
 'use server'
 
-import { CreateAgencyInput, CreateAgencySchema } from "../validations/agency";
+import { CreateAgencyInput, createAgencySchema } from "../validations/agency";
 import { CreateUserInput, createUserSchema } from "../validations/user";
+import { z } from 'zod';
 
 function apiUrl(): string {
   const url = process.env.NEXT_PUBLIC_API_URL;
@@ -14,7 +15,7 @@ function apiUrl(): string {
 
 export async function createAgency(data: {agency: CreateAgencyInput, user: CreateUserInput}) {
   console.log('Creating agency with data:', data);
-  const validatedAgencyFields = CreateAgencySchema.safeParse(data.agency);
+  const validatedAgencyFields = createAgencySchema.safeParse(data.agency);
   const validatedUserFields = createUserSchema.safeParse(data.user);
 
   console.log('Validated agency fields:', validatedAgencyFields.error);
@@ -23,8 +24,8 @@ export async function createAgency(data: {agency: CreateAgencyInput, user: Creat
   if (!validatedAgencyFields.success || !validatedUserFields.success) {
     return {
       errors: {
-        ...(validatedAgencyFields.success ? {} : validatedAgencyFields.error?.flatten().fieldErrors ?? {}),
-        ...(validatedUserFields.success ? {} : validatedUserFields.error?.flatten().fieldErrors ?? {}),
+        ...(validatedAgencyFields.success ? {} : z.flattenError(validatedAgencyFields.error).fieldErrors ?? {}),
+        ...(validatedUserFields.success ? {} : z.flattenError(validatedUserFields.error).fieldErrors ?? {}),
       },
       message: 'Corriger les erreurs ci-dessous.',
     };

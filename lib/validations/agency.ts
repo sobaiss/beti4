@@ -1,9 +1,10 @@
 import { z } from 'zod'
 
-export const CreateAgencySchema = z.object({
+export const createAgencySchema = z.object({
   name: z.string().min(2, 'Le nom de l\'agence est requis').max(200, 'Le nom ne peut pas dépasser 200 caractères'),
   description: z.string().max(500, 'La description ne peut pas dépasser 500 caractères').optional(),
   address: z.string().max(200, 'L\'adresse ne peut pas dépasser 200 caractères').optional(),
+  location: z.string().min(3, 'La localisation est requise').max(100, 'La localisation ne peut pas dépasser 100 caractères'),
   city: z.string().max(100, 'La ville ne peut pas dépasser 100 caractères').optional(),
   zipCode: z.string().max(10, 'Le code postal ne peut pas dépasser 10 caractères').optional(),
   phone: z.string().regex(/^[1-9]{1}[0-9]{7}$/, {
@@ -14,4 +15,4 @@ export const CreateAgencySchema = z.object({
 })
 
 
-export type CreateAgencyInput = z.infer<typeof CreateAgencySchema>
+export type CreateAgencyInput = z.infer<typeof createAgencySchema>

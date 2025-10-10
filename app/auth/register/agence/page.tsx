@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
@@ -22,13 +22,18 @@ import {
   Card,
   CardBody,
   Checkbox, 
-  Divider,
   Textarea,
   Progress
 } from '@heroui/react';
 import Header from '@/components/Header';
 import { createAgency } from '@/lib/actions/agency';
-import { CreateAgencySchema } from '@/lib/validations/agency';
+import { createAgencySchema } from '@/lib/validations/agency';
+import { z } from 'zod';
+import { UserTypeEnum } from '@/types/user';
+import AutocompleteLocation from '@/ui/components/AutocompleteLocation';
+import { Location } from '@/types/location';
+import { getCachedLocations } from '@/lib/utils/location-cache';
+import { getLocationHierarchy } from '@/lib/utils/location-filter';
 
 export default function RegisterAgencyPage() {
   const emptyErrorMessages = {
@@ -36,6 +41,7 @@ export default function RegisterAgencyPage() {
     agencyName: '',
     agencyDescription: '',
     agencyAddress: '',
+    agencyLocation: '',
     agencyCity: '',
     agencyZipCode: '',
     agencyPhone: '',
@@ -48,6 +54,8 @@ export default function RegisterAgencyPage() {
     phone: '',
     password: '',
     confirmPassword: '',
+    location: '',
+    city: '',
   };
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -56,12 +64,14 @@ export default function RegisterAgencyPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessages, setErrorMessages] = useState(emptyErrorMessages);
+  const [cityMap, setCityMap] = useState<Location[]>([]);
   const router = useRouter();
   
   const [agencyData, setAgencyData] = useState({
     name: '',
     description: '',
     address: '',
+    location: '',
     city: '',
     zipCode: '',
     phone: '',
@@ -78,9 +88,19 @@ export default function RegisterAgencyPage() {
     confirmPassword: '',
     acceptTerms: false,
     acceptMarketing: false,
-    userType: 'professionnel' as const,
-    agencyId: ''
+    userType: UserTypeEnum.professionnel,
+    location: '',
+    city: '',
   });
+
+  useEffect(() => {
+    (async () => {
+      const locations = await getCachedLocations();
+      const cities = locations.filter(location => location.divisionLevel >= 3);
+      setCityMap(cities);
+
+    })();
+  }, []);
 
   const handleAgencyInputChange = (field: string, value: string) => {
     setAgencyData(prev => ({ ...prev, [field]: value }));
@@ -92,25 +112,48 @@ export default function RegisterAgencyPage() {
     setErrorMessages(emptyErrorMessages);
   };
 
+
+  const handleLocationInputChange = (field: string, value: string | boolean) => {
+    console.log(`Field changed: ${field}, New value: ${value}`);
+    setAgencyData(prev => ({ ...prev, city: '', location: '' }));
+
+    getLocationHierarchy(value as string).then(hierarchy => {
+      if (!hierarchy) {
+        return;
+      }
+
+      setAgencyData(prev => ({
+        ...prev,
+        location: value as string,
+        city: hierarchy.city?.displayName || '',
+        zipCode: hierarchy.selected?.zip || '',
+      }));
+
+      setUserData(prev => ({
+        ...prev,
+        location: value as string,
+        city: hierarchy.city?.displayName || '',
+      }));
+
+      setErrorMessages(emptyErrorMessages);
+    });
+  };
+
   const nextStep = () => {
     // Validate agency data before moving to step 2
     if (currentStep === 1) {
-      const validatedFields = CreateAgencySchema.safeParse(agencyData);
+      const validatedFields = createAgencySchema.safeParse(agencyData);
       console.log('Agency validation result:', validatedFields.success);
     
       if (!validatedFields.success) {
-        console.log('Agency validation errors:', validatedFields.error.flatten().fieldErrors);
-        setErrorMessages({
-          ...errorMessages,
-          agencyName: validatedFields.error.flatten().fieldErrors.name?.[0] || '',
-          agencyDescription: validatedFields.error.flatten().fieldErrors.description?.[0] || '',
-          agencyEmail: validatedFields.error.flatten().fieldErrors.email?.[0] || '',
-          agencyPhone: validatedFields.error.flatten().fieldErrors.phone?.[0] || '',
-          agencyAddress: validatedFields.error.flatten().fieldErrors.address?.[0] || '',
-          agencyCity: validatedFields.error.flatten().fieldErrors.city?.[0] || '',
-          agencyZipCode: validatedFields.error.flatten().fieldErrors.zipCode?.[0] || '',
-          agencyWebsite: validatedFields.error.flatten().fieldErrors.website?.[0] || '',
-        });
+        console.log('Agency validation errors:', z.flattenError(validatedFields.error).fieldErrors);
+
+        const errors = { ...emptyErrorMessages };
+        for (const [field, messages] of Object.entries(z.flattenError(validatedFields.error).fieldErrors)) {
+          if (Array.isArray(messages)) {
+            errors[field as keyof typeof emptyErrorMessages] = messages[0];
+          }
+        }
 
         setError('Veuillez corriger les erreurs ci-dessous.');
 
@@ -145,24 +188,13 @@ export default function RegisterAgencyPage() {
       const agencyResponse = await createAgency({agency: agencyData, user: userData});
 
       if ('errors' in agencyResponse) {
-
         console.log('Agency creation errors:', agencyResponse.errors);
-        const errors = {
-          ...errorMessages,
-          agencyName: agencyResponse.errors.name?.[0] || '',
-          agencyDescription: agencyResponse.errors.description?.[0] || '',
-          agencyEmail: agencyResponse.errors.email?.[0] || '',
-          agencyPhone: agencyResponse.errors.phone?.[0] || '',
-          agencyAddress: agencyResponse.errors.address?.[0] || '',
-          agencyCity: agencyResponse.errors.city?.[0] || '',
-          agencyZipCode: agencyResponse.errors.zipCode?.[0] || '',
-          agencyWebsite: agencyResponse.errors.website?.[0] || '',
-          firstName: agencyResponse.errors.firstName?.[0] || '',
-          lastName: agencyResponse.errors.lastName?.[0] || '',
-          email: agencyResponse.errors.email?.[0] || '',
-          phone: agencyResponse.errors.phone?.[0] || '',
-          password: agencyResponse.errors.password?.[0] || '',
-          confirmPassword: agencyResponse.errors.confirmPassword?.[0] || '',
+
+        const errors = { ...emptyErrorMessages };
+        for (const [field, messages] of Object.entries(agencyResponse.errors)) {
+          if (Array.isArray(messages)) {
+            errors[field as keyof typeof emptyErrorMessages] = messages[0];
+          }
         }
 
         setErrorMessages(errors);
@@ -227,15 +259,27 @@ export default function RegisterAgencyPage() {
                 isInvalid={errorMessages.agencyDescription !== ''}
               />
             </div>
-
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-default-700">Adresse *</label>
+              <label className="block text-sm font-medium text-default-700">Localisation</label>
+              <AutocompleteLocation
+                isRequired={true}
+                allowsCustomValue={false}
+                locations={cityMap}
+                selectedLocation={agencyData.location}
+                setSelectedLocation={(value) => handleLocationInputChange('location', value)}
+                label=""
+                placeholder="Rechercher une ville, un quartier, un arrondissement..."
+                errorMessage={errorMessages.agencyLocation}
+                isInvalid={errorMessages.agencyLocation !== ''}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-default-700">Adresse</label>
               <Input
                 placeholder="Adresse complète de l'agence"
                 value={agencyData.address}
                 onChange={(e) => handleAgencyInputChange('address', e.target.value)}
                 startContent={<MapPinIcon className="w-4 h-4 text-default-400" />}
-                isRequired
                 size="lg"
                 variant="bordered"
                 radius="lg"
@@ -248,8 +292,9 @@ export default function RegisterAgencyPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-default-700">Ville *</label>
+                <label className="block text-sm font-medium text-default-700">Ville</label>
                 <Input
+                  isDisabled
                   placeholder="Ville"
                   value={agencyData.city}
                   onChange={(e) => handleAgencyInputChange('city', e.target.value)}
@@ -257,23 +302,21 @@ export default function RegisterAgencyPage() {
                   size="lg"
                   variant="bordered"
                   radius="lg"
-                  isClearable
                   onClear={() => handleAgencyInputChange('city', '')}
                   errorMessage={errorMessages.agencyCity}
                   isInvalid={errorMessages.agencyCity !== ''}
                 />
               </div>
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-default-700">Code postal *</label>
+                <label className="block text-sm font-medium text-default-700">Code postal</label>
                 <Input
+                  isDisabled
                   placeholder="Code postal"
                   value={agencyData.zipCode}
                   onChange={(e) => handleAgencyInputChange('zipCode', e.target.value)}
-                  isRequired
                   size="lg"
                   variant="bordered"
                   radius="lg"
-                  isClearable
                   onClear={() => handleAgencyInputChange('zipCode', '')}
                   errorMessage={errorMessages.agencyZipCode}
                   isInvalid={errorMessages.agencyZipCode !== ''}
@@ -348,7 +391,7 @@ export default function RegisterAgencyPage() {
           <div className="w-20 h-20 bg-gradient-to-br from-secondary-100 to-secondary-200 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
             <UserIcon className="w-10 h-10 text-secondary-600" />
           </div>
-          <h2 className="text-3xl font-bold text-default-900 mb-3">Votre Compte Administrateur</h2>
+          <h2 className="text-3xl font-bold text-default-900 mb-3">Votre compte principal</h2>
           <p className="text-lg text-default-600 max-w-md mx-auto">Créez votre compte personnel pour gérer l'agence et ses annonces</p>
         </div>
 

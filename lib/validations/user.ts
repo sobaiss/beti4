@@ -1,12 +1,15 @@
+import { UserTypeEnum } from '@/types/user';
 import { z } from 'zod'
 
 export const createUserSchema = z.object({
-  firstName: z.string().min(2, 'Le prénom est requis').optional().or(z.literal('')),
-  lastName: z.string().min(2, 'Le nom est requis').optional().or(z.literal('')),
+  firstName: z.string().min(2, 'Le prénom doit contenir au moins 2 caractères').optional().or(z.literal('')),
+  lastName: z.string().min(2, 'Le nom doit contenir au moins 2 caractères').optional().or(z.literal('')),
   email: z.string().email('Adresse e-mail invalide'),
   phone: z.string().regex(/^[6-9]{1}[0-9]{7}$/, {
     message: 'Entrez un numéro de téléphone valide.',
   }),
+  location: z.string().optional(),
+  city: z.string().optional(),
   password: z.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/, {
     message: 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre.',
   }),
@@ -18,7 +21,7 @@ export const createUserSchema = z.object({
   }),
   acceptMarketing: z.boolean(),
   agencyId: z.string().optional(),
-  userType: z.enum(['particulier', 'professionnel', 'interne', 'admin']).default('particulier'),
+  userType: z.enum(UserTypeEnum).default(UserTypeEnum.particulier),
 }).superRefine(({ confirmPassword, password }, ctx) => {
   if (confirmPassword !== password) {
     ctx.addIssue({
